@@ -27,7 +27,10 @@
         <div id="map"></div>
         <div id="controls">
             <div class="slider-container">
-                <label for="time-slider">Forecast Time: <span id="selected-time">Now</span></label>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="time-slider">Forecast Time: <span id="selected-time">Now</span></label>
+                    <button id="locate-btn">📍 Locate Me</button>
+                </div>
                 <input type="range" id="time-slider" min="0" max="47" value="0">
             </div>
             <div class="graph-container">
@@ -36,6 +39,12 @@
         </div>
     </main>
     <footer>
+        <p>
+            <span style="color: green;">✔</span> OK Snorkeling &nbsp; | &nbsp;
+            <span>●</span> Unsuitable &nbsp; | &nbsp;
+            <span>📍</span> Landmark &nbsp; | &nbsp;
+            <span>🏪</span> Business
+        </p>
         <p>Recommended snorkeling areas based on wind conditions. "OK" indicates suitable conditions.</p>
     </footer>
 
