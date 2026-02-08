@@ -187,7 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         title: {
                             display: true,
                             text: 'Wind (km/h)',
-                            font: { size: 10 }
+                            font: { size: 10 },
+                            color: '#007bff'
+                        },
+                        ticks: {
+                            color: '#007bff'
                         }
                     },
                     y1: {
@@ -199,7 +203,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         title: {
                             display: true,
                             text: 'Swell (m)',
-                            font: { size: 10 }
+                            font: { size: 10 },
+                            color: '#28a745'
+                        },
+                        ticks: {
+                            color: '#28a745'
                         }
                     }
                 },
