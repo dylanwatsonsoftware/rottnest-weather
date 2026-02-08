@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Register the datalabels plugin
+    Chart.register(ChartDataLabels);
+
     const weatherPanel = document.getElementById('weather-panel');
     const weatherInfo = document.getElementById('weather-info');
     const windArrow = document.getElementById('wind-arrow');
@@ -22,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return directions[index];
     }
 
-    function updateBeaches(hourIndex) {
+    function updateBeaches(hourIndex, animateChart = true) {
         if (!forecastData || !beaches.length) return;
 
         const windDirDeg = forecastData.winddirection_10m[hourIndex];
@@ -52,38 +55,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         }
 
-        beachMarkers.forEach(m => map.removeLayer(m));
-        beachMarkers = [];
+        beachMarkers.forEach(mObj => {
+            const { marker, beach } = mObj;
+            const isOk = beach.ok_winds.includes(windDir);
 
-        beaches.forEach(beach => {
-            if (beach.lat && beach.lon) {
-                const isOk = beach.ok_winds.includes(windDir);
-                let icon;
-                icon = L.divIcon({
-                    className: `beach-marker ${isOk ? 'ok' : 'not-ok'}`,
-                    html: `<div>${isOk ? '🤿' : '✖'}</div>`,
-                    iconSize: [26, 26],
-                    iconAnchor: [13, 13]
-                });
+            const icon = L.divIcon({
+                className: `beach-marker ${isOk ? 'ok' : 'not-ok'}`,
+                html: `<div>${isOk ? '🤿' : '✖'}</div>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
 
-                const marker = L.marker([beach.lat, beach.lon], { icon })
-                    .bindPopup(`<strong>${beach.name}</strong><br>Status: ${isOk ? 'OK' : 'Unsuitable'}<br>OK Winds: ${beach.ok_winds.join(', ')}`)
-                    .bindTooltip(beach.name, {
-                        permanent: true,
-                        direction: 'top',
-                        className: 'beach-label',
-                        offset: [0, -10]
-                    })
-                    .addTo(map);
-                beachMarkers.push(marker);
-            }
+            marker.setIcon(icon);
+            marker.getPopup().setContent(`<strong>${beach.name}</strong><br>Status: ${isOk ? 'OK' : 'Unsuitable'}<br>OK Winds: ${beach.ok_winds.join(', ')}`);
         });
 
         // Update chart vertical line
         if (chart && chart.options.plugins.annotation.annotations.line1) {
             chart.options.plugins.annotation.annotations.line1.xMin = hourIndex;
             chart.options.plugins.annotation.annotations.line1.xMax = hourIndex;
-            chart.update();
+            chart.update(animateChart ? undefined : 'none');
         }
     }
 
@@ -105,13 +96,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             swell_wave_height: marineJson.hourly.swell_wave_height
         };
 
+        // Initialize Beach Markers
+        beaches.forEach(beach => {
+            if (beach.lat && beach.lon) {
+                const marker = L.marker([beach.lat, beach.lon], {
+                    icon: L.divIcon({className: 'beach-marker'}) // placeholder
+                })
+                .bindPopup('')
+                .bindTooltip(beach.name, {
+                    permanent: true,
+                    direction: 'top',
+                    className: 'beach-label',
+                    offset: [0, -10]
+                })
+                .addTo(map);
+                beachMarkers.push({ marker, beach });
+            }
+        });
+
         // Initialize Chart
         const ctx = document.getElementById('windChart').getContext('2d');
-
-        // We need the annotation plugin for the vertical line, but let's see if we can do without or add it.
-        // I'll add the script for annotation plugin in index.html if needed,
-        // but let's try a simpler way: just update the chart's background or similar if possible.
-        // Actually, I'll just add the annotation plugin script.
 
         const labels = forecastData.time.map(t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
 
@@ -127,7 +131,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         fill: true,
                         tension: 0.4,
-                        yAxisID: 'y'
+                        yAxisID: 'y',
+                        datalabels: {
+                            display: function(context) {
+                                return context.dataIndex % 4 === 0; // Show every 4 hours to avoid clutter
+                            },
+                            formatter: function(value, context) {
+                                return getDirection(forecastData.winddirection_10m[context.dataIndex]);
+                            },
+                            align: 'top',
+                            offset: 5,
+                            font: {
+                                size: 10,
+                                weight: 'bold'
+                            },
+                            color: '#0056b3'
+                        }
                     },
                     {
                         label: 'Swell Height (m)',
@@ -136,7 +155,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         backgroundColor: 'transparent',
                         fill: false,
                         tension: 0.4,
-                        yAxisID: 'y1'
+                        yAxisID: 'y1',
+                        datalabels: {
+                            display: false
+                        }
                     }
                 ]
             },
@@ -177,7 +199,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                     legend: {
                         display: false
                     },
-                    annotation: { // Will work if plugin is loaded
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                    if (context.datasetIndex === 0) { // Wind Speed
+                                        const dir = getDirection(forecastData.winddirection_10m[context.dataIndex]);
+                                        label += ' km/h ' + dir;
+                                    } else {
+                                        label += 'm';
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    annotation: {
                         annotations: {
                             line1: {
                                 type: 'line',
@@ -187,6 +229,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 borderWidth: 2,
                             }
                         }
+                    },
+                    datalabels: {
+                        // Default for all datasets is false, overridden in wind speed dataset
+                        display: false
                     }
                 }
             }
@@ -194,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Add event listener for slider
         timeSlider.addEventListener('input', (e) => {
-            updateBeaches(parseInt(e.target.value));
+            updateBeaches(parseInt(e.target.value), false);
         });
 
         // Initial update for current hour
@@ -267,6 +313,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Error loading data:', error);
-        weatherPanel.innerHTML = '<p>Error loading weather data.</p>';
+        if (weatherPanel) weatherPanel.innerHTML = '<p>Error loading weather data.</p>';
     }
 });
