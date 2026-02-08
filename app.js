@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return directions[index];
     }
 
+    function getWindArrow(degrees) {
+        // Arrows pointing WHERE the wind is blowing
+        // e.g. 0 deg = North (blowing South) -> ↓
+        const arrows = ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'];
+        const index = Math.round(degrees / 45) % 8;
+        return arrows[index];
+    }
+
     function updateBeaches(hourIndex, animateChart = true) {
         if (!forecastData || !beaches.length) return;
 
@@ -137,12 +145,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 return context.dataIndex % 4 === 0; // Show every 4 hours to avoid clutter
                             },
                             formatter: function(value, context) {
-                                return getDirection(forecastData.winddirection_10m[context.dataIndex]);
+                                return getWindArrow(forecastData.winddirection_10m[context.dataIndex]);
                             },
                             align: 'top',
                             offset: 5,
                             font: {
-                                size: 10,
+                                size: 14,
                                 weight: 'bold'
                             },
                             color: '#0056b3'
@@ -210,7 +218,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     label += context.parsed.y;
                                     if (context.datasetIndex === 0) { // Wind Speed
                                         const dir = getDirection(forecastData.winddirection_10m[context.dataIndex]);
-                                        label += ' km/h ' + dir;
+                                        const arrow = getWindArrow(forecastData.winddirection_10m[context.dataIndex]);
+                                        label += ' km/h ' + dir + ' ' + arrow;
                                     } else {
                                         label += 'm';
                                     }
