@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const weatherPanel = document.getElementById('weather-panel');
+    const weatherInfo = document.getElementById('weather-info');
+    const windArrow = document.getElementById('wind-arrow');
     const selectedTimeLabel = document.getElementById('selected-time');
     const timeSlider = document.getElementById('time-slider');
     const map = L.map('map').setView([-32.007, 115.51], 13);
@@ -24,15 +26,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const windDirDeg = forecastData.winddirection_10m[hourIndex];
         const windSpeed = forecastData.windspeed_10m[hourIndex];
         const temp = forecastData.temperature_2m[hourIndex];
-        const time = new Date(forecastData.time[hourIndex]).toLocaleString();
+        const time = new Date(forecastData.time[hourIndex]).toLocaleString([], {
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
         const windDir = getDirection(windDirDeg);
 
         selectedTimeLabel.textContent = time;
-        weatherPanel.innerHTML = `
-            <strong>Selected Wind:</strong> ${windSpeed} km/h from ${windDir} (${windDirDeg}°)
-            <br>
-            <strong>Temp:</strong> ${temp} °C
-        `;
+
+        // Update arrow rotation (pointing TO where the wind is blowing)
+        if (windArrow) {
+            windArrow.style.transform = `rotate(${windDirDeg + 180}deg)`;
+        }
+
+        if (weatherInfo) {
+            weatherInfo.innerHTML = `
+                <div><strong>Wind:</strong> ${windSpeed} km/h ${windDir}</div>
+                <div><strong>Temp:</strong> ${temp} °C</div>
+            `;
+        }
 
         beachMarkers.forEach(m => map.removeLayer(m));
         beachMarkers = [];
