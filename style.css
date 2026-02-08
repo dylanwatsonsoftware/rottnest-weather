@@ -5,7 +5,9 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
     background-color: #f0f2f5;
+    overflow: hidden;
 }
 
 header {
@@ -287,42 +289,42 @@ footer {
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(8px);
-        margin: 8px;
-        border-radius: 10px;
-        padding: 8px;
+        margin: 0;
+        border-radius: 15px 15px 0 0;
+        padding: 10px 15px 15px 15px;
         min-height: auto;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.15);
         z-index: 1000;
     }
 
     .slider-container {
-        margin-bottom: 4px;
+        margin-bottom: 5px;
     }
 
     .slider-container label {
-        margin-bottom: 0;
-        font-size: 0.8rem;
+        margin-bottom: 2px;
+        font-size: 0.85rem;
     }
 
     #time-slider {
-        margin: 8px 0;
+        margin: 10px 0;
         height: 10px;
     }
 
     #time-slider::-webkit-slider-thumb {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 
     #time-slider::-moz-range-thumb {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 
     .graph-container {
-        height: 80px;
+        height: 90px;
     }
 }
 
