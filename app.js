@@ -1,11 +1,16 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const weatherPanel = document.getElementById('weather-panel');
+    const weatherInfo = document.getElementById('weather-info');
+    const windArrow = document.getElementById('wind-arrow');
     const selectedTimeLabel = document.getElementById('selected-time');
     const timeSlider = document.getElementById('time-slider');
+    const locateBtn = document.getElementById('locate-btn');
     const map = L.map('map').setView([-32.007, 115.51], 13);
     let chart;
     let forecastData = null;
     let beachMarkers = [];
+    let userLocationMarker = null;
+    let userLocationCircle = null;
     let beaches = [];
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -24,15 +29,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const windDirDeg = forecastData.winddirection_10m[hourIndex];
         const windSpeed = forecastData.windspeed_10m[hourIndex];
         const temp = forecastData.temperature_2m[hourIndex];
-        const time = new Date(forecastData.time[hourIndex]).toLocaleString();
+        const time = new Date(forecastData.time[hourIndex]).toLocaleString([], {
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
         const windDir = getDirection(windDirDeg);
 
         selectedTimeLabel.textContent = time;
-        weatherPanel.innerHTML = `
-            <strong>Selected Wind:</strong> ${windSpeed} km/h from ${windDir} (${windDirDeg}°)
-            <br>
-            <strong>Temp:</strong> ${temp} °C
-        `;
+
+        // Update arrow rotation (pointing TO where the wind is blowing)
+        if (windArrow) {
+            windArrow.style.transform = `rotate(${windDirDeg + 180}deg)`;
+        }
+
+        if (weatherInfo) {
+            weatherInfo.innerHTML = `
+                <div><strong>Wind:</strong> ${windSpeed} km/h ${windDir}</div>
+                <div><strong>Temp:</strong> ${temp} °C</div>
+            `;
+        }
 
         beachMarkers.forEach(m => map.removeLayer(m));
         beachMarkers = [];
@@ -73,12 +89,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const [beachesResponse, weatherResponse] = await Promise.all([
+        const [beachesResponse, landmarksResponse, weatherResponse] = await Promise.all([
             fetch('beaches.json'),
+            fetch('landmarks.json'),
             fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=2')
         ]);
 
         beaches = await beachesResponse.json();
+        const landmarks = await landmarksResponse.json();
         const weatherJson = await weatherResponse.json();
         forecastData = weatherJson.hourly;
 
@@ -144,6 +162,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateBeaches(parseInt(e.target.value));
         });
 
+        if (locateBtn) {
+            locateBtn.addEventListener('click', () => {
+                map.locate({setView: true, maxZoom: 15});
+            });
+        }
+
         // Initial update for current hour
         const now = new Date();
         let closestIndex = 0;
@@ -158,6 +182,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         timeSlider.value = closestIndex;
         updateBeaches(closestIndex);
+
+        // Add landmarks to map
+        landmarks.forEach(landmark => {
+            const icon = L.divIcon({
+                className: 'landmark-marker',
+                html: `<div class="landmark-icon ${landmark.type}">${landmark.type === 'business' ? '🏪' : '📍'}</div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+            L.marker([landmark.lat, landmark.lon], { icon })
+                .bindPopup(`<strong>${landmark.name}</strong><br>Type: ${landmark.type}`)
+                .addTo(map);
+        });
+
+        // User Location Tracking
+        map.on('locationfound', (e) => {
+            const radius = e.accuracy / 2;
+            if (userLocationMarker) {
+                userLocationMarker.setLatLng(e.latlng);
+            } else {
+                userLocationMarker = L.marker(e.latlng).addTo(map)
+                    .bindPopup("You are within " + radius + " meters from this point").openPopup();
+            }
+
+            if (userLocationCircle) {
+                userLocationCircle.setLatLng(e.latlng);
+                userLocationCircle.setRadius(radius);
+            } else {
+                userLocationCircle = L.circle(e.latlng, radius).addTo(map);
+            }
+        });
+
+        map.on('locationerror', (e) => {
+            console.warn("Location access denied or unavailable.");
+        });
 
     } catch (error) {
         console.error('Error loading data:', error);
