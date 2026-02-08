@@ -223,3 +223,42 @@ footer {
     70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
 }
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 5px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    #weather-panel {
+        padding: 5px 10px;
+        width: auto;
+        max-width: 95%;
+        box-sizing: border-box;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    #wind-arrow {
+        width: 24px;
+        height: 24px;
+    }
+
+    #weather-info {
+        font-size: 0.8rem;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #weather-info div {
+        white-space: nowrap;
+    }
+}
