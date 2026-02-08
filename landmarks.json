@@ -1,21 +1,9 @@
 [
     {
-        "name": "Thompson Bay Beach",
-        "lat": -31.997,
-        "lon": 115.542,
-        "type": "landmark"
-    },
-    {
         "name": "The Settlement",
         "lat": -31.997,
         "lon": 115.541,
         "type": "landmark"
-    },
-    {
-        "name": "Hotel Rottnest",
-        "lat": -31.998,
-        "lon": 115.542,
-        "type": "business"
     },
     {
         "name": "Wadjemup Lighthouse",
@@ -30,17 +18,5 @@
         "lon": 115.5401,
         "type": "landmark",
         "subtype": "lighthouse"
-    },
-    {
-        "name": "Geordie Bay Store",
-        "lat": -32.006,
-        "lon": 115.521,
-        "type": "business"
-    },
-    {
-        "name": "Rottnest Island Airport",
-        "lat": -32.006,
-        "lon": 115.539,
-        "type": "landmark"
     }
 ]
