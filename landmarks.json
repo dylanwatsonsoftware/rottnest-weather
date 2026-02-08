@@ -24,6 +24,12 @@
         "type": "landmark"
     },
     {
+        "name": "Bathurst Lighthouse",
+        "lat": -31.9897,
+        "lon": 115.5401,
+        "type": "landmark"
+    },
+    {
         "name": "Geordie Bay Store",
         "lat": -32.006,
         "lon": 115.521,

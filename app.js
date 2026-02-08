@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const windArrow = document.getElementById('wind-arrow');
     const selectedTimeLabel = document.getElementById('selected-time');
     const timeSlider = document.getElementById('time-slider');
-    const map = L.map('map').setView([-32.007, 115.51], 13);
+    const map = L.map('map').setView([-32.007, 115.51], 12);
     let chart;
     let forecastData = null;
     let beachMarkers = [];
@@ -42,10 +42,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             windArrow.style.transform = `rotate(${windDirDeg + 180}deg)`;
         }
 
+        const swellHeight = forecastData.swell_wave_height ? forecastData.swell_wave_height[hourIndex] : 'N/A';
+
         if (weatherInfo) {
             weatherInfo.innerHTML = `
                 <div><strong>Wind:</strong> ${windSpeed} km/h ${windDir}</div>
                 <div><strong>Temp:</strong> ${temp} °C</div>
+                <div><strong>Swell:</strong> ${swellHeight}m</div>
             `;
         }
 
@@ -94,16 +97,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const [beachesResponse, landmarksResponse, weatherResponse] = await Promise.all([
+        const [beachesResponse, landmarksResponse, weatherResponse, marineResponse] = await Promise.all([
             fetch('beaches.json'),
             fetch('landmarks.json'),
-            fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=2')
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=2'),
+            fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=2')
         ]);
 
         beaches = await beachesResponse.json();
         const landmarks = await landmarksResponse.json();
         const weatherJson = await weatherResponse.json();
-        forecastData = weatherJson.hourly;
+        const marineJson = await marineResponse.json();
+
+        forecastData = {
+            ...weatherJson.hourly,
+            swell_wave_height: marineJson.hourly.swell_wave_height
+        };
 
         // Initialize Chart
         const ctx = document.getElementById('windChart').getContext('2d');
@@ -119,14 +128,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: 'Wind Speed (km/h)',
-                    data: forecastData.windspeed_10m,
-                    borderColor: '#007bff',
-                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
+                datasets: [
+                    {
+                        label: 'Wind Speed (km/h)',
+                        data: forecastData.windspeed_10m,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Swell Height (m)',
+                        data: forecastData.swell_wave_height,
+                        borderColor: '#28a745',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
             },
             options: {
                 responsive: true,
@@ -140,7 +161,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Wind (km/h)',
+                            font: { size: 10 }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Swell (m)',
+                            font: { size: 10 }
+                        }
                     }
                 },
                 plugins: {
@@ -202,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 userLocationMarker.setLatLng(e.latlng);
             } else {
                 userLocationMarker = L.marker(e.latlng).addTo(map)
-                    .bindPopup("You are within " + radius + " meters from this point").openPopup();
+                    .bindPopup("You are within " + radius + " meters from this point");
             }
 
             if (userLocationCircle) {
@@ -218,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Trigger automatic geolocation
-        map.locate({setView: true, maxZoom: 15, watch: true});
+        map.locate({setView: false, watch: true});
 
     } catch (error) {
         console.error('Error loading data:', error);
