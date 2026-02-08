@@ -21,13 +21,15 @@
         "name": "Wadjemup Lighthouse",
         "lat": -32.005,
         "lon": 115.515,
-        "type": "landmark"
+        "type": "landmark",
+        "subtype": "lighthouse"
     },
     {
         "name": "Bathurst Lighthouse",
         "lat": -31.9897,
         "lon": 115.5401,
-        "type": "landmark"
+        "type": "landmark",
+        "subtype": "lighthouse"
     },
     {
         "name": "Geordie Bay Store",
