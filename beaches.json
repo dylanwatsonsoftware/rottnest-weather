@@ -1,0 +1,226 @@
+[
+    {
+        "name": "Parker Point",
+        "ok_winds": [
+            "S",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0230368,
+        "lon": 115.5282124
+    },
+    {
+        "name": "Little Salmon Bay",
+        "ok_winds": [
+            "N",
+            "NE",
+            "E",
+            "SE",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.024228,
+        "lon": 115.5250939
+    },
+    {
+        "name": "Salmon Bay",
+        "ok_winds": [
+            "N",
+            "NE",
+            "E",
+            "SE"
+        ],
+        "lat": -32.021471,
+        "lon": 115.5223315
+    },
+    {
+        "name": "Green Island",
+        "ok_winds": [
+            "N",
+            "NE",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0158164,
+        "lon": 115.4984891
+    },
+    {
+        "name": "Firefish Bend",
+        "ok_winds": [
+            "N",
+            "NE",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0165,
+        "lon": 115.4955
+    },
+    {
+        "name": "Mary Cove",
+        "ok_winds": [
+            "N",
+            "NE",
+            "E",
+            "SE",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0184423,
+        "lon": 115.4934981
+    },
+    {
+        "name": "South Point",
+        "ok_winds": [
+            "N",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0219287,
+        "lon": 115.468102
+    },
+    {
+        "name": "Fish Hook Bay",
+        "ok_winds": [
+            "N",
+            "NE",
+            "E",
+            "SE",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0242766,
+        "lon": 115.4515541
+    },
+    {
+        "name": "Cathedral Rocks",
+        "ok_winds": [
+            "E",
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -32.0219332,
+        "lon": 115.4514852
+    },
+    {
+        "name": "Celia Rocks",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -32.015,
+        "lon": 115.465
+    },
+    {
+        "name": "Little Armstrong Bay",
+        "ok_winds": [
+            "NE",
+            "E",
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -31.9918106,
+        "lon": 115.5074396
+    },
+    {
+        "name": "Little Parakeet Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -31.9903081,
+        "lon": 115.5163709
+    },
+    {
+        "name": "Geordie Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -32.0070095,
+        "lon": 115.5205271
+    },
+    {
+        "name": "Fays Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -31.9881719,
+        "lon": 115.5249381
+    },
+    {
+        "name": "Longreach Bay",
+        "ok_winds": [
+            "E",
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -31.9904564,
+        "lon": 115.5301351
+    },
+    {
+        "name": "The Basin",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -31.9894373,
+        "lon": 115.5356029
+    },
+    {
+        "name": "Duck Rock",
+        "ok_winds": [
+            "S",
+            "SW"
+        ],
+        "lat": -31.9875416,
+        "lon": 115.5426055
+    },
+    {
+        "name": "Kingston Reefs",
+        "ok_winds": [
+            "SW"
+        ],
+        "lat": -31.994,
+        "lon": 115.555
+    },
+    {
+        "name": "Natural Jetty",
+        "ok_winds": [
+            "S",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.001,
+        "lon": 115.55
+    },
+    {
+        "name": "Dyer Island",
+        "ok_winds": [
+            "S",
+            "SW",
+            "W",
+            "NW"
+        ],
+        "lat": -32.0187624,
+        "lon": 115.5509162
+    }
+]
