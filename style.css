@@ -62,25 +62,6 @@ main {
     width: 100%;
 }
 
-#locate-btn {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-#locate-btn:hover {
-    background: #0056b3;
-}
-
-#locate-btn:active {
-    transform: translateY(1px);
-}
 
 #controls {
     flex: 0 0 auto;
@@ -164,11 +145,29 @@ footer {
     border: none;
 }
 
-.tick-icon {
-    color: green;
+.snorkel-icon {
     font-size: 24px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.beach-label {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+/* Override default Leaflet tooltip styling */
+.leaflet-tooltip-top:before {
+    border-top-color: #007bff;
 }
 
 .landmark-icon {

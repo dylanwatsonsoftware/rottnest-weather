@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const windArrow = document.getElementById('wind-arrow');
     const selectedTimeLabel = document.getElementById('selected-time');
     const timeSlider = document.getElementById('time-slider');
-    const locateBtn = document.getElementById('locate-btn');
     const map = L.map('map').setView([-32.007, 115.51], 13);
     let chart;
     let forecastData = null;
@@ -60,9 +59,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (isOk) {
                     icon = L.divIcon({
                         className: 'ok-marker',
-                        html: '<div class="tick-icon">✔</div>',
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 12]
+                        html: '<div class="snorkel-icon">🤿</div>',
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
                     });
                 } else {
                     icon = L.divIcon({
@@ -75,6 +74,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const marker = L.marker([beach.lat, beach.lon], { icon })
                     .bindPopup(`<strong>${beach.name}</strong><br>Status: ${isOk ? 'OK' : 'Unsuitable'}<br>OK Winds: ${beach.ok_winds.join(', ')}`)
+                    .bindTooltip(beach.name, {
+                        permanent: true,
+                        direction: 'top',
+                        className: 'beach-label',
+                        offset: [0, -10]
+                    })
                     .addTo(map);
                 beachMarkers.push(marker);
             }
@@ -162,12 +167,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateBeaches(parseInt(e.target.value));
         });
 
-        if (locateBtn) {
-            locateBtn.addEventListener('click', () => {
-                map.locate({setView: true, maxZoom: 15});
-            });
-        }
-
         // Initial update for current hour
         const now = new Date();
         let closestIndex = 0;
@@ -217,6 +216,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         map.on('locationerror', (e) => {
             console.warn("Location access denied or unavailable.");
         });
+
+        // Trigger automatic geolocation
+        map.locate({setView: true, maxZoom: 15, watch: true});
 
     } catch (error) {
         console.error('Error loading data:', error);
