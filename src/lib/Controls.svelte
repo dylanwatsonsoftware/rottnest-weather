@@ -192,6 +192,6 @@
         <input type="range" id="time-slider" min="0" max="47" bind:value={hourIndex} oninput={onSliderChange}>
     </div>
     <div class="graph-container">
-        <canvas bind:this={canvasElement}></canvas>
+        <canvas id="forecastChart" bind:this={canvasElement}></canvas>
     </div>
 </div>
