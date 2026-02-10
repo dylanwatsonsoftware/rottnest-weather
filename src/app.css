@@ -152,25 +152,39 @@ footer {
     color: #666;
 }
 
+.leaflet-div-icon {
+    background: transparent !important;
+    border: none !important;
+}
+
 .beach-marker {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    border: 2px solid white !important;
+    color: white;
+    background-clip: padding-box;
+}
+
+.beach-marker span {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    border: 2px solid white;
     font-size: 16px;
-    color: white;
+    line-height: 1;
 }
 
 .beach-marker.ok {
-    background-color: #28a745;
+    background-color: #28a745 !important;
 }
 
 .beach-marker.not-ok {
-    background-color: #dc3545;
+    background-color: #dc3545 !important;
+}
+
+.beach-marker.not-ok span {
     font-size: 14px;
 }
 
@@ -193,26 +207,32 @@ footer {
 }
 
 .landmark-icon {
-    font-size: 16px;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    background: white !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 2px solid #007bff !important;
+    transition: transform 0.2s ease;
+    z-index: 500 !important;
+}
+
+.landmark-icon span {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: white;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    border: 2px solid #007bff;
-    transition: transform 0.2s ease;
+    font-size: 16px;
+    line-height: 1;
 }
 
 .landmark-icon:hover {
     transform: scale(1.2);
-    z-index: 1000;
+    z-index: 1000 !important;
 }
 
 .landmark-icon.business {
-    border-color: #ffc107;
+    border-color: #ffc107 !important;
 }
 
 .user-location-marker {
