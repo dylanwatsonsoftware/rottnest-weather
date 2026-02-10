@@ -8,6 +8,7 @@
     let map;
     let mapElement;
     let beachMarkers = [];
+    let landmarkMarkers = [];
 
     onMount(() => {
         map = L.map(mapElement).setView([-32.007, 115.51], 12);
@@ -24,20 +25,24 @@
     });
 
     function initLandmarks() {
-        // Clear existing landmarks if any (though unlikely here)
+        // Clear existing landmarks
+        landmarkMarkers.forEach(m => m.remove());
+        landmarkMarkers = [];
+
         landmarks.forEach(landmark => {
             let iconEmoji = landmark.type === 'business' ? '🏪' : '📍';
             if (landmark.subtype === 'lighthouse') iconEmoji = '🗼';
 
             const icon = L.divIcon({
-                className: 'landmark-marker',
-                html: `<div class="landmark-icon ${landmark.type}">${iconEmoji}</div>`,
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
+                className: `landmark-icon ${landmark.type} ${landmark.subtype || ''}`,
+                html: `<span>${iconEmoji}</span>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
             });
-            L.marker([landmark.lat, landmark.lon], { icon })
+            const marker = L.marker([landmark.lat, landmark.lon], { icon })
                 .bindPopup(`<strong>${landmark.name}</strong><br>Type: ${landmark.type}`)
                 .addTo(map);
+            landmarkMarkers.push(marker);
         });
     }
 
@@ -73,7 +78,7 @@
 
             const icon = L.divIcon({
                 className: `beach-marker ${isOk ? 'ok' : 'not-ok'}`,
-                html: `<div>${isOk ? '🤿' : '✖'}</div>`,
+                html: `<span>${isOk ? '🤿' : '✖'}</span>`,
                 iconSize: [26, 26],
                 iconAnchor: [13, 13]
             });
@@ -90,8 +95,8 @@
         const userIcon = L.divIcon({
             className: 'user-location-marker',
             html: '<div class="user-dot"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            iconSize: [20, 20], // Increased for better hit area and visibility
+            iconAnchor: [10, 10]
         });
 
         map.on('locationfound', (e) => {
