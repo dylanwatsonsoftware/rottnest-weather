@@ -38,6 +38,18 @@ h1 {
     letter-spacing: -0.5px;
 }
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-logo {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    color: white;
+    flex-shrink: 0;
+}
+
 #weather-panel {
     display: flex;
     align-items: center;
@@ -267,6 +279,15 @@ footer {
 
     h1 {
         font-size: 1.2rem;
+    }
+
+    .logo-container {
+        gap: 8px;
+    }
+
+    .header-logo {
+        width: 28px !important;
+        height: 28px !important;
     }
 
     #weather-panel {
