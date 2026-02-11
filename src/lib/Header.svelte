@@ -1,9 +1,13 @@
 <script>
+    import Logo from './Logo.svelte';
     let { windDirDeg, windSpeed, windDir, temp, swellHeight, loading = false } = $props();
 </script>
 
 <header>
-    <h1>Rottnest Snorkelling</h1>
+    <div class="logo-container">
+        <Logo size={40} class="header-logo" />
+        <h1>Rottnest Snorkelling</h1>
+    </div>
     <div id="weather-panel">
         {#if loading}
             <div id="weather-info">
