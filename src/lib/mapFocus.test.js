@@ -4,6 +4,7 @@ import {
     getInitialFitSettings,
     getLandmarkFitPoints,
     getMapNavigationTarget,
+    getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
     getVisibleBeachFitSettings
 } from './mapFocus.js';
@@ -71,4 +72,10 @@ test('visible beach fit uses deeper bottom padding for expanded panel', () => {
 
     assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] > collapsed.fitBoundsOptions.paddingBottomRight[1]);
     assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] >= 360);
+});
+
+test('visible beach fit preserves zoom when only panel mode changes', () => {
+    assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'expanded'), 'panel');
+    assert.equal(getVisibleBeachFitReason('a|b', 'a|c', 'collapsed', 'collapsed'), 'points');
+    assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'collapsed'), 'none');
 });

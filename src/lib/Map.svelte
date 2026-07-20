@@ -5,6 +5,7 @@
     import {
         getInitialFitSettings,
         getLandmarkFitPoints,
+        getVisibleBeachFitReason,
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
     } from './mapFocus.js';
@@ -30,7 +31,8 @@
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
-    let lastVisibleBeachFitSignature = '';
+    let lastVisibleBeachPointsSignature = '';
+    let lastVisibleBeachPanelMode = 'collapsed';
 
     const stateIcons = {
         best: '★',
@@ -221,14 +223,29 @@
 
     function fitVisibleBeaches() {
         const fitPoints = getVisibleBeachFitPoints(recommendations);
-        const signature = `${panelMode}:${fitPoints.map((point) => point.join(',')).join('|')}`;
-        if (!map || !fitPoints.length || signature === lastVisibleBeachFitSignature) return;
+        const pointsSignature = fitPoints.map((point) => point.join(',')).join('|');
+        const fitReason = getVisibleBeachFitReason(
+            lastVisibleBeachPointsSignature,
+            pointsSignature,
+            lastVisibleBeachPanelMode,
+            panelMode
+        );
+        if (!map || !fitPoints.length || fitReason === 'none') return;
 
-        lastVisibleBeachFitSignature = signature;
+        lastVisibleBeachPointsSignature = pointsSignature;
+        lastVisibleBeachPanelMode = panelMode;
         const fitSettings = getVisibleBeachFitSettings(panelMode);
 
         if (fitPoints.length === 1) {
-            map.flyTo(fitPoints[0], fitSettings.singleBeachZoom, {
+            const zoom = fitReason === 'panel' ? map.getZoom() : fitSettings.singleBeachZoom;
+            map.flyTo(fitPoints[0], zoom, {
+                animate: true,
+                duration: 0.35
+            });
+        } else if (fitReason === 'panel') {
+            const bounds = L.latLngBounds(fitPoints);
+            map.panInsideBounds(bounds, {
+                ...fitSettings.fitBoundsOptions,
                 animate: true,
                 duration: 0.35
             });

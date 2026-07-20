@@ -35,6 +35,12 @@ export function getVisibleBeachFitPoints(recommendations = []) {
         .map((beach) => [beach.lat, beach.lon]);
 }
 
+export function getVisibleBeachFitReason(previousPointsSignature, nextPointsSignature, previousPanelMode, nextPanelMode) {
+    if (previousPointsSignature !== nextPointsSignature) return 'points';
+    if (previousPanelMode !== nextPanelMode) return 'panel';
+    return 'none';
+}
+
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 
