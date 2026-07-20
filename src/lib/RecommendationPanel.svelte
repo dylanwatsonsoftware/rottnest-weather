@@ -8,12 +8,13 @@
         getPanelModeAfterOpenRequest,
         getRangeModeLabel,
         getRangeModeForHourIndex,
+        getSliderHeatGradient,
         getTimelineScrollLeft,
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
     import { getFacilityIcon, getNearbyFacilities } from './facilities.js';
-    import { buildBeachStatusTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
+    import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
     let {
@@ -60,6 +61,8 @@
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
+    const bestBeachTimeline = $derived(buildBestBeachTimeline(recommendations, forecastData, forecastRange));
+    const sliderHeatGradient = $derived(getSliderHeatGradient(bestBeachTimeline, forecastRange));
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
 
@@ -193,6 +196,7 @@
             <input
                 type="range"
                 id="collapsed-time-slider"
+                style:--slider-heat={sliderHeatGradient}
                 min={forecastRange.min}
                 aria-valuemin={forecastRange.min}
                 aria-valuemax={forecastRange.max}
@@ -350,6 +354,7 @@
                             <input
                                 type="range"
                                 id="detail-time-slider"
+                                style:--slider-heat={sliderHeatGradient}
                                 min={forecastRange.min}
                                 max={forecastRange.max}
                                 bind:value={hourIndex}
@@ -425,6 +430,7 @@
                 {forecastData}
                 {forecastRange}
                 {rangeMode}
+                {sliderHeatGradient}
                 onRangeModeChange={(mode) => rangeMode = mode}
                 bind:hourIndex
             />

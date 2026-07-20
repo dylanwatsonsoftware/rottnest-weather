@@ -170,6 +170,25 @@ export function buildBeachStatusTimeline(beach, forecastData, range = {}) {
     return items;
 }
 
+export function buildBestBeachTimeline(recommendations = [], forecastData, range = {}) {
+    if (!recommendations.length || !forecastData?.time?.length) return [];
+
+    const bestByHour = new Map();
+    recommendations.forEach((recommendation) => {
+        buildBeachStatusTimeline(recommendation.beach, forecastData, range).forEach((item) => {
+            const current = bestByHour.get(item.hourIndex);
+            if (!current || item.score > current.score || (item.score === current.score && item.beach.name.localeCompare(current.beach.name) < 0)) {
+                bestByHour.set(item.hourIndex, {
+                    ...item,
+                    beach: recommendation.beach
+                });
+            }
+        });
+    });
+
+    return [...bestByHour.values()].sort((a, b) => a.hourIndex - b.hourIndex);
+}
+
 export function getBeachDetailNotes(beach = {}) {
     const notes = [];
 

@@ -5,6 +5,14 @@ export const PANEL_MODES = {
 
 export const RANGE_MODES = ['today', 'twoDay', 'threeDay', 'tenDay'];
 
+export const SLIDER_STATE_COLORS = {
+    best: '#167a52',
+    good: '#2e8b86',
+    watch: '#c58a24',
+    avoid: '#b44545',
+    unknown: '#dbe5e5'
+};
+
 export function getDefaultPanelMode() {
     return PANEL_MODES.collapsed;
 }
@@ -126,6 +134,28 @@ export function getTimelineScrollLeft({
     const activeCenter = currentScrollLeft + activeLeft + activeWidth / 2;
     const target = activeCenter - containerWidth / 2;
     return Math.max(0, Math.min(Math.round(target), maxScrollLeft));
+}
+
+export function getSliderHeatGradient(timeline = [], range = {}) {
+    if (!timeline.length) return SLIDER_STATE_COLORS.unknown;
+
+    const min = Number.isFinite(range.min) ? range.min : 0;
+    const max = Number.isFinite(range.max) ? range.max : min;
+    const hourCount = Math.max(max - min + 1, 0);
+    if (!hourCount) return SLIDER_STATE_COLORS.unknown;
+
+    const stateByHour = new Map(timeline.map((item) => [item.hourIndex, item.state]));
+    const stops = [];
+
+    for (let index = 0; index < hourCount; index += 1) {
+        const hourIndex = min + index;
+        const color = SLIDER_STATE_COLORS[stateByHour.get(hourIndex)] || SLIDER_STATE_COLORS.unknown;
+        const start = index / hourCount * 100;
+        const end = (index + 1) / hourCount * 100;
+        stops.push(`${color} ${start.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
+    }
+
+    return `linear-gradient(to right, ${stops.join(', ')})`;
 }
 
 export function getLaterTabHourIndex(recommendations = [], currentHourIndex = 0, forecastData = null, fallbackHours = 3) {

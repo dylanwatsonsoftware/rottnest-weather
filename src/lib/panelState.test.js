@@ -4,6 +4,7 @@ import {
     getDefaultPanelMode,
     getForecastRange,
     getForecastSliderMax,
+    getSliderHeatGradient,
     getTimelineScrollLeft,
     getLaterTabHourIndex,
     getNextPanelMode,
@@ -143,6 +144,33 @@ test('getTimelineScrollLeft centers the selected timeline cell in long ranges', 
         currentScrollLeft: 0,
         maxScrollLeft: 900
     }), 900);
+});
+
+test('getSliderHeatGradient paints hard stops for each forecast hour', () => {
+    const gradient = getSliderHeatGradient([
+        { hourIndex: 0, state: 'best' },
+        { hourIndex: 1, state: 'avoid' }
+    ], { min: 0, max: 1 });
+
+    assert.equal(
+        gradient,
+        'linear-gradient(to right, #167a52 0.00%, #167a52 50.00%, #b44545 50.00%, #b44545 100.00%)'
+    );
+});
+
+test('getSliderHeatGradient shows unknown color for missing timeline hours', () => {
+    const gradient = getSliderHeatGradient([
+        { hourIndex: 1, state: 'watch' }
+    ], { min: 0, max: 2 });
+
+    assert.equal(
+        gradient,
+        'linear-gradient(to right, #dbe5e5 0.00%, #dbe5e5 33.33%, #c58a24 33.33%, #c58a24 66.67%, #dbe5e5 66.67%, #dbe5e5 100.00%)'
+    );
+});
+
+test('getSliderHeatGradient falls back to a neutral track without timeline data', () => {
+    assert.equal(getSliderHeatGradient([], { min: 0, max: 2 }), '#dbe5e5');
 });
 
 test('getLaterTabHourIndex jumps to the earliest future good window', () => {

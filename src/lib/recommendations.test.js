@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+    buildBestBeachTimeline,
     buildBeachStatusTimeline,
     buildRecommendations,
     filterRecommendations,
@@ -71,6 +72,21 @@ test('buildBeachStatusTimeline scores one beach across a selected time range', (
 test('buildBeachStatusTimeline returns no items without beach or forecast times', () => {
     assert.deepEqual(buildBeachStatusTimeline(null, forecast, { min: 0, max: 2 }), []);
     assert.deepEqual(buildBeachStatusTimeline(beaches[0], null, { min: 0, max: 2 }), []);
+});
+
+test('buildBestBeachTimeline picks the highest scoring beach for each forecast hour', () => {
+    const recommendations = buildRecommendations(beaches.slice(0, 2), forecast, 0);
+    const timeline = buildBestBeachTimeline(recommendations, forecast, { min: 0, max: 1 });
+
+    assert.equal(timeline.length, 2);
+    assert.deepEqual(timeline.map((item) => item.hourIndex), [0, 1]);
+    assert.deepEqual(timeline.map((item) => item.beach.name), ['Sheltered Bay', 'Open Reef']);
+    assert.deepEqual(timeline.map((item) => item.state), ['good', 'good']);
+});
+
+test('buildBestBeachTimeline returns no items without recommendations or forecast times', () => {
+    assert.deepEqual(buildBestBeachTimeline([], forecast, { min: 0, max: 1 }), []);
+    assert.deepEqual(buildBestBeachTimeline(buildRecommendations(beaches, forecast, 0), null, { min: 0, max: 1 }), []);
 });
 
 test('getBeachDetailNotes turns local beach metadata into display notes', () => {
