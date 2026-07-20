@@ -7,7 +7,7 @@ A mobile-first Svelte/Vite app for choosing Rottnest Island snorkeling spots fro
 - Ranked beach recommendations: `best`, `good`, `watch`, and `avoid`
 - Wind, swell, and temperature forecast timeline
 - Best-now and best-later mobile bottom sheet
-- Beach detail cards with reasons, good wind directions, confidence, and nearby landmarks
+- Beach detail cards with reasons, good wind directions, confidence, and nearby places
 - Map filters for beach states, landmarks, facilities, and user location
 - Zoom-aware map simplification to reduce marker and label clutter
 - Initial map focus on the 2-3 nearby beaches with the best outlook over the next six hours
@@ -37,7 +37,11 @@ Optional fields can enrich the detail sheet:
 
 Use `safety_tags` for scoring-aware local risks such as `surf_break` and `wildlife_sensitive`. Use `advisory` for manual closure or watch notes, for example `{ "status": "watch", "message": "Check local signage before entering." }`.
 
-Landmark and facility data lives in `public/landmarks.json`. Use `type: "business"` for facilities that should be controlled by the Facilities map toggle.
+Landmark data lives in `public/landmarks.json` and stays focused on navigation references such as the settlement and lighthouses.
+
+Facility data lives in `public/facilities.json` using OSM-style tags where possible. Use `type: "facility"` and `category` values such as `cafe`, `toilets`, `shower`, `drinking_water`, `bus_stop`, `bicycle_parking`, `bbq`, and `visitor_centre`. Facilities are shown in Nearby beach details and can be revealed on the map with the Food & facilities filter.
+
+Optional place ratings/details live in `public/place-enrichment.json`, keyed by facility `id`. Do not scrape Google pages into this file; only use manually curated details or data exported through permitted APIs and record the source/check date with each entry.
 
 ## Recommendation Model
 

@@ -1,0 +1,153 @@
+[
+    {
+        "id": "settlement-visitor-centre",
+        "name": "Visitor Centre",
+        "lat": -31.9968,
+        "lon": 115.541,
+        "type": "facility",
+        "category": "visitor_centre",
+        "osm_tags": {
+            "tourism": "information"
+        },
+        "source": "osm_seed"
+    },
+    {
+        "id": "settlement-cafes",
+        "name": "Settlement Cafes",
+        "lat": -31.9971,
+        "lon": 115.5415,
+        "type": "facility",
+        "category": "cafe",
+        "osm_tags": {
+            "amenity": "cafe"
+        },
+        "source": "osm_seed"
+    },
+    {
+        "id": "settlement-bike-parking",
+        "name": "Settlement Bike Parking",
+        "lat": -31.9972,
+        "lon": 115.5408,
+        "type": "facility",
+        "category": "bicycle_parking",
+        "osm_tags": {
+            "amenity": "bicycle_parking"
+        },
+        "source": "osm_seed"
+    },
+    {
+        "id": "the-basin-facilities",
+        "name": "The Basin Facilities",
+        "lat": -31.9892,
+        "lon": 115.5351,
+        "type": "facility",
+        "category": "toilets",
+        "amenities": [
+            "toilets",
+            "showers",
+            "drinking_water",
+            "bbq"
+        ],
+        "osm_tags": {
+            "amenity": "toilets",
+            "drinking_water": "yes",
+            "shower": "yes",
+            "bbq": "yes"
+        },
+        "source": "rottnest_official_amenities"
+    },
+    {
+        "id": "geordie-bay-cafe",
+        "name": "Geordie Bay Cafe Area",
+        "lat": -31.9913,
+        "lon": 115.5209,
+        "type": "facility",
+        "category": "cafe",
+        "osm_tags": {
+            "amenity": "cafe"
+        },
+        "source": "osm_seed"
+    },
+    {
+        "id": "geordie-bay-facilities",
+        "name": "Geordie Bay Facilities",
+        "lat": -31.9913,
+        "lon": 115.5209,
+        "type": "facility",
+        "category": "toilets",
+        "amenities": [
+            "toilets",
+            "showers",
+            "drinking_water"
+        ],
+        "osm_tags": {
+            "amenity": "toilets",
+            "drinking_water": "yes",
+            "shower": "yes"
+        },
+        "source": "rottnest_official_amenities"
+    },
+    {
+        "id": "parker-point-facilities",
+        "name": "Parker Point Facilities",
+        "lat": -32.0229,
+        "lon": 115.5277,
+        "type": "facility",
+        "category": "toilets",
+        "amenities": [
+            "toilets"
+        ],
+        "osm_tags": {
+            "amenity": "toilets"
+        },
+        "source": "rottnest_official_accessibility"
+    },
+    {
+        "id": "army-jetty-water",
+        "name": "Army Jetty Water Refill",
+        "lat": -32.0089,
+        "lon": 115.5458,
+        "type": "facility",
+        "category": "drinking_water",
+        "osm_tags": {
+            "amenity": "drinking_water"
+        },
+        "source": "rottnest_official_practical_tips"
+    },
+    {
+        "id": "kingstown-barracks-water",
+        "name": "Kingstown Barracks Water Refill",
+        "lat": -32.0104,
+        "lon": 115.5479,
+        "type": "facility",
+        "category": "drinking_water",
+        "osm_tags": {
+            "amenity": "drinking_water"
+        },
+        "source": "rottnest_official_practical_tips"
+    },
+    {
+        "id": "vlamingh-lookout-water",
+        "name": "Vlamingh Lookout Water Refill",
+        "lat": -32.0063,
+        "lon": 115.5085,
+        "type": "facility",
+        "category": "drinking_water",
+        "osm_tags": {
+            "amenity": "drinking_water"
+        },
+        "source": "rottnest_official_practical_tips"
+    },
+    {
+        "id": "parker-point-bus-stop",
+        "name": "Parker Point Bus Stop",
+        "lat": -32.0229,
+        "lon": 115.5277,
+        "type": "facility",
+        "category": "bus_stop",
+        "osm_tags": {
+            "highway": "bus_stop"
+        },
+        "source": "osm_seed"
+    }
+]

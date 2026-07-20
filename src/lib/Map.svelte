@@ -14,6 +14,7 @@
     let {
         recommendations = [],
         landmarks = [],
+        facilities = [],
         filters = {},
         selectedBeachName = '',
         panelMode = 'collapsed',
@@ -26,7 +27,7 @@
     let map;
     let mapElement;
     let beachMarkers = [];
-    let landmarkMarkers = [];
+    let placeMarkers = [];
     let userLocationMarker = null;
     let userLocationCircle = null;
     let currentZoom = $state(12);
@@ -65,25 +66,24 @@
     });
 
     function initLandmarks() {
-        landmarkMarkers.forEach(m => m.remove());
-        landmarkMarkers = [];
+        placeMarkers.forEach(m => m.remove());
+        placeMarkers = [];
 
-        landmarks.forEach(landmark => {
-            if (!shouldShowLandmark(landmark)) return;
+        [...landmarks, ...facilities].forEach(place => {
+            if (!shouldShowPlace(place)) return;
 
-            let iconEmoji = landmark.type === 'business' ? '🏪' : '📍';
-            if (landmark.subtype === 'lighthouse') iconEmoji = '🗼';
+            let iconEmoji = getPlaceIcon(place);
 
             const icon = L.divIcon({
-                className: `landmark-icon ${landmark.type} ${landmark.subtype || ''}`,
+                className: `landmark-icon ${place.type} ${place.category || place.subtype || ''}`,
                 html: `<span>${iconEmoji}</span>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 14]
             });
-            const marker = L.marker([landmark.lat, landmark.lon], { icon })
-                .bindPopup(`<strong>${escapeHtml(landmark.name)}</strong><br>Type: ${escapeHtml(landmark.type)}`)
+            const marker = L.marker([place.lat, place.lon], { icon })
+                .bindPopup(getPlacePopup(place))
                 .addTo(map);
-            landmarkMarkers.push(marker);
+            placeMarkers.push(marker);
         });
     }
 
@@ -181,12 +181,37 @@
         });
     }
 
-    function shouldShowLandmark(landmark) {
-        if (landmark.type === 'business') {
-            return filters.showBusinesses !== false && currentZoom > 12;
+    function shouldShowPlace(place) {
+        if (place.type === 'facility' || place.type === 'business') {
+            return filters.showFacilities === true && currentZoom > 12;
         }
         if (filters.showLandmarks === false) return false;
-        return currentZoom > 10 || landmark.subtype === 'lighthouse';
+        return currentZoom > 10 || place.subtype === 'lighthouse';
+    }
+
+    function getPlaceIcon(place) {
+        if (place.subtype === 'lighthouse') return '🗼';
+        if (place.category === 'cafe' || place.category === 'restaurant') return '☕';
+        if (place.category === 'toilets') return '🚻';
+        if (place.category === 'drinking_water') return '💧';
+        if (place.category === 'bus_stop') return '🚌';
+        if (place.category === 'bicycle_parking') return '🚲';
+        if (place.category === 'visitor_centre') return 'ⓘ';
+        if (place.type === 'business') return '🏪';
+        return '📍';
+    }
+
+    function getPlacePopup(place) {
+        const parts = [
+            `<strong>${escapeHtml(place.name)}</strong>`,
+            `Type: ${escapeHtml(place.category || place.subtype || place.type)}`
+        ];
+
+        if (Number.isFinite(place.rating)) {
+            parts.push(`Rating: ${escapeHtml(place.rating)} ★`);
+        }
+
+        return parts.join('<br>');
     }
 
     function updateLandmarks() {
@@ -307,7 +332,7 @@
     });
 
     $effect(() => {
-        if (map && landmarks.length > 0) {
+        if (map && (landmarks.length > 0 || facilities.length > 0)) {
             initLandmarks();
         }
     });

@@ -715,10 +715,19 @@ main {
 }
 
 .nearby-list button span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 750;
+}
+
+.nearby-list button span small {
+    flex: 0 0 auto;
+    color: inherit;
+    font-size: 0.84rem;
 }
 
 .nearby-list button small {
@@ -865,6 +874,10 @@ main {
 
 .landmark-icon.business {
     border-color: #d39b46 !important;
+}
+
+.landmark-icon.facility {
+    border-color: #2f9b8f !important;
 }
 
 .landmark-icon span {

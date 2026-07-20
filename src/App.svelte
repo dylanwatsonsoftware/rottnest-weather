@@ -9,11 +9,13 @@
         getConditions,
         getSafetyNotices
     } from './lib/recommendations.js';
+    import { mergeFacilityEnrichment } from './lib/facilities.js';
     import { getBeachSelectionMapTarget } from './lib/mapFocus.js';
     import './app.css';
 
     let beaches = $state([]);
     let landmarks = $state([]);
+    let facilities = $state([]);
     let forecastData = $state(null);
     let hourIndex = $state(0);
     let loading = $state(true);
@@ -34,7 +36,7 @@
         },
         showBeaches: true,
         showLandmarks: true,
-        showBusinesses: true,
+        showFacilities: false,
         showUserLocation: true,
         showAllWhenZoomedOut: false,
         minimumScore: 0,
@@ -66,11 +68,17 @@
             requestId: mapNavigationSequence
         };
 
-        if (target.type === 'landmark' || target.type === 'business') {
+        if (target.type === 'landmark') {
             filters = {
                 ...filters,
-                showLandmarks: true,
-                showBusinesses: true
+                showLandmarks: true
+            };
+        }
+
+        if (target.type === 'facility') {
+            filters = {
+                ...filters,
+                showFacilities: true
             };
         }
     }
@@ -84,13 +92,16 @@
 
     onMount(async () => {
         try {
-            const [beachesRes, landmarksRes] = await Promise.all([
+            const [beachesRes, landmarksRes, facilitiesRes, enrichmentRes] = await Promise.all([
                 fetch('/beaches.json'),
-                fetch('/landmarks.json')
+                fetch('/landmarks.json'),
+                fetch('/facilities.json'),
+                fetch('/place-enrichment.json')
             ]);
 
             beaches = await beachesRes.json();
             landmarks = await landmarksRes.json();
+            facilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
             const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
             if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
@@ -163,6 +174,7 @@
     <Map
         recommendations={$state.snapshot(visibleRecommendations)}
         landmarks={$state.snapshot(landmarks)}
+        facilities={$state.snapshot(facilities)}
         {filters}
         selectedBeachName={selectedRecommendation?.beach.name}
         {panelMode}
@@ -177,6 +189,7 @@
     <RecommendationPanel
         recommendations={$state.snapshot(recommendations)}
         landmarks={$state.snapshot(landmarks)}
+        facilities={$state.snapshot(facilities)}
         selectedRecommendation={$state.snapshot(selectedRecommendation)}
         safetyNotices={$state.snapshot(safetyNotices)}
         forecastData={$state.snapshot(forecastData)}

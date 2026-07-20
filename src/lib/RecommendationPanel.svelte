@@ -11,12 +11,14 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
+    import { getFacilityIcon, getNearbyFacilities } from './facilities.js';
     import { buildBeachStatusTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
     let {
         recommendations = [],
         landmarks = [],
+        facilities = [],
         selectedRecommendation = null,
         safetyNotices = [],
         forecastData = null,
@@ -48,7 +50,7 @@
 
     const bestNow = $derived(recommendations.filter((item) => item.state === 'best' || item.state === 'good').slice(0, 6));
     const later = $derived(recommendations.filter((item) => item.nextGood).slice(0, 8));
-    const nearbyLandmarks = $derived(getNearbyLandmarks(selectedRecommendation?.beach, landmarks));
+    const nearbyPlaces = $derived(getNearbyPlaces(selectedRecommendation?.beach, landmarks, facilities));
     let lastHandledOpenRequest = $state(0);
     let rangeMode = $state('today');
     const isCollapsed = $derived(panelMode === 'collapsed');
@@ -62,10 +64,21 @@
         return allLandmarks
             .map((landmark) => ({
                 ...landmark,
-                distanceKm: getDistanceKm(beach.lat, beach.lon, landmark.lat, landmark.lon)
+                distanceKm: getDistanceKm(beach.lat, beach.lon, landmark.lat, landmark.lon),
+                label: landmark.subtype === 'lighthouse' ? 'Lighthouse' : 'Landmark',
+                icon: landmark.subtype === 'lighthouse' ? '🗼' : '📍'
             }))
             .sort((a, b) => a.distanceKm - b.distanceKm)
-            .slice(0, 3);
+            .slice(0, 2);
+    }
+
+    function getNearbyPlaces(beach, allLandmarks, allFacilities) {
+        return [
+            ...getNearbyFacilities(beach, allFacilities, 5),
+            ...getNearbyLandmarks(beach, allLandmarks)
+        ]
+            .sort((a, b) => a.distanceKm - b.distanceKm)
+            .slice(0, 6);
     }
 
     function getDistanceKm(lat1, lon1, lat2, lon2) {
@@ -250,8 +263,8 @@
                         <span>Landmarks</span>
                     </label>
                     <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showBusinesses} onchange={(event) => onToggleFilter('showBusinesses', event.currentTarget.checked)} />
-                        <span>Facilities</span>
+                        <input type="checkbox" checked={filters.showFacilities} onchange={(event) => onToggleFilter('showFacilities', event.currentTarget.checked)} />
+                        <span>Food & facilities</span>
                     </label>
                     <label class="toggle-row">
                         <input type="checkbox" checked={filters.showUserLocation} onchange={(event) => onToggleFilter('showUserLocation', event.currentTarget.checked)} />
@@ -344,13 +357,21 @@
                 {#if selectedRecommendation.nextGood}
                     <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
                 {/if}
-                {#if nearbyLandmarks.length}
+                {#if nearbyPlaces.length}
                     <div class="nearby-list">
                         <strong>Nearby</strong>
-                        {#each nearbyLandmarks as landmark}
-                            <button type="button" onclick={() => navigatePlaceToMap(landmark)}>
-                                <span>{landmark.name}</span>
-                                <small>{landmark.distanceKm.toFixed(1)} km</small>
+                        {#each nearbyPlaces as place}
+                            <button type="button" onclick={() => navigatePlaceToMap(place)}>
+                                <span>
+                                    <small aria-hidden="true">{place.icon || getFacilityIcon(place.category)}</small>
+                                    {place.name}
+                                </span>
+                                <small>
+                                    {#if Number.isFinite(place.rating)}
+                                        {place.rating} ★ ·
+                                    {/if}
+                                    {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
+                                </small>
                             </button>
                         {/each}
                     </div>
