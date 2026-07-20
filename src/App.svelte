@@ -75,7 +75,7 @@
             };
         }
 
-        if (target.type === 'facility') {
+        if (target.type === 'facility' || target.type === 'business') {
             filters = {
                 ...filters,
                 showFacilities: true

@@ -15,6 +15,10 @@ test('map knows when a beach was explicitly selected by the user', () => {
     assert.match(app, /hasExplicitBeachSelection=\{Boolean\(selectedBeachName\)\}/);
 });
 
+test('nearby facility and business navigation enables the places layer', () => {
+    assert.match(app, /target\.type === 'facility' \|\| target\.type === 'business'/);
+});
+
 test('recommendation rows describe the selected status window instead of repeating score summaries', () => {
     const panel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 

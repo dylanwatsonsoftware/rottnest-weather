@@ -53,6 +53,10 @@ export function shouldShowBeachLabel(recommendation = {}, zoom = 12, selectedBea
     return rank < 1;
 }
 
+export function shouldShowPlaceLabel(place = {}, zoom = 12, selectedPlaceName = '') {
+    return Boolean(place.name && place.name === selectedPlaceName);
+}
+
 export function getVisibleBeachFitPoints(recommendations = []) {
     return recommendations
         .map((recommendation) => recommendation.beach)

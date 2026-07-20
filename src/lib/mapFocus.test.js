@@ -11,6 +11,7 @@ import {
     getPanelModeMapOffset,
     getPanelModePanOffset,
     shouldShowBeachLabel,
+    shouldShowPlaceLabel,
     getVisibleMapAnchorOffset,
     getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
@@ -219,4 +220,12 @@ test('selected and best beaches keep labels even when lower ranked', () => {
         '',
         12
     ), true);
+});
+
+test('place labels stay hidden unless the place was selected', () => {
+    const place = { name: 'Parker Point Stop', type: 'facility' };
+
+    assert.equal(shouldShowPlaceLabel(place, 15, ''), false);
+    assert.equal(shouldShowPlaceLabel(place, 15, 'Parker Point Stop'), true);
+    assert.equal(shouldShowPlaceLabel(place, 11, 'Parker Point Stop'), true);
 });

@@ -1145,6 +1145,23 @@ main {
     pointer-events: none;
 }
 
+.place-label {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #0b6476;
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-weight: 850;
+    color: #203133;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.place-label.selected {
+    border-color: #0b7583;
+}
+
 .leaflet-tooltip-top:before {
     border-top-color: #0b6476;
 }
@@ -1165,6 +1182,11 @@ main {
 
 .landmark-icon.facility {
     border-color: #2f9b8f !important;
+}
+
+.landmark-icon.selected {
+    border: 3px solid white !important;
+    box-shadow: 0 0 0 4px #0b7583, 0 4px 12px rgba(0, 0, 0, 0.28);
 }
 
 .landmark-icon span {

@@ -31,6 +31,13 @@ test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
 });
 
+test('selected nearby map places have an obvious marker and label', () => {
+    assert.match(css, /\.landmark-icon\.selected\s*{[^}]*border:\s*3px solid white/s);
+    assert.match(css, /\.landmark-icon\.selected\s*{[^}]*box-shadow:[^}]*0 0 0 4px #0b7583/s);
+    assert.match(css, /\.place-label\s*{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.96\)/s);
+    assert.match(css, /\.place-label\.selected\s*{[^}]*border-color:\s*#0b7583/s);
+});
+
 test('beach detail timeline has its own time slider styling', () => {
     assert.match(css, /\.detail-time-control\s*{/);
     assert.match(css, /\.detail-time-control input\[type="range"\]/);

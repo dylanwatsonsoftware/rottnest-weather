@@ -15,3 +15,13 @@ test('map only exposes user location markers inside Rottnest bounds', () => {
     assert.match(mapSource, /onUserLocationChange\(null\);/);
     assert.match(mapSource, /onUserLocationChange\(location\);/);
 });
+
+test('map highlights selected nearby places with a visible label', () => {
+    assert.match(mapSource, /const selectedPlaceName = \$derived/);
+    assert.match(mapSource, /mapNavigationRequest\?\.type === 'landmark'/);
+    assert.match(mapSource, /mapNavigationRequest\?\.type === 'facility'/);
+    assert.match(mapSource, /mapNavigationRequest\?\.type === 'business'/);
+    assert.match(mapSource, /shouldShowPlaceLabel\(place,\s*currentZoom,\s*selectedPlaceName\)/);
+    assert.match(mapSource, /className: `landmark-icon \$\{place\.type\} \$\{place\.category \|\| place\.subtype \|\| ''\} \$\{selected\}`/);
+    assert.match(mapSource, /if \(selected\) marker\.setZIndexOffset\(1000\)/);
+});

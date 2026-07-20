@@ -8,6 +8,7 @@
         getNavigationSettleDelay,
         getPanelModePanOffset,
         shouldShowBeachLabel,
+        shouldShowPlaceLabel,
         getVisibleMapAnchorOffset,
         getVisibleBeachFitReason,
         getVisibleBeachFitPoints,
@@ -42,6 +43,11 @@
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'collapsed';
     let lastVisibleBeachMapLayout = 'default';
+    const selectedPlaceName = $derived(
+        mapNavigationRequest?.type === 'landmark' || mapNavigationRequest?.type === 'facility' || mapNavigationRequest?.type === 'business'
+            ? mapNavigationRequest.name
+            : ''
+    );
 
     const stateIcons = {
         best: '★',
@@ -73,24 +79,32 @@
     });
 
     function initLandmarks() {
-        placeMarkers.forEach(m => m.remove());
+        placeMarkers.forEach(({ marker }) => marker.remove());
         placeMarkers = [];
 
         [...landmarks, ...facilities].forEach(place => {
             if (!shouldShowPlace(place)) return;
 
             let iconEmoji = getPlaceIcon(place);
+            const selected = place.name === selectedPlaceName ? 'selected' : '';
 
             const icon = L.divIcon({
-                className: `landmark-icon ${place.type} ${place.category || place.subtype || ''}`,
+                className: `landmark-icon ${place.type} ${place.category || place.subtype || ''} ${selected}`,
                 html: `<span>${iconEmoji}</span>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 14]
             });
             const marker = L.marker([place.lat, place.lon], { icon })
+                .bindTooltip(place.name, {
+                    permanent: shouldShowPlaceLabel(place, currentZoom, selectedPlaceName),
+                    direction: 'top',
+                    className: `place-label ${place.type} ${selected}`,
+                    offset: [0, -8]
+                })
                 .bindPopup(getPlacePopup(place))
                 .addTo(map);
-            placeMarkers.push(marker);
+            if (selected) marker.setZIndexOffset(1000);
+            placeMarkers.push({ marker, place });
         });
     }
 
@@ -430,6 +444,7 @@
     $effect(() => {
         const request = mapNavigationRequest;
         if (map) {
+            updateLandmarks();
             navigateToMapRequest(request);
         }
     });
