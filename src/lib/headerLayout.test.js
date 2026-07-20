@@ -60,6 +60,11 @@ test('collapsed recommendation toggle shows a compact count badge', () => {
     assert.match(css, /\.recommendation-count-badge\s*{[^}]*min-width:\s*28px/s);
 });
 
+test('expanded recommendation toggle uses a clear hide label', () => {
+    assert.match(recommendationPanel, /Hide recommendations/);
+    assert.doesNotMatch(recommendationPanel, /Map view/);
+});
+
 test('expanded panel shows compact forecast controls near the top', () => {
     assert.match(recommendationPanel, /class="expanded-time-control"/);
     assert.match(recommendationPanel, /id="expanded-time-slider"/);

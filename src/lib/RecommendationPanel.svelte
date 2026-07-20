@@ -228,7 +228,7 @@
     >
         <span class="sheet-handle" aria-hidden="true"></span>
         <span class="panel-toggle-title">
-            <span>{isCollapsed ? 'Show recommendations' : 'Map view'}</span>
+            <span>{isCollapsed ? 'Show recommendations' : 'Hide recommendations'}</span>
             {#if isCollapsed}
                 <span class="recommendation-count-badge" aria-label="{listedRecommendations.length} recommendations">
                     {listedRecommendations.length}
