@@ -8,6 +8,7 @@
         getPanelModeAfterOpenRequest,
         getRangeModeLabel,
         getRangeModeForHourIndex,
+        getTimelineScrollLeft,
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
@@ -54,6 +55,8 @@
     const nearbyPlaces = $derived(getNearbyPlaces(selectedRecommendation?.beach, landmarks, facilities));
     let lastHandledOpenRequest = $state(0);
     let rangeMode = $state('today');
+    let timelineChartElement = $state(null);
+    let timelineCellElements = new Map();
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
@@ -104,6 +107,36 @@
         });
     }
 
+    function bindTimelineCell(element, hour) {
+        if (element) {
+            timelineCellElements.set(hour, element);
+        }
+
+        return {
+            destroy() {
+                timelineCellElements.delete(hour);
+            }
+        };
+    }
+
+    function syncTimelineScroll() {
+        const activeCell = timelineCellElements.get(hourIndex);
+        if (!timelineChartElement || !activeCell) return;
+        const activeRect = activeCell.getBoundingClientRect();
+        const chartRect = timelineChartElement.getBoundingClientRect();
+
+        timelineChartElement.scrollTo({
+            left: getTimelineScrollLeft({
+                activeLeft: activeRect.left - chartRect.left,
+                activeWidth: activeRect.width,
+                containerWidth: timelineChartElement.clientWidth,
+                currentScrollLeft: timelineChartElement.scrollLeft,
+                maxScrollLeft: timelineChartElement.scrollWidth - timelineChartElement.clientWidth
+            }),
+            behavior: 'smooth'
+        });
+    }
+
     function selectTab(tab) {
         onTabChange(tab);
         if (tab !== 'later') return;
@@ -122,6 +155,12 @@
         const range = forecastRange;
         if (hourIndex < range.min) hourIndex = range.min;
         if (hourIndex > range.max) hourIndex = range.max;
+    });
+
+    $effect(() => {
+        const currentHourIndex = hourIndex;
+        const timelineCount = beachTimeline.length;
+        requestAnimationFrame(syncTimelineScroll);
     });
 </script>
 
@@ -320,10 +359,11 @@
                             <strong>Score by time</strong>
                             <span>{getRangeModeLabel(rangeMode)}</span>
                         </div>
-                        <div class="timeline-chart">
+                        <div class="timeline-chart" bind:this={timelineChartElement}>
                             {#each beachTimeline as item}
                                 <button
                                     type="button"
+                                    use:bindTimelineCell={item.hourIndex}
                                     class="timeline-cell {item.state}"
                                     class:active={item.hourIndex === hourIndex}
                                     title="{item.label}: {item.summary}"
