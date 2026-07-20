@@ -14,7 +14,7 @@
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
     } from './mapFocus.js';
-    import { getFacilityTypeLabel } from './facilities.js';
+    import { getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
     import { isWithinRottnestBounds } from './recommendations.js';
 
     let {
@@ -247,8 +247,9 @@
             `Type: ${escapeHtml(getFacilityTypeLabel(place))}`
         ];
 
-        if (Number.isFinite(place.rating)) {
-            parts.push(`Rating: ${escapeHtml(place.rating)} ★`);
+        const ratingLabel = getFacilityRatingLabel(place);
+        if (ratingLabel) {
+            parts.push(`Rating: ${escapeHtml(ratingLabel)}`);
         }
 
         return parts.join('<br>');

@@ -15,7 +15,7 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
-    import { getFacilityIcon, getNearbyFacilities } from './facilities.js';
+    import { getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities } from './facilities.js';
     import { getBeachImages } from './beachMedia.js';
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
@@ -450,8 +450,8 @@
                                     {place.name}
                                 </span>
                                 <small>
-                                    {#if Number.isFinite(place.rating)}
-                                        {place.rating} ★ ·
+                                    {#if getFacilityRatingLabel(place)}
+                                        {getFacilityRatingLabel(place)} ·
                                     {/if}
                                     {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
                                 </small>

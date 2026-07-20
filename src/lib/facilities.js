@@ -26,6 +26,15 @@ export function getFacilityIcon(category) {
     return FACILITY_TYPE_ICONS[category] || '📍';
 }
 
+export function getFacilityRatingLabel(place = {}) {
+    if (!Number.isFinite(place.rating)) return '';
+
+    const rating = Number(place.rating).toFixed(1);
+    if (!Number.isFinite(place.userRatingCount)) return `${rating} ★`;
+
+    return `${rating} ★ (${formatRatingCount(place.userRatingCount)})`;
+}
+
 export function getFacilityTypeLabel(place = {}) {
     const category = place.category || place.subtype || place.type;
     if (!category) return 'Place';
@@ -77,4 +86,12 @@ function toRadians(value) {
 
 function roundDistance(distanceKm) {
     return Math.round(distanceKm * 10) / 10;
+}
+
+function formatRatingCount(count) {
+    if (count < 1000) return String(count);
+
+    const thousands = count / 1000;
+    const formatted = Number.isInteger(thousands) ? thousands.toFixed(0) : thousands.toFixed(1);
+    return `${formatted}K`;
 }
