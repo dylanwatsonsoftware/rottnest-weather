@@ -756,7 +756,7 @@ main {
     inset: 0;
     z-index: 2200;
     display: grid;
-    place-items: center;
+    place-items: end center;
     padding: 16px;
 }
 
@@ -782,13 +782,14 @@ main {
 }
 
 .beach-photo-modal-image {
-    max-height: min(74dvh, 720px);
+    max-height: min(68dvh, 720px);
     object-fit: contain;
     border-radius: 8px;
     background: #0a1d21;
 }
 
 .beach-photo-modal-content figcaption {
+    order: 2;
     display: flex;
     flex-wrap: wrap;
     gap: 6px 10px;
@@ -807,6 +808,7 @@ main {
 }
 
 .beach-photo-modal-close {
+    order: 3;
     justify-self: end;
     min-height: 40px;
     border: 1px solid rgba(255, 255, 255, 0.36);

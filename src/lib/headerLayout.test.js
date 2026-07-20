@@ -70,8 +70,10 @@ test('beach photos can open in a larger modal view', () => {
     assert.match(recommendationPanel, /class="beach-photo-modal"/);
     assert.match(recommendationPanel, /class="beach-photo-modal-close"/);
     assert.match(css, /\.beach-photo-modal\s*{[^}]*position:\s*fixed/s);
+    assert.match(css, /\.beach-photo-modal\s*{[^}]*place-items:\s*end center/s);
     assert.match(css, /\.beach-photo-modal-content\s*{[^}]*background:\s*#061b20/s);
-    assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(74dvh,\s*720px\)/s);
+    assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(68dvh,\s*720px\)/s);
+    assert.match(css, /\.beach-photo-modal-close\s*{[^}]*order:\s*3/s);
 });
 
 test('recommendation panel has one selected-time list with better-time and settings controls', () => {
