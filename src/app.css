@@ -985,11 +985,24 @@ main {
     }
 
     .recommendation-panel {
+        top: var(--header-offset);
         left: auto;
-        width: 44vw;
-        min-width: 360px;
-        max-height: calc(100vh - 54px);
+        right: 0;
+        bottom: 0;
+        width: min(420px, 48vw);
+        min-width: min(360px, 58vw);
+        height: calc(100dvh - var(--header-offset));
+        min-height: 0;
+        max-height: none;
         border-radius: 12px 0 0 0;
+    }
+
+    .recommendation-panel.collapsed {
+        top: auto;
+        width: min(420px, 58vw);
+        min-width: min(360px, 58vw);
+        height: auto;
+        max-height: 126px;
     }
 
     .graph-container {
@@ -997,7 +1010,7 @@ main {
     }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 900px) and (min-height: 431px) {
     :root {
         --header-offset: 76px;
     }

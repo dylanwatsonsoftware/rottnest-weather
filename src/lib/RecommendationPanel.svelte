@@ -26,6 +26,7 @@
         panelMode = $bindable(getDefaultPanelMode()),
         filters,
         activeTab = 'best',
+        mapLayout = 'default',
         panelOpenRequest = 0,
         onSelectBeach = () => {},
         onTabChange = () => {},
@@ -95,7 +96,7 @@
     }
 
     function navigatePlaceToMap(place) {
-        const target = getMapNavigationTarget(place, 15, getPanelModeMapOffset(panelMode));
+        const target = getMapNavigationTarget(place, 15, getPanelModeMapOffset(panelMode, mapLayout));
         if (!target) return;
         onNavigateToMap({
             ...target,

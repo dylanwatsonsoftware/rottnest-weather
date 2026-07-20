@@ -10,7 +10,7 @@
         getSafetyNotices
     } from './lib/recommendations.js';
     import { mergeFacilityEnrichment } from './lib/facilities.js';
-    import { getBeachSelectionMapTarget } from './lib/mapFocus.js';
+    import { getBeachSelectionMapTarget, getMapLayout } from './lib/mapFocus.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -27,6 +27,7 @@
     let panelOpenRequest = $state(0);
     let mapNavigationRequest = $state(null);
     let mapNavigationSequence = 0;
+    let mapLayout = $state('default');
     let filters = $state({
         states: {
             best: true,
@@ -86,7 +87,7 @@
     function selectBeach(name) {
         selectedBeachName = name;
         const beach = beaches.find((item) => item.name === name);
-        const target = getBeachSelectionMapTarget(beach, panelMode);
+        const target = getBeachSelectionMapTarget(beach, panelMode, mapLayout);
         if (target) navigateToMapTarget(target);
     }
 
@@ -96,57 +97,75 @@
         panelOpenRequest += 1;
     }
 
-    onMount(async () => {
-        try {
-            const [beachesRes, landmarksRes, facilitiesRes, enrichmentRes] = await Promise.all([
-                fetch('/beaches.json'),
-                fetch('/landmarks.json'),
-                fetch('/facilities.json'),
-                fetch('/place-enrichment.json')
-            ]);
+    onMount(() => {
+        function updateMapLayout() {
+            mapLayout = getMapLayout({
+                width: window.innerWidth,
+                height: window.innerHeight
+            });
+        }
 
-            beaches = await beachesRes.json();
-            landmarks = await landmarksRes.json();
-            facilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
+        updateMapLayout();
+        window.addEventListener('resize', updateMapLayout);
 
-            const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
-            if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
-            const weatherJson = await weatherRes.json();
-
-            forecastData = {
-                ...weatherJson.hourly
-            };
-
+        async function loadAppData() {
             try {
-                const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10');
-                if (marineRes.ok) {
-                    const marineJson = await marineRes.json();
-                    forecastData = {
-                        ...forecastData,
-                        swell_wave_height: marineJson.hourly.swell_wave_height
-                    };
-                } else {
+                const [beachesRes, landmarksRes, facilitiesRes, enrichmentRes] = await Promise.all([
+                    fetch('/beaches.json'),
+                    fetch('/landmarks.json'),
+                    fetch('/facilities.json'),
+                    fetch('/place-enrichment.json')
+                ]);
+
+                beaches = await beachesRes.json();
+                landmarks = await landmarksRes.json();
+                facilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
+
+                const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
+                if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
+                const weatherJson = await weatherRes.json();
+
+                forecastData = {
+                    ...weatherJson.hourly
+                };
+
+                try {
+                    const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10');
+                    if (marineRes.ok) {
+                        const marineJson = await marineRes.json();
+                        forecastData = {
+                            ...forecastData,
+                            swell_wave_height: marineJson.hourly.swell_wave_height
+                        };
+                    } else {
+                        loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
+                    }
+                } catch (error) {
                     loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
                 }
-            } catch (error) {
-                loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
-            }
 
-            const now = new Date();
-            let minDiff = Infinity;
-            forecastData.time.forEach((t, i) => {
-                const diff = Math.abs(new Date(t) - now);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    hourIndex = i;
-                }
-            });
-        } catch (error) {
-            console.error('Error loading data:', error);
-            loadError = 'Forecast data is unavailable. Beach recommendations are low confidence.';
-        } finally {
-            loading = false;
+                const now = new Date();
+                let minDiff = Infinity;
+                forecastData.time.forEach((t, i) => {
+                    const diff = Math.abs(new Date(t) - now);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        hourIndex = i;
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading data:', error);
+                loadError = 'Forecast data is unavailable. Beach recommendations are low confidence.';
+            } finally {
+                loading = false;
+            }
         }
+
+        loadAppData();
+
+        return () => {
+            window.removeEventListener('resize', updateMapLayout);
+        };
     });
 
     const currentConditions = $derived(getConditions(forecastData, hourIndex));
@@ -185,6 +204,7 @@
         {filters}
         selectedBeachName={selectedRecommendation?.beach.name}
         {panelMode}
+        {mapLayout}
         {mapNavigationRequest}
         onSelectBeach={(name) => {
             selectBeach(name);
@@ -204,6 +224,7 @@
         bind:panelMode
         {filters}
         {activeTab}
+        {mapLayout}
         {panelOpenRequest}
         onSelectBeach={selectBeach}
         onTabChange={(tab) => activeTab = tab}

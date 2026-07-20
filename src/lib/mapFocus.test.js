@@ -4,6 +4,7 @@ import {
     getInitialFitSettings,
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
+    getMapLayout,
     getMapNavigationTarget,
     getPanelModeMapOffset,
     getPanelModePanOffset,
@@ -57,6 +58,12 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
     });
 });
 
+test('getMapLayout detects short landscape phones', () => {
+    assert.equal(getMapLayout({ width: 780, height: 390 }), 'shortLandscape');
+    assert.equal(getMapLayout({ width: 390, height: 780 }), 'default');
+    assert.equal(getMapLayout({ width: 900, height: 700 }), 'default');
+});
+
 test('getVisibleBeachFitPoints uses currently shown beach recommendations', () => {
     const points = getVisibleBeachFitPoints([
         { beach: { name: 'A', lat: -31.99, lon: 115.54 } },
@@ -87,6 +94,15 @@ test('visible beach fit uses deeper bottom padding for expanded panel', () => {
     assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] >= 520);
 });
 
+test('short landscape visible beach fit leaves room for the side panel', () => {
+    const collapsed = getVisibleBeachFitSettings('collapsed', 'shortLandscape');
+    const expanded = getVisibleBeachFitSettings('expanded', 'shortLandscape');
+
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[0] > collapsed.fitBoundsOptions.paddingBottomRight[0]);
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[0] >= 360);
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] < 100);
+});
+
 test('visible beach fit preserves zoom when only panel mode changes', () => {
     assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'expanded'), 'panel');
     assert.equal(getVisibleBeachFitReason('a|b', 'a|c', 'collapsed', 'collapsed'), 'points');
@@ -99,7 +115,14 @@ test('panel mode pan offset adjusts center without changing zoom', () => {
     assert.deepEqual(getPanelModePanOffset('collapsed', 'collapsed'), [0, 0]);
 });
 
+test('short landscape panel mode pan offset adjusts horizontally', () => {
+    assert.deepEqual(getPanelModePanOffset('collapsed', 'expanded', 'shortLandscape'), [280, -90]);
+    assert.deepEqual(getPanelModePanOffset('expanded', 'collapsed', 'shortLandscape'), [-280, 90]);
+});
+
 test('panel mode map offsets leave extra room for expanded sheet', () => {
     assert.deepEqual(getPanelModeMapOffset('collapsed'), [0, 180]);
     assert.deepEqual(getPanelModeMapOffset('expanded'), [0, 320]);
+    assert.deepEqual(getPanelModeMapOffset('collapsed', 'shortLandscape'), [170, 90]);
+    assert.deepEqual(getPanelModeMapOffset('expanded', 'shortLandscape'), [360, 0]);
 });

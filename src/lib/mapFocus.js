@@ -15,8 +15,23 @@ export function getLandmarkFitPoints(landmarks = []) {
         .map((landmark) => [landmark.lat, landmark.lon]);
 }
 
-export function getVisibleBeachFitSettings(panelMode = 'collapsed') {
+export function getMapLayout({ width = 0, height = 0 } = {}) {
+    return width > height && height <= 430 ? 'shortLandscape' : 'default';
+}
+
+export function getVisibleBeachFitSettings(panelMode = 'collapsed', mapLayout = 'default') {
     const expandedPanel = panelMode !== 'collapsed';
+
+    if (mapLayout === 'shortLandscape') {
+        return {
+            singleBeachZoom: 14,
+            fitBoundsOptions: {
+                paddingTopLeft: [42, 70],
+                paddingBottomRight: [expandedPanel ? 390 : 170, 42],
+                maxZoom: 14
+            }
+        };
+    }
 
     return {
         singleBeachZoom: 14,
@@ -35,23 +50,37 @@ export function getVisibleBeachFitPoints(recommendations = []) {
         .map((beach) => [beach.lat, beach.lon]);
 }
 
-export function getVisibleBeachFitReason(previousPointsSignature, nextPointsSignature, previousPanelMode, nextPanelMode) {
+export function getVisibleBeachFitReason(
+    previousPointsSignature,
+    nextPointsSignature,
+    previousPanelMode,
+    nextPanelMode,
+    previousMapLayout = 'default',
+    nextMapLayout = 'default'
+) {
     if (previousPointsSignature !== nextPointsSignature) return 'points';
     if (previousPanelMode !== nextPanelMode) return 'panel';
+    if (previousMapLayout !== nextMapLayout) return 'panel';
     return 'none';
 }
 
-export function getPanelModePanOffset(previousPanelMode, nextPanelMode) {
+export function getPanelModePanOffset(previousPanelMode, nextPanelMode, mapLayout = 'default') {
     if (previousPanelMode === nextPanelMode) return [0, 0];
+    if (mapLayout === 'shortLandscape') {
+        return nextPanelMode === 'collapsed' ? [-280, 90] : [280, -90];
+    }
     return nextPanelMode === 'collapsed' ? [0, -300] : [0, 300];
 }
 
-export function getPanelModeMapOffset(panelMode = 'collapsed') {
+export function getPanelModeMapOffset(panelMode = 'collapsed', mapLayout = 'default') {
+    if (mapLayout === 'shortLandscape') {
+        return panelMode === 'collapsed' ? [170, 90] : [360, 0];
+    }
     return panelMode === 'collapsed' ? [0, 180] : [0, 320];
 }
 
-export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed') {
-    return getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode));
+export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLayout = 'default') {
+    return getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
 }
 
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {

@@ -51,3 +51,15 @@ test('top beach in the header is selectable', () => {
     assert.match(header, /class="top-beach-button"/);
     assert.match(header, /aria-label="Show \{topRecommendation\.beach\.name\}"/);
 });
+
+test('short landscape panel uses available height without forcing desktop width', () => {
+    const mediaStart = css.indexOf('@media (max-height: 430px) and (orientation: landscape)');
+    assert.notEqual(mediaStart, -1);
+    const desktopStart = css.indexOf('@media (min-width: 900px)', mediaStart);
+    const landscapeCss = css.slice(mediaStart, desktopStart);
+
+    assert.match(landscapeCss, /height:\s*calc\(100dvh - var\(--header-offset\)\)/);
+    assert.match(landscapeCss, /min-height:\s*0/);
+    assert.match(landscapeCss, /min-width:\s*min\(360px,\s*58vw\)/);
+    assert.match(css, /@media \(min-width: 900px\) and \(min-height: 431px\)/);
+});

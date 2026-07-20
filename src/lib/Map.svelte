@@ -18,6 +18,7 @@
         filters = {},
         selectedBeachName = '',
         panelMode = 'collapsed',
+        mapLayout = 'default',
         mapNavigationRequest = null,
         onSelectBeach = () => {},
         onZoomChange = () => {},
@@ -35,6 +36,7 @@
     let lastNavigationRequestId = null;
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'collapsed';
+    let lastVisibleBeachMapLayout = 'default';
 
     const stateIcons = {
         best: '★',
@@ -251,17 +253,21 @@
         const fitPoints = getVisibleBeachFitPoints(recommendations);
         const pointsSignature = fitPoints.map((point) => point.join(',')).join('|');
         const previousPanelMode = lastVisibleBeachPanelMode;
+        const previousMapLayout = lastVisibleBeachMapLayout;
         const fitReason = getVisibleBeachFitReason(
             lastVisibleBeachPointsSignature,
             pointsSignature,
             previousPanelMode,
-            panelMode
+            panelMode,
+            previousMapLayout,
+            mapLayout
         );
         if (!map || !fitPoints.length || fitReason === 'none') return;
 
         lastVisibleBeachPointsSignature = pointsSignature;
         lastVisibleBeachPanelMode = panelMode;
-        const fitSettings = getVisibleBeachFitSettings(panelMode);
+        lastVisibleBeachMapLayout = mapLayout;
+        const fitSettings = getVisibleBeachFitSettings(panelMode, mapLayout);
 
         if (fitPoints.length === 1) {
             const zoom = fitReason === 'panel' ? map.getZoom() : fitSettings.singleBeachZoom;
@@ -270,7 +276,7 @@
                 duration: 0.35
             });
         } else if (fitReason === 'panel') {
-            map.panBy(getPanelModePanOffset(previousPanelMode, panelMode), {
+            map.panBy(getPanelModePanOffset(previousPanelMode, panelMode, mapLayout), {
                 animate: true,
                 duration: 0.35
             });
@@ -326,6 +332,7 @@
 
     $effect(() => {
         const currentPanelMode = panelMode;
+        const currentMapLayout = mapLayout;
         if (map) {
             fitVisibleBeaches();
         }
