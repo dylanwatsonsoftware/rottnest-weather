@@ -364,6 +364,13 @@ main {
     font-size: 0.78rem;
 }
 
+.recommendation-row.best .row-main small,
+.recommendation-row.good .row-main small,
+.recommendation-row.watch .row-main small,
+.recommendation-row.avoid .row-main small {
+    color: rgba(255, 255, 255, 0.78);
+}
+
 .state-pill {
     border-radius: 999px;
     padding: 5px 8px;
