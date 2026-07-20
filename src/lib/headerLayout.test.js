@@ -33,3 +33,7 @@ test('beach detail timeline has its own time slider styling', () => {
     assert.match(css, /\.detail-time-control\s*{/);
     assert.match(css, /\.detail-time-control input\[type="range"\]/);
 });
+
+test('active status timeline cell has a clear selected border', () => {
+    assert.match(css, /\.timeline-cell\.active\s*{[^}]*border:\s*3px solid white/s);
+});

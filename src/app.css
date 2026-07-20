@@ -651,6 +651,7 @@ main {
 }
 
 .timeline-cell {
+    box-sizing: border-box;
     min-width: 22px;
     height: 34px;
     border: 1px solid rgba(255, 255, 255, 0.8);
@@ -663,8 +664,10 @@ main {
 }
 
 .timeline-cell.active {
-    outline: 3px solid rgba(11, 100, 118, 0.24);
+    border: 3px solid white;
+    outline: 2px solid #0b6476;
     outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(11, 100, 118, 0.26), inset 0 -10px 16px rgba(0, 0, 0, 0.08);
 }
 
 .timeline-cell span {
