@@ -322,7 +322,9 @@
     function getNavigationOffset(request) {
         if (!request.visibleAnchor) return request.offset || [0, 0];
 
-        const visibleBounds = getVisibleMapBounds();
+        const visibleBounds = getVisibleMapBounds({
+            constrainVerticalByPanel: request.visibleAnchor.constrainVerticalByPanel !== false
+        });
         return getVisibleMapAnchorOffset({
             ...visibleBounds,
             targetXRatio: request.visibleAnchor.targetXRatio,
@@ -330,7 +332,7 @@
         });
     }
 
-    function getVisibleMapBounds() {
+    function getVisibleMapBounds({ constrainVerticalByPanel = true } = {}) {
         const mapRect = mapElement.getBoundingClientRect();
         const headerRect = document.querySelector('header')?.getBoundingClientRect();
         const panelRect = document.querySelector('.recommendation-panel')?.getBoundingClientRect();
@@ -342,7 +344,7 @@
             visibleLeft: 0,
             visibleRight: isSidePanel && panelRect ? Math.max(panelRect.left - mapRect.left, 0) : mapRect.width,
             visibleTop: headerRect ? Math.max(headerRect.bottom - mapRect.top, 0) : 0,
-            visibleBottom: !isSidePanel && panelRect ? Math.max(panelRect.top - mapRect.top, 0) : mapRect.height
+            visibleBottom: constrainVerticalByPanel && !isSidePanel && panelRect ? Math.max(panelRect.top - mapRect.top, 0) : mapRect.height
         };
     }
 

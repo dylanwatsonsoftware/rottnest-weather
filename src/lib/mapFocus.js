@@ -87,7 +87,8 @@ export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLa
         ...target,
         visibleAnchor: {
             targetXRatio: 0.5,
-            targetYRatio: 0.5
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: false
         }
     };
 }

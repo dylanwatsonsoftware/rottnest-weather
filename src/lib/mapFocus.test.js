@@ -59,7 +59,8 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
         offset: [0, 320],
         visibleAnchor: {
             targetXRatio: 0.5,
-            targetYRatio: 0.5
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: false
         }
     });
 });
@@ -81,7 +82,8 @@ test('getMapLayoutChangeTarget recenters selected beach when orientation layout 
         offset: [360, 0],
         visibleAnchor: {
             targetXRatio: 0.5,
-            targetYRatio: 0.5
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: false
         }
     });
     assert.equal(getMapLayoutChangeTarget(beach, 'expanded', 'default', 'default'), null);
@@ -166,4 +168,14 @@ test('visible map anchor offset centers selected items inside the unobscured map
         targetXRatio: 0.5,
         targetYRatio: 0.5
     }), [160, 0]);
+});
+
+test('visible map anchor offset can center selected items in the map viewport below the header', () => {
+    assert.deepEqual(getVisibleMapAnchorOffset({
+        mapWidth: 390,
+        mapHeight: 800,
+        visibleTop: 80,
+        visibleBottom: 800,
+        targetYRatio: 0.5
+    }), [0, -40]);
 });
