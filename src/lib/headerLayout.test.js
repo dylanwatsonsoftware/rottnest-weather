@@ -27,6 +27,11 @@ test('mobile header uses content height instead of fixed extra vertical space', 
     assert.doesNotMatch(mobileHeaderRule, /min-height:\s*74px/);
 });
 
+test('navbar uses compact Rottnest title', () => {
+    assert.match(header, /<h1>Rottnest<\/h1>/);
+    assert.doesNotMatch(header, /<h1>Rottnest Snorkelling<\/h1>/);
+});
+
 test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
