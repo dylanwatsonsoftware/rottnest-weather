@@ -5,6 +5,7 @@ import {
     buildRecommendations,
     filterRecommendations,
     getDirection,
+    getBeachDetailNotes,
     getInitialFocusRecommendations,
     getSafetyNotices,
     shouldUseUserLocationForFocus
@@ -70,6 +71,24 @@ test('buildBeachStatusTimeline scores one beach across a selected time range', (
 test('buildBeachStatusTimeline returns no items without beach or forecast times', () => {
     assert.deepEqual(buildBeachStatusTimeline(null, forecast, { min: 0, max: 2 }), []);
     assert.deepEqual(buildBeachStatusTimeline(beaches[0], null, { min: 0, max: 2 }), []);
+});
+
+test('getBeachDetailNotes turns local beach metadata into display notes', () => {
+    const notes = getBeachDetailNotes({
+        exposure_note: 'Protected north-facing bay',
+        facilities: ['Toilets', 'Cafe nearby'],
+        activity_tags: ['snorkel', 'family swim'],
+        guide_note: 'Best in southerly winds.',
+        caution_notes: ['Watch reef edges in swell.']
+    });
+
+    assert.deepEqual(notes, [
+        'Protected north-facing bay',
+        'Facilities: Toilets, Cafe nearby',
+        'Good for: snorkel, family swim',
+        'Best in southerly winds.',
+        'Watch reef edges in swell.'
+    ]);
 });
 
 test('filterRecommendations applies state filters and low-zoom simplification', () => {

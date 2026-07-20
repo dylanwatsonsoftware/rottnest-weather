@@ -11,7 +11,7 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
-    import { buildBeachStatusTimeline, formatTime, RECOMMENDATION_STATES } from './recommendations.js';
+    import { buildBeachStatusTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget } from './mapFocus.js';
 
     let {
@@ -55,6 +55,7 @@
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
+    const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
 
     function getNearbyLandmarks(beach, allLandmarks) {
         if (!beach?.lat || !beach?.lon) return [];
@@ -337,6 +338,9 @@
                 {#if selectedRecommendation.beach.access}
                     <p class="detail-note">{selectedRecommendation.beach.access}</p>
                 {/if}
+                {#each beachDetailNotes as note}
+                    <p class="detail-note">{note}</p>
+                {/each}
                 {#if selectedRecommendation.nextGood}
                     <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
                 {/if}

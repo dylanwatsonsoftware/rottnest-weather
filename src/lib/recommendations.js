@@ -152,6 +152,18 @@ export function buildBeachStatusTimeline(beach, forecastData, range = {}) {
     return items;
 }
 
+export function getBeachDetailNotes(beach = {}) {
+    const notes = [];
+
+    if (beach.exposure_note) notes.push(beach.exposure_note);
+    if (beach.facilities?.length) notes.push(`Facilities: ${beach.facilities.join(', ')}`);
+    if (beach.activity_tags?.length) notes.push(`Good for: ${beach.activity_tags.join(', ')}`);
+    if (beach.guide_note) notes.push(beach.guide_note);
+    if (beach.caution_notes?.length) notes.push(...beach.caution_notes);
+
+    return notes;
+}
+
 export function findNextGoodWindow(beach, forecastData, startIndex = 0) {
     if (!forecastData?.time?.length) return null;
 

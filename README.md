@@ -27,6 +27,10 @@ Optional fields can enrich the detail sheet:
 - `difficulty`
 - `access`
 - `exposure_note`
+- `activity_tags`
+- `facilities`
+- `guide_note`
+- `caution_notes`
 - `aliases`
 
 Landmark and facility data lives in `public/landmarks.json`. Use `type: "business"` for facilities that should be controlled by the Facilities map toggle.

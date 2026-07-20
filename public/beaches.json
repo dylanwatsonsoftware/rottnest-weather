@@ -2,16 +2,21 @@
     {
         "name": "Parker Point",
         "ok_winds": [
-            "S",
-            "SW",
-            "W",
+            "N",
+            "NE",
             "NW"
         ],
         "lat": -32.0230368,
         "lon": 115.5282124,
         "difficulty": "Confident snorkellers",
-        "access": "Bike and walking access nearby",
-        "exposure_note": "South-east coast reef and bays"
+        "access": "Bike, Island Explorer bus stop 5, or Wardan Nara Bidi",
+        "exposure_note": "South-east coast reef and bays",
+        "activity_tags": [
+            "snorkel trail",
+            "reef snorkel",
+            "swim"
+        ],
+        "guide_note": "Official wind guide highlights Parker Point when winds are coming from the north."
     },
     {
         "name": "Little Salmon Bay",
@@ -28,7 +33,12 @@
         "lon": 115.5250939,
         "difficulty": "Beginner friendly in calm conditions",
         "access": "Popular beach stop with easy shore entry",
-        "exposure_note": "Sheltered pocket on the south coast"
+        "exposure_note": "Sheltered pocket on the south coast",
+        "activity_tags": [
+            "snorkel",
+            "beginner friendly",
+            "shore entry"
+        ]
     },
     {
         "name": "Salmon Bay",
@@ -41,8 +51,14 @@
         "lat": -32.021471,
         "lon": 115.5223315,
         "difficulty": "Moderate",
-        "access": "Long sandy bay with shore entry",
-        "exposure_note": "Open south-facing bay"
+        "access": "Island Explorer bus stop 7 or Wardan Nara Bidi",
+        "exposure_note": "Open south-facing bay",
+        "activity_tags": [
+            "swim",
+            "snorkel",
+            "coastal walk"
+        ],
+        "guide_note": "Official wind guide highlights Salmon Bay when winds are coming from the north."
     },
     {
         "name": "Green Island",
@@ -54,7 +70,18 @@
             "NW"
         ],
         "lat": -32.0158164,
-        "lon": 115.4984891
+        "lon": 115.4984891,
+        "access": "Island Explorer bus stop 9 or Wardan Nara Bidi",
+        "exposure_note": "Southern sanctuary-zone island beach",
+        "activity_tags": [
+            "wildlife",
+            "swim",
+            "snorkel"
+        ],
+        "guide_note": "Official wind guide highlights Green Island when winds are coming from the north.",
+        "caution_notes": [
+            "Sea lions may be present; keep a respectful distance on land and in water."
+        ]
     },
     {
         "name": "Firefish Bend",
@@ -80,7 +107,17 @@
             "NW"
         ],
         "lat": -32.0184423,
-        "lon": 115.4934981
+        "lon": 115.4934981,
+        "access": "Island Explorer bus stop 9 or Wardan Nara Bidi",
+        "exposure_note": "Tucked into the south-west coast",
+        "activity_tags": [
+            "secluded swim",
+            "surf"
+        ],
+        "guide_note": "Official wind guide highlights Mary Cove when winds are coming from the north.",
+        "caution_notes": [
+            "Known for a reliable surf break; assess swell before swimming or snorkelling."
+        ]
     },
     {
         "name": "South Point",
@@ -136,7 +173,15 @@
             "SW"
         ],
         "lat": -31.9918106,
-        "lon": 115.5074396
+        "lon": 115.5074396,
+        "access": "Island Explorer bus stop 17 or Karlinyah Bidi",
+        "exposure_note": "Small protected north-coast bay with rocky outcrops",
+        "activity_tags": [
+            "snorkel",
+            "family swim",
+            "sheltered bay"
+        ],
+        "guide_note": "Official wind guide highlights Little Armstrong Bay when winds are coming from the south."
     },
     {
         "name": "Little Parakeet Bay",
@@ -147,7 +192,15 @@
             "W"
         ],
         "lat": -31.9903081,
-        "lon": 115.5163709
+        "lon": 115.5163709,
+        "access": "Island Explorer bus stop 18 or Gabbi Karniny Bidi",
+        "exposure_note": "North-shore cove protected by dunes and rocky crags",
+        "activity_tags": [
+            "snorkel",
+            "calm swim",
+            "sheltered bay"
+        ],
+        "guide_note": "Official wind guide highlights Little Parakeet Bay when winds are coming from the south."
     },
     {
         "name": "Geordie Bay",
@@ -158,7 +211,21 @@
             "W"
         ],
         "lat": -31.9908784,
-        "lon": 115.5213083
+        "lon": 115.5213083,
+        "access": "Island Explorer bus stop 19 or Gabbi Karniny Bidi",
+        "exposure_note": "Large north-coast bay with calmer water in southerly winds",
+        "activity_tags": [
+            "snorkel",
+            "family swim",
+            "food nearby"
+        ],
+        "facilities": [
+            "Cafe nearby",
+            "Seasonal ice cream",
+            "Toilets",
+            "Showers"
+        ],
+        "guide_note": "Official wind guide highlights Geordie Bay when winds are coming from the south."
     },
     {
         "name": "Fays Bay",
@@ -168,7 +235,17 @@
             "SW"
         ],
         "lat": -31.9881719,
-        "lon": 115.5249381
+        "lon": 115.5249381,
+        "aliases": [
+            "Fay's Bay"
+        ],
+        "access": "Island Explorer bus stop 19 or Gabbi Karniny Bidi",
+        "exposure_note": "Small northern cove with limestone protection",
+        "activity_tags": [
+            "protected swim",
+            "quiet cove"
+        ],
+        "guide_note": "Official wind guide highlights Fay's Bay when winds are coming from the south."
     },
     {
         "name": "Longreach Bay",
@@ -180,7 +257,15 @@
             "W"
         ],
         "lat": -31.9904564,
-        "lon": 115.5301351
+        "lon": 115.5301351,
+        "access": "Island Explorer bus stop 19 or Gabbi Karniny Bidi",
+        "exposure_note": "Broad sheltered bay on the northern coast",
+        "activity_tags": [
+            "swim",
+            "sheltered bay",
+            "boat moorings"
+        ],
+        "guide_note": "Official wind guide highlights Longreach Bay when winds are coming from the south."
     },
     {
         "name": "The Basin",
@@ -194,7 +279,19 @@
         "lon": 115.5356029,
         "difficulty": "Beginner friendly in calm conditions",
         "access": "Close to settlement facilities",
-        "exposure_note": "Protected north-east beach"
+        "exposure_note": "Protected north-east beach",
+        "activity_tags": [
+            "snorkel",
+            "family swim",
+            "picnic"
+        ],
+        "facilities": [
+            "Barbeques",
+            "Showers",
+            "Toilets",
+            "Food nearby"
+        ],
+        "guide_note": "Official wind guide highlights The Basin when winds are coming from the south."
     },
     {
         "name": "Duck Rock",
