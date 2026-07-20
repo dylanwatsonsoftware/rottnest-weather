@@ -52,6 +52,15 @@ test('collapsed tray leaves clearance below the forecast slider thumb', () => {
     assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
 });
 
+test('expanded panel shows compact forecast controls near the top', () => {
+    assert.match(recommendationPanel, /class="expanded-time-control"/);
+    assert.match(recommendationPanel, /id="expanded-time-slider"/);
+    assert.match(recommendationPanel, /for="expanded-time-slider">\{selectedTime\}/);
+    assert.match(recommendationPanel, /class="range-mode-toggle" aria-label="Expanded forecast range"/);
+    assert.match(css, /\.expanded-time-control\s*{[^}]*padding:\s*0 12px 10px/s);
+    assert.match(css, /\.expanded-time-control input\[type="range"\]\s*{[^}]*background:\s*var\(--slider-heat,\s*#dbe5e5\)/s);
+});
+
 test('selected beach detail can show a horizontally scrollable local photo strip', () => {
     assert.match(recommendationPanel, /getBeachImages/);
     assert.match(recommendationPanel, /\{#key selectedRecommendation\.beach\.name\}/);

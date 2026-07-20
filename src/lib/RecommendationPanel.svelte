@@ -255,6 +255,33 @@
         </button>
     </div>
 
+    {#if forecastData}
+        <div class="expanded-time-control" aria-label="Expanded forecast time control">
+            <div class="range-mode-toggle" aria-label="Expanded forecast range">
+                {#each RANGE_MODES as mode}
+                    <button
+                        type="button"
+                        class:active={rangeMode === mode}
+                        onclick={() => rangeMode = mode}
+                    >
+                        {getRangeModeLabel(mode)}
+                    </button>
+                {/each}
+            </div>
+            <label for="expanded-time-slider">{selectedTime}</label>
+            <input
+                type="range"
+                id="expanded-time-slider"
+                style:--slider-heat={sliderHeatGradient}
+                min={forecastRange.min}
+                aria-valuemin={forecastRange.min}
+                aria-valuemax={forecastRange.max}
+                max={forecastRange.max}
+                bind:value={hourIndex}
+            />
+        </div>
+    {/if}
+
     {#if safetyNotices.length}
         <div class="safety-strip">
             {#each safetyNotices as notice}

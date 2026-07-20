@@ -180,6 +180,13 @@ main {
     gap: 6px;
 }
 
+.expanded-time-control {
+    padding: 0 12px 10px;
+    display: grid;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+
 .range-mode-toggle {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -202,14 +209,16 @@ main {
     color: white;
 }
 
-.collapsed-time-control label {
+.collapsed-time-control label,
+.expanded-time-control label {
     color: #0b6476;
     font-size: 0.78rem;
     font-weight: 850;
     text-align: center;
 }
 
-.collapsed-time-control input[type="range"] {
+.collapsed-time-control input[type="range"],
+.expanded-time-control input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
@@ -218,7 +227,8 @@ main {
     outline: none;
 }
 
-.collapsed-time-control input[type="range"]::-webkit-slider-thumb {
+.collapsed-time-control input[type="range"]::-webkit-slider-thumb,
+.expanded-time-control input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 24px;
@@ -230,7 +240,8 @@ main {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
 }
 
-.collapsed-time-control input[type="range"]::-moz-range-thumb {
+.collapsed-time-control input[type="range"]::-moz-range-thumb,
+.expanded-time-control input[type="range"]::-moz-range-thumb {
     width: 24px;
     height: 24px;
     border-radius: 50%;
