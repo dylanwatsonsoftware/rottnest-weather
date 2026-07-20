@@ -61,6 +61,17 @@ test('expanded panel shows compact forecast controls near the top', () => {
     assert.match(css, /\.expanded-time-control input\[type="range"\]\s*{[^}]*background:\s*var\(--slider-heat,\s*#dbe5e5\)/s);
 });
 
+test('best beach row selection scrolls the detail card into view', () => {
+    assert.match(recommendationPanel, /import \{ tick \} from 'svelte'/);
+    assert.match(recommendationPanel, /let beachDetailElement = \$state\(null\)/);
+    assert.match(recommendationPanel, /function selectRecommendationRow\(beachName\)/);
+    assert.match(recommendationPanel, /onSelectBeach\(beachName\)/);
+    assert.match(recommendationPanel, /await tick\(\)/);
+    assert.match(recommendationPanel, /beachDetailElement\?\.scrollIntoView\(\{[\s\S]*block:\s*'start'/);
+    assert.match(recommendationPanel, /onclick=\{\(\) => selectRecommendationRow\(item\.beach\.name\)\}/);
+    assert.match(recommendationPanel, /bind:this=\{beachDetailElement\}/);
+});
+
 test('selected beach detail can show a horizontally scrollable local photo strip', () => {
     assert.match(recommendationPanel, /getBeachImages/);
     assert.match(recommendationPanel, /\{#key selectedRecommendation\.beach\.name\}/);

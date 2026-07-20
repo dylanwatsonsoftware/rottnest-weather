@@ -1,4 +1,5 @@
 <script>
+    import { tick } from 'svelte';
     import Controls from './Controls.svelte';
     import {
         getBetterTimeSelection,
@@ -60,6 +61,7 @@
     let selectedPhoto = $state(null);
     let settingsOpen = $state(false);
     let betterTimeStatus = $state('');
+    let beachDetailElement = $state(null);
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
@@ -160,6 +162,15 @@
         rangeMode = nextSelection.rangeMode;
         hourIndex = nextSelection.hourIndex;
         betterTimeStatus = 'Showing next good window';
+    }
+
+    async function selectRecommendationRow(beachName) {
+        onSelectBeach(beachName);
+        await tick();
+        beachDetailElement?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     }
 
     $effect(() => {
@@ -293,7 +304,7 @@
     <div class="panel-content">
         <div class="recommendation-list">
             {#each listedRecommendations as item}
-                <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => onSelectBeach(item.beach.name)}>
+                <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => selectRecommendationRow(item.beach.name)}>
                     <span class="score">{item.score}</span>
                     <span class="row-main">
                         <strong>{item.beach.name}</strong>
@@ -307,7 +318,7 @@
         </div>
 
         {#if selectedRecommendation}
-            <article class="beach-detail {selectedRecommendation.state}">
+            <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
                 <div class="detail-heading">
                     <p class="eyebrow">{selectedRecommendation.summary}</p>
                     <h2>{selectedRecommendation.beach.name}</h2>
