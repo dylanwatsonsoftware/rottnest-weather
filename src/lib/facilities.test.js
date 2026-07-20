@@ -9,7 +9,7 @@ import {
 
 const beach = { name: 'The Basin', lat: -31.9892, lon: 115.5351 };
 
-test('getNearbyFacilities sorts facilities by distance and adds labels', () => {
+test('getNearbyFacilities sorts facilities by distance and only keeps places within 1km', () => {
     const facilities = [
         { id: 'geordie-cafe', name: 'Geordie Cafe', lat: -31.9913, lon: 115.5209, category: 'cafe' },
         { id: 'basin-water', name: 'The Basin Water', lat: -31.98921, lon: 115.53512, category: 'drinking_water' }
@@ -22,13 +22,6 @@ test('getNearbyFacilities sorts facilities by distance and adds labels', () => {
             distanceKm: 0,
             label: 'Water',
             icon: '💧'
-        },
-        {
-            ...facilities[0],
-            type: 'facility',
-            distanceKm: 1.4,
-            label: 'Cafe',
-            icon: '☕'
         }
     ]);
 });

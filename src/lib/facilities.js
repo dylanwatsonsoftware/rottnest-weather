@@ -26,7 +26,7 @@ export function getFacilityIcon(category) {
     return FACILITY_TYPE_ICONS[category] || '📍';
 }
 
-export function getNearbyFacilities(beach, facilities = [], limit = 5) {
+export function getNearbyFacilities(beach, facilities = [], limit = 5, maxDistanceKm = 1) {
     if (!Number.isFinite(beach?.lat) || !Number.isFinite(beach?.lon)) return [];
 
     return facilities
@@ -41,6 +41,7 @@ export function getNearbyFacilities(beach, facilities = [], limit = 5) {
                 icon: getFacilityIcon(category)
             };
         })
+        .filter((facility) => facility.distanceKm <= maxDistanceKm)
         .sort((a, b) => a.distanceKm - b.distanceKm)
         .slice(0, limit);
 }

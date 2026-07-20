@@ -72,6 +72,12 @@ test('best beach row selection scrolls the detail card into view', () => {
     assert.match(recommendationPanel, /bind:this=\{beachDetailElement\}/);
 });
 
+test('nearby panel places are limited to within one kilometre', () => {
+    assert.match(recommendationPanel, /const NEARBY_RADIUS_KM = 1/);
+    assert.match(recommendationPanel, /getNearbyFacilities\(beach,\s*allFacilities,\s*5,\s*NEARBY_RADIUS_KM\)/);
+    assert.match(recommendationPanel, /\.filter\(\(place\) => place\.distanceKm <= NEARBY_RADIUS_KM\)/);
+});
+
 test('selected beach detail can show a horizontally scrollable local photo strip', () => {
     assert.match(recommendationPanel, /getBeachImages/);
     assert.match(recommendationPanel, /\{#key selectedRecommendation\.beach\.name\}/);

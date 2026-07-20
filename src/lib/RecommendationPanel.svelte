@@ -19,6 +19,8 @@
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
+    const NEARBY_RADIUS_KM = 1;
+
     let {
         recommendations = [],
         beaches = [],
@@ -92,13 +94,14 @@
                 label: landmark.subtype === 'lighthouse' ? 'Lighthouse' : 'Landmark',
                 icon: landmark.subtype === 'lighthouse' ? '🗼' : '📍'
             }))
+            .filter((place) => place.distanceKm <= NEARBY_RADIUS_KM)
             .sort((a, b) => a.distanceKm - b.distanceKm)
             .slice(0, 2);
     }
 
     function getNearbyPlaces(beach, allLandmarks, allFacilities) {
         return [
-            ...getNearbyFacilities(beach, allFacilities, 5),
+            ...getNearbyFacilities(beach, allFacilities, 5, NEARBY_RADIUS_KM),
             ...getNearbyLandmarks(beach, allLandmarks)
         ]
             .sort((a, b) => a.distanceKm - b.distanceKm)
