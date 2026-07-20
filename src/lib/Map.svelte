@@ -14,6 +14,7 @@
         landmarks = [],
         filters = {},
         selectedBeachName = '',
+        panelMode = 'collapsed',
         mapNavigationRequest = null,
         onSelectBeach = () => {},
         onZoomChange = () => {},
@@ -220,11 +221,11 @@
 
     function fitVisibleBeaches() {
         const fitPoints = getVisibleBeachFitPoints(recommendations);
-        const signature = fitPoints.map((point) => point.join(',')).join('|');
+        const signature = `${panelMode}:${fitPoints.map((point) => point.join(',')).join('|')}`;
         if (!map || !fitPoints.length || signature === lastVisibleBeachFitSignature) return;
 
         lastVisibleBeachFitSignature = signature;
-        const fitSettings = getVisibleBeachFitSettings();
+        const fitSettings = getVisibleBeachFitSettings(panelMode);
 
         if (fitPoints.length === 1) {
             map.flyTo(fitPoints[0], fitSettings.singleBeachZoom, {
@@ -278,6 +279,13 @@
     $effect(() => {
         if (map) {
             initBeaches();
+        }
+    });
+
+    $effect(() => {
+        const currentPanelMode = panelMode;
+        if (map) {
+            fitVisibleBeaches();
         }
     });
 

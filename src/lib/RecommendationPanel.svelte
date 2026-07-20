@@ -21,6 +21,7 @@
         safetyNotices = [],
         forecastData = null,
         hourIndex = $bindable(0),
+        panelMode = $bindable(getDefaultPanelMode()),
         filters,
         activeTab = 'best',
         panelOpenRequest = 0,
@@ -48,7 +49,6 @@
     const bestNow = $derived(recommendations.filter((item) => item.state === 'best' || item.state === 'good').slice(0, 6));
     const later = $derived(recommendations.filter((item) => item.nextGood).slice(0, 8));
     const nearbyLandmarks = $derived(getNearbyLandmarks(selectedRecommendation?.beach, landmarks));
-    let panelMode = $state(getDefaultPanelMode());
     let lastHandledOpenRequest = $state(0);
     let rangeMode = $state('today');
     const isCollapsed = $derived(panelMode === 'collapsed');

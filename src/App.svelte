@@ -20,6 +20,7 @@
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
     let activeTab = $state('best');
+    let panelMode = $state('collapsed');
     let panelOpenRequest = $state(0);
     let mapNavigationRequest = $state(null);
     let mapNavigationSequence = 0;
@@ -156,6 +157,7 @@
         landmarks={$state.snapshot(landmarks)}
         {filters}
         selectedBeachName={selectedRecommendation?.beach.name}
+        {panelMode}
         {mapNavigationRequest}
         onSelectBeach={(name) => {
             selectedBeachName = name;
@@ -171,6 +173,7 @@
         safetyNotices={$state.snapshot(safetyNotices)}
         forecastData={$state.snapshot(forecastData)}
         bind:hourIndex
+        bind:panelMode
         {filters}
         {activeTab}
         {panelOpenRequest}

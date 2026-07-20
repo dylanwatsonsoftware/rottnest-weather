@@ -57,10 +57,18 @@ test('getVisibleBeachFitPoints uses currently shown beach recommendations', () =
 });
 
 test('visible beach fit leaves room for header and collapsed tray', () => {
-    const settings = getVisibleBeachFitSettings();
+    const settings = getVisibleBeachFitSettings('collapsed');
 
     assert.deepEqual(settings.fitBoundsOptions.paddingTopLeft, [42, 140]);
     assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] >= 160);
     assert.equal(settings.fitBoundsOptions.maxZoom, 14);
     assert.equal(settings.singleBeachZoom, 14);
+});
+
+test('visible beach fit uses deeper bottom padding for expanded panel', () => {
+    const collapsed = getVisibleBeachFitSettings('collapsed');
+    const expanded = getVisibleBeachFitSettings('expanded');
+
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] > collapsed.fitBoundsOptions.paddingBottomRight[1]);
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] >= 360);
 });

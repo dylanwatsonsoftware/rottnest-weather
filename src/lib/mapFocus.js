@@ -15,12 +15,14 @@ export function getLandmarkFitPoints(landmarks = []) {
         .map((landmark) => [landmark.lat, landmark.lon]);
 }
 
-export function getVisibleBeachFitSettings() {
+export function getVisibleBeachFitSettings(panelMode = 'collapsed') {
+    const expandedPanel = panelMode !== 'collapsed';
+
     return {
         singleBeachZoom: 14,
         fitBoundsOptions: {
             paddingTopLeft: [42, 140],
-            paddingBottomRight: [42, 170],
+            paddingBottomRight: [42, expandedPanel ? 390 : 170],
             maxZoom: 14
         }
     };
