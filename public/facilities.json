@@ -89,7 +89,7 @@
     },
     {
         "id": "pinkys-rottnest-island",
-        "name": "Pinky's Rottnest Island",
+        "name": "Pinky's Beach Club",
         "lat": -31.9895018,
         "lon": 115.5388461,
         "type": "facility",
@@ -102,7 +102,6 @@
         "coordinate_checked_at": "2026-07-20",
         "osm_type": "node",
         "osm_id": 9409361909,
-        "osm_name": "Pinky's Beach Club",
         "osm_tags": {
             "leisure": "beach_resort"
         }
