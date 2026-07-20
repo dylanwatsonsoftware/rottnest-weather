@@ -177,7 +177,9 @@ export function buildBestBeachTimeline(recommendations = [], forecastData, range
     recommendations.forEach((recommendation) => {
         buildBeachStatusTimeline(recommendation.beach, forecastData, range).forEach((item) => {
             const current = bestByHour.get(item.hourIndex);
-            if (!current || item.score > current.score || (item.score === current.score && item.beach.name.localeCompare(current.beach.name) < 0)) {
+            const candidateName = recommendation.beach.name;
+            const currentName = current?.beach?.name || '';
+            if (!current || item.score > current.score || (item.score === current.score && candidateName.localeCompare(currentName) < 0)) {
                 bestByHour.set(item.hourIndex, {
                     ...item,
                     beach: recommendation.beach

@@ -84,6 +84,18 @@ test('buildBestBeachTimeline picks the highest scoring beach for each forecast h
     assert.deepEqual(timeline.map((item) => item.state), ['good', 'good']);
 });
 
+test('buildBestBeachTimeline breaks tied scores by beach name without throwing', () => {
+    const tiedRecommendations = buildRecommendations([
+        { name: 'Zed Bay', ok_winds: ['SW'], lat: -32, lon: 115.5 },
+        { name: 'Alpha Bay', ok_winds: ['SW'], lat: -32.01, lon: 115.51 }
+    ], forecast, 0);
+
+    const timeline = buildBestBeachTimeline(tiedRecommendations, forecast, { min: 0, max: 0 });
+
+    assert.equal(timeline[0].score, 92);
+    assert.equal(timeline[0].beach.name, 'Alpha Bay');
+});
+
 test('buildBestBeachTimeline returns no items without recommendations or forecast times', () => {
     assert.deepEqual(buildBestBeachTimeline([], forecast, { min: 0, max: 1 }), []);
     assert.deepEqual(buildBestBeachTimeline(buildRecommendations(beaches, forecast, 0), null, { min: 0, max: 1 }), []);
