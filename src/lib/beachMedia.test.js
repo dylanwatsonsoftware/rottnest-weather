@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
-import beaches from '../../public/beaches.json' with { type: 'json' };
 import { BEACH_MEDIA, getBeachImages } from './beachMedia.js';
 
+const beaches = JSON.parse(readFileSync(new URL('../../public/beaches.json', import.meta.url), 'utf8'));
 const BEACH_NAMES = new Set(beaches.map((beach) => beach.name));
 
 test('beach media is keyed to known beaches and local image files', () => {

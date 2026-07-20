@@ -18,6 +18,7 @@
     } from './panelState.js';
     import { getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities } from './facilities.js';
     import { getBeachImages } from './beachMedia.js';
+    import { getPlaceImages } from './placeMedia.js';
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
@@ -185,6 +186,10 @@
             progress: `${getRangeProgressPercent(forecastRange, hourIndex)}%`,
             summary: getStatusWindowSummary(timeline, hourIndex)
         };
+    }
+
+    function getPrimaryPlaceImage(place) {
+        return getPlaceImages(place?.name)[0] ?? null;
     }
 
     async function selectRecommendationRow(beachName) {
@@ -465,7 +470,11 @@
                     <div class="nearby-list">
                         <strong>Nearby</strong>
                         {#each nearbyPlaces as place}
-                            <button type="button" onclick={() => navigatePlaceToMap(place)}>
+                            {@const placeImage = getPrimaryPlaceImage(place)}
+                            <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
+                                {#if placeImage}
+                                    <img class="nearby-place-thumbnail" src={placeImage.src} alt={placeImage.alt} loading="lazy" />
+                                {/if}
                                 <span>
                                     <small aria-hidden="true">{place.icon || getFacilityIcon(place.category)}</small>
                                     {place.name}

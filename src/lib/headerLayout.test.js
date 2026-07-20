@@ -118,6 +118,14 @@ test('selected beach detail can show a horizontally scrollable local photo strip
     assert.match(css, /\.beach-photo-strip img\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
 });
 
+test('nearby landmarks and food venues can show bundled place photos', () => {
+    assert.match(recommendationPanel, /getPlaceImages/);
+    assert.match(recommendationPanel, /getPrimaryPlaceImage\(place\)/);
+    assert.match(recommendationPanel, /class="nearby-place-thumbnail"/);
+    assert.match(recommendationPanel, /alt=\{placeImage\.alt\}/);
+    assert.match(css, /\.nearby-place-thumbnail\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
+});
+
 test('beach photos can open in a larger modal view', () => {
     assert.match(recommendationPanel, /let selectedPhoto = \$state\(null\)/);
     assert.match(recommendationPanel, /onclick=\{\(\) => selectedPhoto = image\}/);

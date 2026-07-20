@@ -1150,6 +1150,18 @@ main {
     text-align: left;
 }
 
+.nearby-list button.with-photo {
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+}
+
+.nearby-place-thumbnail {
+    width: 58px;
+    aspect-ratio: 4 / 3;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #dbe5e5;
+}
+
 .nearby-list button span {
     display: flex;
     align-items: center;
@@ -1309,6 +1321,17 @@ main {
 
 .place-label.selected {
     border-color: #0b7583;
+}
+
+.place-popup-image {
+    width: 180px;
+    max-width: 56vw;
+    aspect-ratio: 4 / 3;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #dbe5e5;
 }
 
 .leaflet-tooltip-top:before {

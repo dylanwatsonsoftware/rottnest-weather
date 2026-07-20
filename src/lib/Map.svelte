@@ -16,6 +16,7 @@
         getVisibleBeachFitSettings
     } from './mapFocus.js';
     import { getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
+    import { getPrimaryPlaceImage } from './placeMedia.js';
     import { isWithinRottnestBounds } from './recommendations.js';
 
     let {
@@ -245,10 +246,12 @@
     }
 
     function getPlacePopup(place) {
+        const image = getPrimaryPlaceImage(place);
         const parts = [
+            image ? `<img class="place-popup-image" src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" />` : '',
             `<strong>${escapeHtml(place.name)}</strong>`,
             `Type: ${escapeHtml(getFacilityTypeLabel(place))}`
-        ];
+        ].filter(Boolean);
 
         const ratingLabel = getFacilityRatingLabel(place);
         if (ratingLabel) {
