@@ -12,6 +12,7 @@
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
     } from './mapFocus.js';
+    import { isWithinRottnestBounds } from './recommendations.js';
 
     let {
         recommendations = [],
@@ -136,6 +137,13 @@
         });
 
         map.on('locationfound', (e) => {
+            const location = { lat: e.latlng.lat, lon: e.latlng.lng };
+            if (!isWithinRottnestBounds(location)) {
+                clearUserLocation();
+                onUserLocationChange(null);
+                return;
+            }
+
             if (userLocationMarker) {
                 userLocationMarker.setLatLng(e.latlng);
             } else {
@@ -155,11 +163,22 @@
                     weight: 1
                 }).addTo(map);
             }
-            onUserLocationChange({ lat: e.latlng.lat, lon: e.latlng.lng });
+            onUserLocationChange(location);
             updateUserLocationVisibility();
         });
 
         map.locate({setView: false, watch: true});
+    }
+
+    function clearUserLocation() {
+        if (userLocationMarker) {
+            userLocationMarker.remove();
+            userLocationMarker = null;
+        }
+        if (userLocationCircle) {
+            userLocationCircle.remove();
+            userLocationCircle = null;
+        }
     }
 
     function getBeachIcon(recommendation) {
