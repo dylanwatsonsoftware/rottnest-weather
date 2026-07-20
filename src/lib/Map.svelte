@@ -2,7 +2,12 @@
     import { onMount } from 'svelte';
     import L from 'leaflet';
     import 'leaflet/dist/leaflet.css';
-    import { getInitialFitSettings, getLandmarkFitPoints } from './mapFocus.js';
+    import {
+        getInitialFitSettings,
+        getLandmarkFitPoints,
+        getVisibleBeachFitPoints,
+        getVisibleBeachFitSettings
+    } from './mapFocus.js';
 
     let {
         recommendations = [],
@@ -24,6 +29,7 @@
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
+    let lastVisibleBeachFitSignature = '';
 
     const stateIcons = {
         best: '★',
@@ -99,6 +105,7 @@
             }
         });
         updateBeaches();
+        fitVisibleBeaches();
     }
 
     function updateBeaches() {
@@ -207,6 +214,32 @@
         if (fitSettings.minZoom && map.getZoom() < fitSettings.minZoom) {
             map.setView(bounds.getCenter(), fitSettings.minZoom, { animate: false });
         }
+        currentZoom = map.getZoom();
+        onZoomChange(currentZoom);
+    }
+
+    function fitVisibleBeaches() {
+        const fitPoints = getVisibleBeachFitPoints(recommendations);
+        const signature = fitPoints.map((point) => point.join(',')).join('|');
+        if (!map || !fitPoints.length || signature === lastVisibleBeachFitSignature) return;
+
+        lastVisibleBeachFitSignature = signature;
+        const fitSettings = getVisibleBeachFitSettings();
+
+        if (fitPoints.length === 1) {
+            map.flyTo(fitPoints[0], fitSettings.singleBeachZoom, {
+                animate: true,
+                duration: 0.35
+            });
+        } else {
+            const bounds = L.latLngBounds(fitPoints);
+            map.flyToBounds(bounds, {
+                ...fitSettings.fitBoundsOptions,
+                animate: true,
+                duration: 0.35
+            });
+        }
+
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
     }

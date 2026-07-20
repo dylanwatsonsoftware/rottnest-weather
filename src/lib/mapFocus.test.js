@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
     getInitialFitSettings,
     getLandmarkFitPoints,
-    getMapNavigationTarget
+    getMapNavigationTarget,
+    getVisibleBeachFitPoints,
+    getVisibleBeachFitSettings
 } from './mapFocus.js';
 
 test('getLandmarkFitPoints uses every known landmark coordinate for initial load', () => {
@@ -39,4 +41,26 @@ test('getMapNavigationTarget creates a stable map destination', () => {
 
 test('getMapNavigationTarget ignores unmappable places', () => {
     assert.equal(getMapNavigationTarget({ name: 'Missing' }), null);
+});
+
+test('getVisibleBeachFitPoints uses currently shown beach recommendations', () => {
+    const points = getVisibleBeachFitPoints([
+        { beach: { name: 'A', lat: -31.99, lon: 115.54 } },
+        { beach: { name: 'Missing latitude', lon: 115.52 } },
+        { beach: { name: 'B', lat: -32.02, lon: 115.53 } }
+    ]);
+
+    assert.deepEqual(points, [
+        [-31.99, 115.54],
+        [-32.02, 115.53]
+    ]);
+});
+
+test('visible beach fit leaves room for header and collapsed tray', () => {
+    const settings = getVisibleBeachFitSettings();
+
+    assert.deepEqual(settings.fitBoundsOptions.paddingTopLeft, [42, 140]);
+    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] >= 160);
+    assert.equal(settings.fitBoundsOptions.maxZoom, 14);
+    assert.equal(settings.singleBeachZoom, 14);
 });

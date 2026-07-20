@@ -15,6 +15,24 @@ export function getLandmarkFitPoints(landmarks = []) {
         .map((landmark) => [landmark.lat, landmark.lon]);
 }
 
+export function getVisibleBeachFitSettings() {
+    return {
+        singleBeachZoom: 14,
+        fitBoundsOptions: {
+            paddingTopLeft: [42, 140],
+            paddingBottomRight: [42, 170],
+            maxZoom: 14
+        }
+    };
+}
+
+export function getVisibleBeachFitPoints(recommendations = []) {
+    return recommendations
+        .map((recommendation) => recommendation.beach)
+        .filter((beach) => Number.isFinite(beach?.lat) && Number.isFinite(beach?.lon))
+        .map((beach) => [beach.lat, beach.lon]);
+}
+
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 
