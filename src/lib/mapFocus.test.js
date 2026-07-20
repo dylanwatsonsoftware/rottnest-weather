@@ -5,6 +5,7 @@ import {
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
     getMapNavigationTarget,
+    getPanelModeMapOffset,
     getPanelModePanOffset,
     getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
@@ -47,12 +48,12 @@ test('getMapNavigationTarget ignores unmappable places', () => {
 });
 
 test('getBeachSelectionMapTarget centers selected beaches with panel offset', () => {
-    assert.deepEqual(getBeachSelectionMapTarget({ name: 'Parker Point', lat: -32.023, lon: 115.528 }), {
+    assert.deepEqual(getBeachSelectionMapTarget({ name: 'Parker Point', lat: -32.023, lon: 115.528 }, 'expanded'), {
         name: 'Parker Point',
         lat: -32.023,
         lon: 115.528,
         zoom: 15,
-        offset: [0, 180]
+        offset: [0, 320]
     });
 });
 
@@ -83,7 +84,7 @@ test('visible beach fit uses deeper bottom padding for expanded panel', () => {
     const expanded = getVisibleBeachFitSettings('expanded');
 
     assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] > collapsed.fitBoundsOptions.paddingBottomRight[1]);
-    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] >= 360);
+    assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] >= 520);
 });
 
 test('visible beach fit preserves zoom when only panel mode changes', () => {
@@ -93,7 +94,12 @@ test('visible beach fit preserves zoom when only panel mode changes', () => {
 });
 
 test('panel mode pan offset adjusts center without changing zoom', () => {
-    assert.deepEqual(getPanelModePanOffset('collapsed', 'expanded'), [0, 180]);
-    assert.deepEqual(getPanelModePanOffset('expanded', 'collapsed'), [0, -180]);
+    assert.deepEqual(getPanelModePanOffset('collapsed', 'expanded'), [0, 300]);
+    assert.deepEqual(getPanelModePanOffset('expanded', 'collapsed'), [0, -300]);
     assert.deepEqual(getPanelModePanOffset('collapsed', 'collapsed'), [0, 0]);
+});
+
+test('panel mode map offsets leave extra room for expanded sheet', () => {
+    assert.deepEqual(getPanelModeMapOffset('collapsed'), [0, 180]);
+    assert.deepEqual(getPanelModeMapOffset('expanded'), [0, 320]);
 });

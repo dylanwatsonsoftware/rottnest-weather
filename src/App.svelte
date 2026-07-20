@@ -78,7 +78,7 @@
     function selectBeach(name) {
         selectedBeachName = name;
         const beach = beaches.find((item) => item.name === name);
-        const target = getBeachSelectionMapTarget(beach);
+        const target = getBeachSelectionMapTarget(beach, panelMode);
         if (target) navigateToMapTarget(target);
     }
 

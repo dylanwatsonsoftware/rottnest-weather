@@ -12,7 +12,7 @@
         shouldShowConfidenceLabel
     } from './panelState.js';
     import { buildBeachStatusTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
-    import { getMapNavigationTarget } from './mapFocus.js';
+    import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
     let {
         recommendations = [],
@@ -82,7 +82,7 @@
     }
 
     function navigatePlaceToMap(place) {
-        const target = getMapNavigationTarget(place);
+        const target = getMapNavigationTarget(place, 15, getPanelModeMapOffset(panelMode));
         if (!target) return;
         onNavigateToMap({
             ...target,

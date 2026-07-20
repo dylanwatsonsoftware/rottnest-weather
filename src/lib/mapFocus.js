@@ -22,7 +22,7 @@ export function getVisibleBeachFitSettings(panelMode = 'collapsed') {
         singleBeachZoom: 14,
         fitBoundsOptions: {
             paddingTopLeft: [42, 140],
-            paddingBottomRight: [42, expandedPanel ? 390 : 170],
+            paddingBottomRight: [42, expandedPanel ? 560 : 170],
             maxZoom: 14
         }
     };
@@ -43,11 +43,15 @@ export function getVisibleBeachFitReason(previousPointsSignature, nextPointsSign
 
 export function getPanelModePanOffset(previousPanelMode, nextPanelMode) {
     if (previousPanelMode === nextPanelMode) return [0, 0];
-    return nextPanelMode === 'collapsed' ? [0, -180] : [0, 180];
+    return nextPanelMode === 'collapsed' ? [0, -300] : [0, 300];
 }
 
-export function getBeachSelectionMapTarget(beach) {
-    return getMapNavigationTarget(beach);
+export function getPanelModeMapOffset(panelMode = 'collapsed') {
+    return panelMode === 'collapsed' ? [0, 180] : [0, 320];
+}
+
+export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed') {
+    return getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode));
 }
 
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
