@@ -5,6 +5,7 @@
     import {
         getInitialFitSettings,
         getLandmarkFitPoints,
+        getNavigationSettleDelay,
         getPanelModePanOffset,
         getVisibleMapAnchorOffset,
         getVisibleBeachFitReason,
@@ -299,17 +300,22 @@
         if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
 
         lastNavigationRequestId = request.requestId;
-        requestAnimationFrame(() => {
+        window.setTimeout(() => {
             if (!map) return;
-            const zoom = request.zoom || 15;
-            const center = getOffsetCenter(request, zoom);
-            map.flyTo(center, zoom, {
-                animate: true,
-                duration: 0.45
+            if (request.requestId !== lastNavigationRequestId) return;
+
+            requestAnimationFrame(() => {
+                if (!map || request.requestId !== lastNavigationRequestId) return;
+                const zoom = request.zoom || 15;
+                const center = getOffsetCenter(request, zoom);
+                map.flyTo(center, zoom, {
+                    animate: true,
+                    duration: 0.45
+                });
+                currentZoom = map.getZoom();
+                onZoomChange(currentZoom);
             });
-            currentZoom = map.getZoom();
-            onZoomChange(currentZoom);
-        });
+        }, getNavigationSettleDelay(request));
     }
 
     function getOffsetCenter(request, zoom) {

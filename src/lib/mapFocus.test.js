@@ -7,6 +7,7 @@ import {
     getMapLayoutChangeTarget,
     getMapLayout,
     getMapNavigationTarget,
+    getNavigationSettleDelay,
     getPanelModeMapOffset,
     getPanelModePanOffset,
     getVisibleMapAnchorOffset,
@@ -60,7 +61,8 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
         visibleAnchor: {
             targetXRatio: 0.5,
             targetYRatio: 0.5,
-            constrainVerticalByPanel: false
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
         }
     });
 });
@@ -83,7 +85,8 @@ test('getMapLayoutChangeTarget recenters selected beach when orientation layout 
         visibleAnchor: {
             targetXRatio: 0.5,
             targetYRatio: 0.5,
-            constrainVerticalByPanel: false
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
         }
     });
     assert.equal(getMapLayoutChangeTarget(beach, 'expanded', 'default', 'default'), null);
@@ -178,4 +181,11 @@ test('visible map anchor offset can center selected items in the map viewport be
         visibleBottom: 800,
         targetYRatio: 0.5
     }), [0, -40]);
+});
+
+test('selected beach navigation waits for the expanding panel to settle before measuring', () => {
+    const target = getBeachSelectionMapTarget({ name: 'Parker Point', lat: -32.023, lon: 115.528 }, 'expanded');
+
+    assert.ok(getNavigationSettleDelay(target) >= 200);
+    assert.equal(getNavigationSettleDelay(getMapNavigationTarget({ name: 'Jetty', lat: -32, lon: 115.5 })), 0);
 });

@@ -79,6 +79,8 @@ export function getPanelModeMapOffset(panelMode = 'collapsed', mapLayout = 'defa
     return panelMode === 'collapsed' ? [0, 180] : [0, 320];
 }
 
+export const PANEL_TRANSITION_SETTLE_MS = 220;
+
 export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLayout = 'default') {
     const target = getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
     if (!target) return null;
@@ -88,7 +90,8 @@ export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLa
         visibleAnchor: {
             targetXRatio: 0.5,
             targetYRatio: 0.5,
-            constrainVerticalByPanel: false
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
         }
     };
 }
@@ -135,6 +138,10 @@ export function getVisibleMapAnchorOffset({
         Math.round(safeMapWidth / 2 - targetX),
         Math.round(safeMapHeight / 2 - targetY)
     ];
+}
+
+export function getNavigationSettleDelay(request = {}) {
+    return request.visibleAnchor?.waitForPanelTransition ? PANEL_TRANSITION_SETTLE_MS : 0;
 }
 
 function clampPixel(value, min, max) {
