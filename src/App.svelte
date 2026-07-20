@@ -10,6 +10,7 @@
         getSafetyNotices
     } from './lib/recommendations.js';
     import { mergeFacilityEnrichment } from './lib/facilities.js';
+    import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import './app.css';
 
@@ -95,6 +96,37 @@
         panelOpenRequest += 1;
     }
 
+    function getNearestForecastHourIndex(nextForecastData, now = new Date()) {
+        let nearestHourIndex = 0;
+        let minDiff = Infinity;
+
+        nextForecastData?.time?.forEach((time, index) => {
+            const diff = Math.abs(new Date(time) - now);
+            if (diff < minDiff) {
+                minDiff = diff;
+                nearestHourIndex = index;
+            }
+        });
+
+        return nearestHourIndex;
+    }
+
+    function applyAppData(nextAppData) {
+        beaches = nextAppData.beaches;
+        landmarks = nextAppData.landmarks;
+        facilities = nextAppData.facilities;
+        forecastData = nextAppData.forecastData;
+        hourIndex = getNearestForecastHourIndex(nextAppData.forecastData);
+    }
+
+    function applyCachedAppData(cachedAppData) {
+        if (!cachedAppData) return false;
+        applyAppData(cachedAppData);
+        loading = false;
+        loadError = '';
+        return true;
+    }
+
     onMount(() => {
         function updateMapLayout() {
             const nextMapLayout = getMapLayout({
@@ -122,15 +154,15 @@
                     fetch('/place-enrichment.json')
                 ]);
 
-                beaches = await beachesRes.json();
-                landmarks = await landmarksRes.json();
-                facilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
+                const nextBeaches = await beachesRes.json();
+                const nextLandmarks = await landmarksRes.json();
+                const nextFacilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
                 const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
                 if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
                 const weatherJson = await weatherRes.json();
 
-                forecastData = {
+                let nextForecastData = {
                     ...weatherJson.hourly
                 };
 
@@ -138,8 +170,8 @@
                     const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10');
                     if (marineRes.ok) {
                         const marineJson = await marineRes.json();
-                        forecastData = {
-                            ...forecastData,
+                        nextForecastData = {
+                            ...nextForecastData,
                             swell_wave_height: marineJson.hourly.swell_wave_height
                         };
                     } else {
@@ -149,15 +181,15 @@
                     loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
                 }
 
-                const now = new Date();
-                let minDiff = Infinity;
-                forecastData.time.forEach((t, i) => {
-                    const diff = Math.abs(new Date(t) - now);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        hourIndex = i;
-                    }
-                });
+                const nextAppData = {
+                    beaches: nextBeaches,
+                    landmarks: nextLandmarks,
+                    facilities: nextFacilities,
+                    forecastData: nextForecastData
+                };
+
+                applyAppData(nextAppData);
+                writeForecastCache(localStorage, nextAppData);
             } catch (error) {
                 console.error('Error loading data:', error);
                 loadError = 'Forecast data is unavailable. Beach recommendations are low confidence.';
@@ -165,6 +197,9 @@
                 loading = false;
             }
         }
+
+        const cachedAppData = readForecastCache(localStorage);
+        applyCachedAppData(cachedAppData);
 
         loadAppData();
 
@@ -180,6 +215,7 @@
     const selectedRecommendation = $derived(
         recommendations.find((item) => item.beach.name === selectedBeachName) || recommendations[0] || null
     );
+    const hasLoadedForecast = $derived(!loading && Boolean(forecastData?.time?.length));
     const safetyNotices = $derived([
         ...getSafetyNotices({
             windSpeed: currentConditions.windSpeed,
@@ -219,22 +255,24 @@
         }}
         onZoomChange={(zoom) => mapZoom = zoom}
     />
-    <RecommendationPanel
-        {beaches}
-        recommendations={$state.snapshot(recommendations)}
-        landmarks={$state.snapshot(landmarks)}
-        facilities={$state.snapshot(facilities)}
-        selectedRecommendation={$state.snapshot(selectedRecommendation)}
-        safetyNotices={$state.snapshot(safetyNotices)}
-        forecastData={$state.snapshot(forecastData)}
-        bind:hourIndex
-        bind:panelMode
-        {filters}
-        {mapLayout}
-        {panelOpenRequest}
-        onSelectBeach={selectBeach}
-        onStateFilterChange={updateStateFilter}
-        onToggleFilter={updateLayerFilter}
-        onNavigateToMap={navigateToMapTarget}
-    />
+    {#if hasLoadedForecast}
+        <RecommendationPanel
+            {beaches}
+            recommendations={$state.snapshot(recommendations)}
+            landmarks={$state.snapshot(landmarks)}
+            facilities={$state.snapshot(facilities)}
+            selectedRecommendation={$state.snapshot(selectedRecommendation)}
+            safetyNotices={$state.snapshot(safetyNotices)}
+            forecastData={$state.snapshot(forecastData)}
+            bind:hourIndex
+            bind:panelMode
+            {filters}
+            {mapLayout}
+            {panelOpenRequest}
+            onSelectBeach={selectBeach}
+            onStateFilterChange={updateStateFilter}
+            onToggleFilter={updateLayerFilter}
+            onNavigateToMap={navigateToMapTarget}
+        />
+    {/if}
 </main>

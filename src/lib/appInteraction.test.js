@@ -26,3 +26,15 @@ test('recommendation rows describe the selected status window instead of repeati
     assert.match(panel, /getRecommendationWindowSummary\(item\)/);
     assert.doesNotMatch(panel, /<small>\{item\.summary\}<\/small>/);
 });
+
+test('app hydrates cached forecast data before refreshing from the network', () => {
+    assert.match(app, /import \{ readForecastCache, writeForecastCache \} from '\.\/lib\/forecastCache\.js';/);
+    assert.match(app, /const cachedAppData = readForecastCache\(localStorage\);/);
+    assert.match(app, /applyCachedAppData\(cachedAppData\)/);
+    assert.match(app, /writeForecastCache\(localStorage,/);
+});
+
+test('recommendation panel waits until forecast data is ready', () => {
+    assert.match(app, /const hasLoadedForecast = \$derived\(!loading && Boolean\(forecastData\?\.time\?\.length\)\);/);
+    assert.match(app, /\{#if hasLoadedForecast\}[\s\S]*<RecommendationPanel/);
+});
