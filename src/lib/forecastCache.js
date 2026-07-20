@@ -18,12 +18,21 @@ function isRecent(payload, now) {
     return now.getTime() - savedAt.getTime() <= FORECAST_CACHE_MAX_AGE_MS;
 }
 
+function hasForecastCoverage(payload, now) {
+    const times = payload?.forecastData?.time || [];
+    return times.some((time) => {
+        const forecastTime = new Date(time);
+        return !Number.isNaN(forecastTime.getTime()) && forecastTime >= now;
+    });
+}
+
 export function readForecastCache(storage = globalThis.localStorage, now = new Date()) {
     try {
         const raw = storage?.getItem?.(FORECAST_CACHE_KEY);
         if (!raw) return null;
         const payload = JSON.parse(raw);
-        if (!hasAppData(payload) || !isRecent(payload, now)) return null;
+        if (!hasAppData(payload)) return null;
+        if (!isRecent(payload, now) && !hasForecastCoverage(payload, now)) return null;
         return payload;
     } catch (error) {
         return null;

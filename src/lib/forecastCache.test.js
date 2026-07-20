@@ -48,19 +48,37 @@ test('readForecastCache returns a recent complete cached app payload', () => {
         [FORECAST_CACHE_KEY]: JSON.stringify(cached)
     });
 
-    assert.deepEqual(readForecastCache(storage, new Date('2026-07-20T10:00:00.000Z')), cached);
+    assert.deepEqual(readForecastCache(storage, new Date('2026-07-20T10:00:00')), cached);
 });
 
-test('readForecastCache ignores stale cached forecasts', () => {
+test('readForecastCache reuses older cached forecasts while they still cover the current time', () => {
+    const now = new Date('2026-07-20T10:00:00');
     const cached = {
         ...completeCachedData,
-        savedAt: new Date(Date.parse('2026-07-20T10:00:00.000Z') - FORECAST_CACHE_MAX_AGE_MS - 1).toISOString()
+        forecastData: {
+            ...completeCachedData.forecastData,
+            time: ['2026-07-20T08:00', '2026-07-20T11:00']
+        },
+        savedAt: new Date(now.getTime() - FORECAST_CACHE_MAX_AGE_MS - 1).toISOString()
     };
     const storage = createStorage({
         [FORECAST_CACHE_KEY]: JSON.stringify(cached)
     });
 
-    assert.equal(readForecastCache(storage, new Date('2026-07-20T10:00:00.000Z')), null);
+    assert.deepEqual(readForecastCache(storage, now), cached);
+});
+
+test('readForecastCache ignores cached forecasts that no longer cover the current time', () => {
+    const now = new Date('2026-07-20T10:00:00');
+    const cached = {
+        ...completeCachedData,
+        savedAt: new Date(now.getTime() - FORECAST_CACHE_MAX_AGE_MS - 1).toISOString()
+    };
+    const storage = createStorage({
+        [FORECAST_CACHE_KEY]: JSON.stringify(cached)
+    });
+
+    assert.equal(readForecastCache(storage, now), null);
 });
 
 test('readForecastCache ignores incomplete cached forecasts', () => {
