@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
     getInitialFitSettings,
     getLandmarkFitPoints,
+    getBeachSelectionMapTarget,
     getMapNavigationTarget,
     getPanelModePanOffset,
     getVisibleBeachFitReason,
@@ -43,6 +44,16 @@ test('getMapNavigationTarget creates a stable map destination', () => {
 
 test('getMapNavigationTarget ignores unmappable places', () => {
     assert.equal(getMapNavigationTarget({ name: 'Missing' }), null);
+});
+
+test('getBeachSelectionMapTarget centers selected beaches with panel offset', () => {
+    assert.deepEqual(getBeachSelectionMapTarget({ name: 'Parker Point', lat: -32.023, lon: 115.528 }), {
+        name: 'Parker Point',
+        lat: -32.023,
+        lon: 115.528,
+        zoom: 15,
+        offset: [0, 180]
+    });
 });
 
 test('getVisibleBeachFitPoints uses currently shown beach recommendations', () => {

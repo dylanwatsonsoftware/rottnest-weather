@@ -46,6 +46,10 @@ export function getPanelModePanOffset(previousPanelMode, nextPanelMode) {
     return nextPanelMode === 'collapsed' ? [0, -180] : [0, 180];
 }
 
+export function getBeachSelectionMapTarget(beach) {
+    return getMapNavigationTarget(beach);
+}
+
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 

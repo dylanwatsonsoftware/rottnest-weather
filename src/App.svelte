@@ -9,6 +9,7 @@
         getConditions,
         getSafetyNotices
     } from './lib/recommendations.js';
+    import { getBeachSelectionMapTarget } from './lib/mapFocus.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -72,6 +73,13 @@
                 showBusinesses: true
             };
         }
+    }
+
+    function selectBeach(name) {
+        selectedBeachName = name;
+        const beach = beaches.find((item) => item.name === name);
+        const target = getBeachSelectionMapTarget(beach);
+        if (target) navigateToMapTarget(target);
     }
 
     onMount(async () => {
@@ -160,7 +168,7 @@
         {panelMode}
         {mapNavigationRequest}
         onSelectBeach={(name) => {
-            selectedBeachName = name;
+            selectBeach(name);
             activeTab = 'best';
             panelOpenRequest += 1;
         }}
@@ -177,7 +185,7 @@
         {filters}
         {activeTab}
         {panelOpenRequest}
-        onSelectBeach={(name) => selectedBeachName = name}
+        onSelectBeach={selectBeach}
         onTabChange={(tab) => activeTab = tab}
         onStateFilterChange={updateStateFilter}
         onToggleFilter={updateLayerFilter}
