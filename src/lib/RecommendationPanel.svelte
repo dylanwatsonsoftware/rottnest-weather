@@ -9,7 +9,7 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
-    import { formatTime, RECOMMENDATION_STATES } from './recommendations.js';
+    import { buildBeachStatusTimeline, formatTime, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget } from './mapFocus.js';
 
     let {
@@ -52,6 +52,7 @@
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
+    const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
 
     function getNearbyLandmarks(beach, allLandmarks) {
         if (!beach?.lat || !beach?.lon) return [];
@@ -251,6 +252,32 @@
                         <span>{selectedRecommendation.confidence} confidence</span>
                     {/if}
                 </div>
+                {#if beachTimeline.length}
+                    <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
+                        <div class="timeline-heading">
+                            <strong>Status by time</strong>
+                            <span>{getRangeModeLabel(rangeMode)}</span>
+                        </div>
+                        <div class="timeline-chart">
+                            {#each beachTimeline as item}
+                                <button
+                                    type="button"
+                                    class="timeline-cell {item.state}"
+                                    class:active={item.hourIndex === hourIndex}
+                                    title="{item.label}: {item.summary}"
+                                    aria-label="{item.label}: {item.summary}"
+                                    onclick={() => hourIndex = item.hourIndex}
+                                >
+                                    <span>{item.score}</span>
+                                </button>
+                            {/each}
+                        </div>
+                        <div class="timeline-labels">
+                            <span>{beachTimeline[0].label}</span>
+                            <span>{beachTimeline[beachTimeline.length - 1].label}</span>
+                        </div>
+                    </div>
+                {/if}
                 <ul>
                     {#each selectedRecommendation.reasons.slice(0, 3) as reason}
                         <li>{reason}</li>

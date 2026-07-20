@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+    buildBeachStatusTimeline,
     buildRecommendations,
     filterRecommendations,
     getDirection,
@@ -55,6 +56,20 @@ test('buildRecommendations finds the next better forecast window', () => {
     assert.equal(sheltered.state, 'avoid');
     assert.equal(sheltered.nextGood.time, '2026-07-20T11:00');
     assert.equal(sheltered.nextGood.state, 'good');
+});
+
+test('buildBeachStatusTimeline scores one beach across a selected time range', () => {
+    const timeline = buildBeachStatusTimeline(beaches[0], forecast, { min: 0, max: 2 });
+
+    assert.equal(timeline.length, 3);
+    assert.deepEqual(timeline.map((item) => item.hourIndex), [0, 1, 2]);
+    assert.deepEqual(timeline.map((item) => item.state), ['good', 'avoid', 'avoid']);
+    assert.deepEqual(timeline.map((item) => item.label), ['08:00 AM', '09:00 AM', '10:00 AM']);
+});
+
+test('buildBeachStatusTimeline returns no items without beach or forecast times', () => {
+    assert.deepEqual(buildBeachStatusTimeline(null, forecast, { min: 0, max: 2 }), []);
+    assert.deepEqual(buildBeachStatusTimeline(beaches[0], null, { min: 0, max: 2 }), []);
 });
 
 test('filterRecommendations applies state filters and low-zoom simplification', () => {

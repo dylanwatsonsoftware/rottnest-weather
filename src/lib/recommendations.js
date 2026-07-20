@@ -130,6 +130,28 @@ export function buildRecommendations(beaches = [], forecastData, hourIndex = 0) 
         .sort((a, b) => b.score - a.score || a.beach.name.localeCompare(b.beach.name));
 }
 
+export function buildBeachStatusTimeline(beach, forecastData, range = {}) {
+    if (!beach || !forecastData?.time?.length) return [];
+
+    const min = clamp(range.min ?? 0, 0, forecastData.time.length - 1);
+    const max = clamp(range.max ?? forecastData.time.length - 1, min, forecastData.time.length - 1);
+    const items = [];
+
+    for (let index = min; index <= max; index += 1) {
+        const recommendation = scoreBeach(beach, getConditions(forecastData, index));
+        items.push({
+            hourIndex: index,
+            time: forecastData.time[index],
+            label: formatTimelineTime(forecastData.time[index]),
+            state: recommendation.state,
+            score: recommendation.score,
+            summary: recommendation.summary
+        });
+    }
+
+    return items;
+}
+
 export function findNextGoodWindow(beach, forecastData, startIndex = 0) {
     if (!forecastData?.time?.length) return null;
 
@@ -267,6 +289,13 @@ function getSummary(state, score) {
     if (state === 'good') return `Good option (${score}/100)`;
     if (state === 'watch') return `Use caution (${score}/100)`;
     return `Avoid for now (${score}/100)`;
+}
+
+function formatTimelineTime(time) {
+    return new Date(time).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 function clamp(value, min, max) {
