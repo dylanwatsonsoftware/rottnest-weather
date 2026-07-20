@@ -56,3 +56,11 @@ test('app wires floating map search to all map data and navigation callbacks', (
     assert.match(app, /selectBeach\(name,\s*'expanded'\)/);
     assert.match(app, /panelOpenRequest \+= 1/);
 });
+
+test('map and search beach selections request the panel detail scroll', () => {
+    assert.match(app, /let panelScrollRequest = \$state\(0\)/);
+    assert.match(app, /function revealBeachInPanel\(name\)/);
+    assert.match(app, /panelOpenRequest \+= 1;\s+panelScrollRequest \+= 1;/);
+    assert.match(app, /onSelectBeach=\{revealBeachInPanel\}/);
+    assert.match(app, /\{panelScrollRequest\}/);
+});

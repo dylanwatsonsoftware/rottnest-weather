@@ -111,6 +111,14 @@ test('best beach row selection scrolls the detail card into view', () => {
     assert.match(recommendationPanel, /bind:this=\{beachDetailElement\}/);
 });
 
+test('external beach selections scroll the selected panel detail into view', () => {
+    assert.match(recommendationPanel, /panelScrollRequest = 0/);
+    assert.match(recommendationPanel, /let lastHandledScrollRequest = \$state\(0\)/);
+    assert.match(recommendationPanel, /function scrollBeachDetailIntoView\(\)/);
+    assert.match(recommendationPanel, /requestAnimationFrame\(scrollBeachDetailIntoView\)/);
+    assert.match(recommendationPanel, /lastHandledScrollRequest = panelScrollRequest/);
+});
+
 test('nearby panel places are limited to within one kilometre', () => {
     assert.match(recommendationPanel, /const NEARBY_RADIUS_KM = 1/);
     assert.match(recommendationPanel, /getNearbyFacilities\(beach,\s*allFacilities,\s*5,\s*NEARBY_RADIUS_KM\)/);

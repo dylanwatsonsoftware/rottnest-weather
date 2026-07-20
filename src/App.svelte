@@ -26,6 +26,7 @@
     let selectedBeachName = $state('');
     let panelMode = $state('collapsed');
     let panelOpenRequest = $state(0);
+    let panelScrollRequest = $state(0);
     let mapNavigationRequest = $state(null);
     let mapNavigationSequence = 0;
     let mapLayout = $state('default');
@@ -93,13 +94,17 @@
     }
 
     function selectTopRecommendation(name) {
-        selectBeach(name, 'expanded');
-        panelOpenRequest += 1;
+        revealBeachInPanel(name);
     }
 
     function selectSearchBeach(name) {
+        revealBeachInPanel(name);
+    }
+
+    function revealBeachInPanel(name) {
         selectBeach(name, 'expanded');
         panelOpenRequest += 1;
+        panelScrollRequest += 1;
     }
 
     function getNearestForecastHourIndex(nextForecastData, now = new Date()) {
@@ -255,10 +260,7 @@
         {panelMode}
         {mapLayout}
         {mapNavigationRequest}
-        onSelectBeach={(name) => {
-            selectBeach(name, 'expanded');
-            panelOpenRequest += 1;
-        }}
+        onSelectBeach={revealBeachInPanel}
         onZoomChange={(zoom) => mapZoom = zoom}
     />
     <MapSearch
@@ -284,6 +286,7 @@
             {filters}
             {mapLayout}
             {panelOpenRequest}
+            {panelScrollRequest}
             onSelectBeach={selectBeach}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}

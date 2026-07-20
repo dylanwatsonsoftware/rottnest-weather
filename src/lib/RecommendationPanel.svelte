@@ -37,6 +37,7 @@
         filters,
         mapLayout = 'default',
         panelOpenRequest = 0,
+        panelScrollRequest = 0,
         onSelectBeach = () => {},
         onStateFilterChange = () => {},
         onToggleFilter = () => {},
@@ -60,6 +61,7 @@
     const listedRecommendations = $derived(getListedRecommendations(recommendations, filters));
     const nearbyPlaces = $derived(getNearbyPlaces(selectedRecommendation?.beach, landmarks, facilities));
     let lastHandledOpenRequest = $state(0);
+    let lastHandledScrollRequest = $state(0);
     let rangeMode = $state('today');
     let timelineChartElement = $state(null);
     let timelineCellElements = new Map();
@@ -192,18 +194,32 @@
         return getPlaceImages(place?.name)[0] ?? null;
     }
 
-    async function selectRecommendationRow(beachName) {
-        onSelectBeach(beachName);
-        await tick();
+    function scrollBeachDetailIntoView() {
         beachDetailElement?.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
         });
     }
 
+    async function selectRecommendationRow(beachName) {
+        onSelectBeach(beachName);
+        await tick();
+        scrollBeachDetailIntoView();
+    }
+
     $effect(() => {
         panelMode = getPanelModeAfterOpenRequest(panelMode, panelOpenRequest, lastHandledOpenRequest);
         lastHandledOpenRequest = panelOpenRequest;
+    });
+
+    $effect(() => {
+        const selectedBeachName = selectedRecommendation?.beach.name;
+        if (!panelScrollRequest || panelScrollRequest === lastHandledScrollRequest) return;
+
+        lastHandledScrollRequest = panelScrollRequest;
+        tick().then(() => {
+            requestAnimationFrame(scrollBeachDetailIntoView);
+        });
     });
 
     $effect(() => {
