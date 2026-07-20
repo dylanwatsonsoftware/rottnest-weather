@@ -10,6 +10,7 @@ import {
     getNavigationSettleDelay,
     getPanelModeMapOffset,
     getPanelModePanOffset,
+    shouldShowBeachLabel,
     getVisibleMapAnchorOffset,
     getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
@@ -193,4 +194,29 @@ test('selected beach navigation waits for the expanding panel to settle before m
 
     assert.ok(getNavigationSettleDelay(target) >= 200);
     assert.equal(getNavigationSettleDelay(getMapNavigationTarget({ name: 'Jetty', lat: -32, lon: 115.5 })), 0);
+});
+
+test('beach labels are capped by zoom and recommendation rank to reduce map clutter', () => {
+    const recommendation = { beach: { name: 'Little Salmon Bay' }, state: 'watch', score: 50 };
+
+    assert.equal(shouldShowBeachLabel(recommendation, 12, '', 0), true);
+    assert.equal(shouldShowBeachLabel(recommendation, 12, '', 3), false);
+    assert.equal(shouldShowBeachLabel(recommendation, 13, '', 5), true);
+    assert.equal(shouldShowBeachLabel(recommendation, 13, '', 6), false);
+    assert.equal(shouldShowBeachLabel(recommendation, 15, '', 20), true);
+});
+
+test('selected and best beaches keep labels even when lower ranked', () => {
+    assert.equal(shouldShowBeachLabel(
+        { beach: { name: 'Selected Bay' }, state: 'avoid', score: 20 },
+        12,
+        'Selected Bay',
+        12
+    ), true);
+    assert.equal(shouldShowBeachLabel(
+        { beach: { name: 'Best Bay' }, state: 'best', score: 90 },
+        12,
+        '',
+        12
+    ), true);
 });

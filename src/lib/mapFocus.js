@@ -43,6 +43,16 @@ export function getVisibleBeachFitSettings(panelMode = 'collapsed', mapLayout = 
     };
 }
 
+export function shouldShowBeachLabel(recommendation = {}, zoom = 12, selectedBeachName = '', rank = 0) {
+    const beachName = recommendation.beach?.name || '';
+    if (beachName && beachName === selectedBeachName) return true;
+    if (recommendation.state === 'best') return true;
+    if (zoom >= 15) return true;
+    if (zoom >= 13) return rank < 6;
+    if (zoom >= 12) return rank < 3;
+    return rank < 1;
+}
+
 export function getVisibleBeachFitPoints(recommendations = []) {
     return recommendations
         .map((recommendation) => recommendation.beach)

@@ -7,6 +7,7 @@
         getLandmarkFitPoints,
         getNavigationSettleDelay,
         getPanelModePanOffset,
+        shouldShowBeachLabel,
         getVisibleMapAnchorOffset,
         getVisibleBeachFitReason,
         getVisibleBeachFitPoints,
@@ -97,7 +98,7 @@
         beachMarkers.forEach(mObj => mObj.marker.remove());
         beachMarkers = [];
 
-        recommendations.forEach(recommendation => {
+        recommendations.forEach((recommendation, index) => {
             const beach = recommendation.beach;
             if (beach.lat && beach.lon) {
                 const marker = L.marker([beach.lat, beach.lon], {
@@ -105,13 +106,13 @@
                 })
                 .on('click', () => onSelectBeach(beach.name))
                 .bindTooltip(beach.name, {
-                    permanent: currentZoom > 11 || recommendation.state === 'best',
+                    permanent: shouldShowBeachLabel(recommendation, currentZoom, selectedBeachName, index),
                     direction: 'top',
                     className: `beach-label ${recommendation.state}`,
                     offset: [0, -10]
                 })
                 .addTo(map);
-                beachMarkers.push({ marker, recommendation });
+                beachMarkers.push({ marker, recommendation, rank: index });
             }
         });
         updateBeaches();
@@ -192,8 +193,8 @@
     }
 
     function updateBeachLabels() {
-        beachMarkers.forEach(({ marker, recommendation }) => {
-            const shouldShow = currentZoom > 11 || recommendation.state === 'best' || recommendation.beach.name === selectedBeachName;
+        beachMarkers.forEach(({ marker, recommendation, rank }) => {
+            const shouldShow = shouldShowBeachLabel(recommendation, currentZoom, selectedBeachName, rank);
             const tooltip = marker.getTooltip();
             if (!tooltip) return;
 
