@@ -57,9 +57,20 @@ test('selected beach detail can show a horizontally scrollable local photo strip
     assert.match(recommendationPanel, /\{#key selectedRecommendation\.beach\.name\}/);
     assert.match(recommendationPanel, /class="beach-photo-strip"/);
     assert.match(recommendationPanel, /\{#each selectedBeachImages as image \(image\.src\)\}/);
+    assert.match(recommendationPanel, /class="beach-photo-button"/);
     assert.match(recommendationPanel, /loading="lazy"/);
     assert.match(css, /\.beach-photo-strip\s*{[^}]*overflow-x:\s*auto/s);
     assert.match(css, /\.beach-photo-strip img\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
+});
+
+test('beach photos can open in a larger modal view', () => {
+    assert.match(recommendationPanel, /let selectedPhoto = \$state\(null\)/);
+    assert.match(recommendationPanel, /onclick=\{\(\) => selectedPhoto = image\}/);
+    assert.match(recommendationPanel, /role="dialog"/);
+    assert.match(recommendationPanel, /class="beach-photo-modal"/);
+    assert.match(recommendationPanel, /class="beach-photo-modal-close"/);
+    assert.match(css, /\.beach-photo-modal\s*{[^}]*position:\s*fixed/s);
+    assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(74dvh,\s*720px\)/s);
 });
 
 test('top beach in the header is selectable', () => {

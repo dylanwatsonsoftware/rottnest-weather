@@ -601,13 +601,31 @@ main {
     scroll-snap-align: start;
 }
 
-.beach-photo-strip img {
+.beach-photo-button {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    border: 0;
+    border-radius: 8px;
+    display: block;
+    padding: 0;
+    background: #dbe5e5;
+    overflow: hidden;
+}
+
+.beach-photo-button:focus-visible {
+    outline: 3px solid #0b6476;
+    outline-offset: 2px;
+}
+
+.beach-photo-strip img,
+.beach-photo-modal-image {
+    width: 100%;
     object-fit: cover;
     display: block;
+}
+
+.beach-photo-strip img {
+    aspect-ratio: 4 / 3;
     border-radius: 8px;
-    background: #dbe5e5;
 }
 
 .beach-photo-strip figcaption {
@@ -631,6 +649,69 @@ main {
 
 .beach-photo-strip span {
     flex: 0 0 auto;
+}
+
+.beach-photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+}
+
+.beach-photo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(5, 20, 24, 0.78);
+}
+
+.beach-photo-modal-content {
+    position: relative;
+    z-index: 1;
+    width: min(960px, 100%);
+    max-height: calc(100dvh - 32px);
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.beach-photo-modal-image {
+    max-height: min(74dvh, 720px);
+    object-fit: contain;
+    border-radius: 8px;
+    background: #0a1d21;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.42);
+}
+
+.beach-photo-modal-content figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.76rem;
+    font-weight: 750;
+}
+
+.beach-photo-modal-content figcaption span:first-child {
+    flex-basis: 100%;
+}
+
+.beach-photo-modal-content a {
+    color: white;
+}
+
+.beach-photo-modal-close {
+    justify-self: end;
+    min-height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    font-weight: 850;
 }
 
 .status-timeline {

@@ -60,6 +60,7 @@
     let rangeMode = $state('today');
     let timelineChartElement = $state(null);
     let timelineCellElements = new Map();
+    let selectedPhoto = $state(null);
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
@@ -155,6 +156,11 @@
     $effect(() => {
         panelMode = getPanelModeAfterOpenRequest(panelMode, panelOpenRequest, lastHandledOpenRequest);
         lastHandledOpenRequest = panelOpenRequest;
+    });
+
+    $effect(() => {
+        const selectedBeachName = selectedRecommendation?.beach.name;
+        selectedPhoto = null;
     });
 
     $effect(() => {
@@ -352,7 +358,14 @@
                         <div class="beach-photo-strip" aria-label="{selectedRecommendation.beach.name} photos">
                             {#each selectedBeachImages as image (image.src)}
                                 <figure>
-                                    <img src={image.src} alt={image.alt} loading="lazy" />
+                                    <button
+                                        class="beach-photo-button"
+                                        type="button"
+                                        aria-label="Open larger photo of {selectedRecommendation.beach.name}"
+                                        onclick={() => selectedPhoto = image}
+                                    >
+                                        <img src={image.src} alt={image.alt} loading="lazy" />
+                                    </button>
                                     <figcaption>
                                         <a href={image.sourceUrl} target="_blank" rel="noreferrer">{image.author}</a>
                                         <span>{image.license}</span>
@@ -455,4 +468,19 @@
         {/if}
     </div>
     </div>
+
+    {#if selectedPhoto}
+        <div class="beach-photo-modal" role="dialog" aria-modal="true" aria-label="Larger beach photo">
+            <button class="beach-photo-modal-backdrop" type="button" aria-label="Close larger photo" onclick={() => selectedPhoto = null}></button>
+            <figure class="beach-photo-modal-content">
+                <img class="beach-photo-modal-image" src={selectedPhoto.src} alt={selectedPhoto.alt} />
+                <button class="beach-photo-modal-close" type="button" onclick={() => selectedPhoto = null}>Close</button>
+                <figcaption>
+                    <span>{selectedPhoto.alt}</span>
+                    <a href={selectedPhoto.sourceUrl} target="_blank" rel="noreferrer">{selectedPhoto.author}</a>
+                    <span>{selectedPhoto.license}</span>
+                </figcaption>
+            </figure>
+        </div>
+    {/if}
 </section>
