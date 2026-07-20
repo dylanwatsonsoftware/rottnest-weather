@@ -23,3 +23,8 @@ test('mobile header uses content height instead of fixed extra vertical space', 
     assert.match(mobileHeaderRule, /min-height:\s*auto/);
     assert.doesNotMatch(mobileHeaderRule, /min-height:\s*74px/);
 });
+
+test('leaflet map controls sit below the fixed top pane', () => {
+    assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
+    assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
+});

@@ -2,16 +2,13 @@
     import { onMount } from 'svelte';
     import L from 'leaflet';
     import 'leaflet/dist/leaflet.css';
-    import { getInitialFitSettings } from './mapFocus.js';
-    import { ROTTNEST_BOUNDS, shouldUseUserLocationForFocus } from './recommendations.js';
+    import { getInitialFitSettings, getLandmarkFitPoints } from './mapFocus.js';
 
     let {
         recommendations = [],
         landmarks = [],
         filters = {},
         selectedBeachName = '',
-        initialFocusRecommendations = [],
-        userLocation = null,
         onSelectBeach = () => {},
         onZoomChange = () => {},
         onUserLocationChange = () => {}
@@ -25,8 +22,6 @@
     let userLocationCircle = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
-    let locationResolved = false;
-    let locationFallbackTimer;
 
     const stateIcons = {
         best: '★',
@@ -43,10 +38,6 @@
         }).addTo(map);
 
         initUserLocation();
-        locationFallbackTimer = window.setTimeout(() => {
-            locationResolved = true;
-            fitInitialFocus();
-        }, 1800);
         map.on('zoomend', () => {
             currentZoom = map.getZoom();
             onZoomChange(currentZoom);
@@ -57,7 +48,6 @@
         onZoomChange(currentZoom);
 
         return () => {
-            window.clearTimeout(locationFallbackTimer);
             map.remove();
         };
     });
@@ -148,16 +138,7 @@
                 }).addTo(map);
             }
             onUserLocationChange({ lat: e.latlng.lat, lon: e.latlng.lng });
-            locationResolved = true;
-            window.clearTimeout(locationFallbackTimer);
             updateUserLocationVisibility();
-            fitInitialFocus();
-        });
-
-        map.on('locationerror', () => {
-            locationResolved = true;
-            window.clearTimeout(locationFallbackTimer);
-            fitInitialFocus();
         });
 
         map.locate({setView: false, watch: true});
@@ -214,22 +195,11 @@
     }
 
     function fitInitialFocus() {
-        if (!map || didFitInitialFocus || !locationResolved) return;
-
-        const points = initialFocusRecommendations
-            .map((item) => item.beach)
-            .filter((beach) => beach.lat && beach.lon)
-            .map((beach) => [beach.lat, beach.lon]);
-
-        if (shouldUseUserLocationForFocus(initialFocusRecommendations, userLocation)) {
-            points.push([userLocation.lat, userLocation.lon]);
-        }
-
-        const hasBeachFocus = points.length > 0;
-        const fitPoints = hasBeachFocus ? points : getRottnestBoundsPoints();
-        const fitSettings = getInitialFitSettings({ hasBeachFocus });
+        const fitPoints = getLandmarkFitPoints(landmarks);
+        if (!map || didFitInitialFocus || !fitPoints.length) return;
 
         didFitInitialFocus = true;
+        const fitSettings = getInitialFitSettings();
         const bounds = L.latLngBounds(fitPoints);
         map.fitBounds(bounds, fitSettings.fitBoundsOptions);
         if (fitSettings.minZoom && map.getZoom() < fitSettings.minZoom) {
@@ -237,15 +207,6 @@
         }
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
-    }
-
-    function getRottnestBoundsPoints() {
-        return [
-            [ROTTNEST_BOUNDS.north, ROTTNEST_BOUNDS.west],
-            [ROTTNEST_BOUNDS.north, ROTTNEST_BOUNDS.east],
-            [ROTTNEST_BOUNDS.south, ROTTNEST_BOUNDS.west],
-            [ROTTNEST_BOUNDS.south, ROTTNEST_BOUNDS.east]
-        ];
     }
 
     function escapeHtml(value) {
@@ -284,8 +245,7 @@
     });
 
     $effect(() => {
-        const focusItems = initialFocusRecommendations;
-        const location = userLocation;
+        const focusLandmarks = landmarks;
         if (map) {
             fitInitialFocus();
         }

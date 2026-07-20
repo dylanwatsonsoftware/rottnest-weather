@@ -7,7 +7,6 @@
         buildRecommendations,
         filterRecommendations,
         getConditions,
-        getInitialFocusRecommendations,
         getSafetyNotices
     } from './lib/recommendations.js';
     import './app.css';
@@ -21,7 +20,6 @@
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
     let activeTab = $state('best');
-    let userLocation = $state(null);
     let panelOpenRequest = $state(0);
     let filters = $state({
         states: {
@@ -106,9 +104,6 @@
 
     const currentConditions = $derived(getConditions(forecastData, hourIndex));
     const recommendations = $derived(buildRecommendations(beaches, forecastData, hourIndex));
-    const initialFocusRecommendations = $derived(
-        getInitialFocusRecommendations(recommendations, forecastData, hourIndex, userLocation)
-    );
     const visibleRecommendations = $derived(filterRecommendations(recommendations, filters, mapZoom));
     const selectedRecommendation = $derived(
         recommendations.find((item) => item.beach.name === selectedBeachName) || recommendations[0] || null
@@ -146,9 +141,6 @@
             panelOpenRequest += 1;
         }}
         onZoomChange={(zoom) => mapZoom = zoom}
-        onUserLocationChange={(location) => userLocation = location}
-        initialFocusRecommendations={$state.snapshot(initialFocusRecommendations)}
-        {userLocation}
     />
     <RecommendationPanel
         recommendations={$state.snapshot(recommendations)}

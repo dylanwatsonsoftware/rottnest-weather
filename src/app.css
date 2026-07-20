@@ -3,6 +3,10 @@ body {
     height: 100%;
 }
 
+:root {
+    --header-offset: 68px;
+}
+
 body {
     margin: 0;
     height: 100vh;
@@ -561,6 +565,10 @@ main {
     border: none !important;
 }
 
+.leaflet-top.leaflet-left {
+    top: calc(var(--header-offset) + 8px);
+}
+
 .beach-marker {
     width: 34px !important;
     height: 34px !important;
@@ -666,6 +674,10 @@ main {
 }
 
 @media (max-width: 620px) {
+    :root {
+        --header-offset: 106px;
+    }
+
     header {
         min-height: auto;
         align-items: flex-start;
@@ -701,6 +713,10 @@ main {
 }
 
 @media (max-height: 430px) and (orientation: landscape) {
+    :root {
+        --header-offset: 54px;
+    }
+
     header {
         min-height: 48px;
         padding: 5px 10px;
@@ -724,6 +740,10 @@ main {
 }
 
 @media (min-width: 900px) {
+    :root {
+        --header-offset: 76px;
+    }
+
     header {
         min-height: 76px;
         padding: 14px 22px;

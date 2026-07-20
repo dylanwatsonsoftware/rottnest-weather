@@ -1,17 +1,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getInitialFitSettings } from './mapFocus.js';
+import {
+    getInitialFitSettings,
+    getLandmarkFitPoints
+} from './mapFocus.js';
 
-test('focused beach startup avoids over-zooming out on mobile', () => {
-    const settings = getInitialFitSettings({ hasBeachFocus: true });
+test('getLandmarkFitPoints uses every known landmark coordinate for initial load', () => {
+    const points = getLandmarkFitPoints([
+        { name: 'A', lat: -31.99, lon: 115.54 },
+        { name: 'Missing latitude', lon: 115.52 },
+        { name: 'B', lat: -32.02, lon: 115.53 }
+    ]);
 
-    assert.equal(settings.minZoom, 14);
-    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] <= 140);
+    assert.deepEqual(points, [
+        [-31.99, 115.54],
+        [-32.02, 115.53]
+    ]);
 });
 
-test('whole-island startup can fit all of Rottnest when no beaches look good', () => {
-    const settings = getInitialFitSettings({ hasBeachFocus: false });
+test('initial landmark fit keeps controls and collapsed tray clear', () => {
+    const settings = getInitialFitSettings();
 
     assert.equal(settings.minZoom, null);
-    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] >= 260);
+    assert.deepEqual(settings.fitBoundsOptions.paddingTopLeft, [42, 150]);
+    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] >= 180);
 });
