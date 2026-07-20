@@ -176,6 +176,32 @@ export function getRangeModeForHourIndex(forecastData, hourIndex) {
     return 'tenDay';
 }
 
+export function getBetterTimeSelection(recommendations = [], currentHourIndex = 0, forecastData = null) {
+    const hourIndex = getLaterTabHourIndex(recommendations, currentHourIndex, forecastData);
+
+    return {
+        hourIndex,
+        rangeMode: getRangeModeForHourIndex(forecastData, hourIndex)
+    };
+}
+
+export function getRecommendationHeading(forecastData, hourIndex = 0, now = new Date()) {
+    const times = forecastData?.time || [];
+    if (!times.length) return 'Best beaches';
+
+    const selectedIndex = clampIndex(hourIndex, times.length);
+    const selectedDate = new Date(times[selectedIndex]);
+    const nowDate = now instanceof Date ? now : new Date(now);
+    const nearestNowIndex = getNearestTimeIndex(times, nowDate);
+
+    if (selectedIndex === nearestNowIndex) return 'Best now';
+    if (getDateKey(selectedDate) === getDateKey(nowDate)) {
+        return `Best at ${formatHeadingTime(selectedDate)}`;
+    }
+
+    return `Best ${formatHeadingDayTime(selectedDate)}`;
+}
+
 export function shouldShowConfidenceLabel(confidence) {
     return Boolean(confidence && confidence !== 'normal');
 }
@@ -196,6 +222,38 @@ function getForecastDayRangeMax(times, dayCount) {
 function getDateKey(value) {
     const date = value instanceof Date ? value : new Date(value);
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+
+function getNearestTimeIndex(times, now) {
+    let nearestIndex = 0;
+    let nearestDiff = Infinity;
+
+    times.forEach((time, index) => {
+        const diff = Math.abs(new Date(time) - now);
+        if (diff < nearestDiff) {
+            nearestDiff = diff;
+            nearestIndex = index;
+        }
+    });
+
+    return nearestIndex;
+}
+
+function clampIndex(index, length) {
+    if (!Number.isFinite(index)) return 0;
+    return Math.max(0, Math.min(index, Math.max(length - 1, 0)));
+}
+
+function formatHeadingTime(value) {
+    return value.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function formatHeadingDayTime(value) {
+    const dayName = value.toLocaleDateString([], { weekday: 'short' });
+    return `${dayName} ${formatHeadingTime(value)}`;
 }
 
 function formatChartTime(value) {

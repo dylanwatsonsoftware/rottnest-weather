@@ -22,7 +22,6 @@
     let loadError = $state('');
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
-    let activeTab = $state('best');
     let panelMode = $state('collapsed');
     let panelOpenRequest = $state(0);
     let mapNavigationRequest = $state(null);
@@ -93,7 +92,6 @@
 
     function selectTopRecommendation(name) {
         selectBeach(name, 'expanded');
-        activeTab = 'best';
         panelOpenRequest += 1;
     }
 
@@ -217,7 +215,6 @@
         {mapNavigationRequest}
         onSelectBeach={(name) => {
             selectBeach(name, 'expanded');
-            activeTab = 'best';
             panelOpenRequest += 1;
         }}
         onZoomChange={(zoom) => mapZoom = zoom}
@@ -233,11 +230,9 @@
         bind:hourIndex
         bind:panelMode
         {filters}
-        {activeTab}
         {mapLayout}
         {panelOpenRequest}
         onSelectBeach={selectBeach}
-        onTabChange={(tab) => activeTab = tab}
         onStateFilterChange={updateStateFilter}
         onToggleFilter={updateLayerFilter}
         onNavigateToMap={navigateToMapTarget}

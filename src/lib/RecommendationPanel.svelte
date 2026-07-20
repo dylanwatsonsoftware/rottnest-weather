@@ -1,13 +1,13 @@
 <script>
     import Controls from './Controls.svelte';
     import {
+        getBetterTimeSelection,
         getDefaultPanelMode,
         getForecastRange,
-        getLaterTabHourIndex,
         getNextPanelMode,
         getPanelModeAfterOpenRequest,
+        getRecommendationHeading,
         getRangeModeLabel,
-        getRangeModeForHourIndex,
         getSliderHeatGradient,
         getTimelineScrollLeft,
         RANGE_MODES,
@@ -29,11 +29,9 @@
         hourIndex = $bindable(0),
         panelMode = $bindable(getDefaultPanelMode()),
         filters,
-        activeTab = 'best',
         mapLayout = 'default',
         panelOpenRequest = 0,
         onSelectBeach = () => {},
-        onTabChange = () => {},
         onStateFilterChange = () => {},
         onToggleFilter = () => {},
         onNavigateToMap = () => {}
@@ -47,35 +45,41 @@
     };
 
     const stateText = {
-        best: 'Best now',
+        best: 'Best',
         good: 'Good',
         watch: 'Watch',
         avoid: 'Avoid'
     };
 
-    const laterStateText = {
-        best: 'Best later',
-        good: 'Good later',
-        watch: 'Watch later',
-        avoid: 'Avoid later'
-    };
-
-    const bestNow = $derived(recommendations.filter((item) => item.state === 'best' || item.state === 'good').slice(0, 6));
-    const later = $derived(recommendations.filter((item) => item.nextGood).slice(0, 8));
+    const listedRecommendations = $derived(getListedRecommendations(recommendations, filters));
     const nearbyPlaces = $derived(getNearbyPlaces(selectedRecommendation?.beach, landmarks, facilities));
     let lastHandledOpenRequest = $state(0);
     let rangeMode = $state('today');
     let timelineChartElement = $state(null);
     let timelineCellElements = new Map();
     let selectedPhoto = $state(null);
+    let settingsOpen = $state(false);
+    let betterTimeStatus = $state('');
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
+    const recommendationHeading = $derived(getRecommendationHeading(forecastData, hourIndex));
     const bestBeachTimeline = $derived(buildBestBeachTimeline(beaches, forecastData, forecastRange));
     const sliderHeatGradient = $derived(getSliderHeatGradient(bestBeachTimeline, forecastRange));
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
     const selectedBeachImages = $derived(getBeachImages(selectedRecommendation?.beach.name));
+
+    function getListedRecommendations(allRecommendations, currentFilters) {
+        const states = currentFilters?.states || {};
+        const minimumScore = Number.isFinite(currentFilters?.minimumScore) ? currentFilters.minimumScore : 0;
+        const enabledStates = RECOMMENDATION_STATES.filter((state) => states[state] !== false);
+
+        return allRecommendations
+            .filter((item) => item.score >= minimumScore)
+            .filter((item) => enabledStates.includes(item.state) || (currentFilters?.includeLeastBad && item.state === 'avoid'))
+            .slice(0, 8);
+    }
 
     function getNearbyLandmarks(beach, allLandmarks) {
         if (!beach?.lat || !beach?.lon) return [];
@@ -151,13 +155,11 @@
         });
     }
 
-    function selectTab(tab) {
-        onTabChange(tab);
-        if (tab !== 'later') return;
-
-        const laterHourIndex = getLaterTabHourIndex(recommendations, hourIndex, forecastData);
-        rangeMode = getRangeModeForHourIndex(forecastData, laterHourIndex);
-        hourIndex = laterHourIndex;
+    function findBetterTime() {
+        const nextSelection = getBetterTimeSelection(recommendations, hourIndex, forecastData);
+        rangeMode = nextSelection.rangeMode;
+        hourIndex = nextSelection.hourIndex;
+        betterTimeStatus = 'Showing next good window';
     }
 
     $effect(() => {
@@ -174,6 +176,15 @@
         const range = forecastRange;
         if (hourIndex < range.min) hourIndex = range.min;
         if (hourIndex > range.max) hourIndex = range.max;
+    });
+
+    $effect(() => {
+        const currentHourIndex = hourIndex;
+        if (betterTimeStatus) {
+            window.setTimeout(() => {
+                betterTimeStatus = '';
+            }, 1800);
+        }
     });
 
     $effect(() => {
@@ -219,14 +230,29 @@
                 max={forecastRange.max}
                 bind:value={hourIndex}
             />
+            <button class="collapsed-better-time-button" type="button" onclick={findBetterTime}>Better time</button>
         </div>
     {/if}
 
     <div id="recommendation-panel-content" class="panel-body" hidden={isCollapsed}>
-    <div class="panel-tabs" role="tablist" aria-label="Recommendation views">
-        <button class:active={activeTab === 'best'} onclick={() => selectTab('best')} type="button">Best Now</button>
-        <button class:active={activeTab === 'later'} onclick={() => selectTab('later')} type="button">Good Later</button>
-        <button class:active={activeTab === 'filters'} onclick={() => selectTab('filters')} type="button">Filters</button>
+    <div class="panel-toolbar">
+        <div class="panel-heading">
+            <p class="eyebrow">Best Beaches</p>
+            <h2>{recommendationHeading}</h2>
+            {#if betterTimeStatus}
+                <small>{betterTimeStatus}</small>
+            {/if}
+        </div>
+        <button class="better-time-button" type="button" onclick={findBetterTime}>Find better time</button>
+        <button
+            class="settings-icon-button"
+            type="button"
+            aria-label="Open recommendation settings"
+            title="Settings"
+            onclick={() => settingsOpen = true}
+        >
+            <span aria-hidden="true">⚙</span>
+        </button>
     </div>
 
     {#if safetyNotices.length}
@@ -238,105 +264,20 @@
     {/if}
 
     <div class="panel-content">
-        {#if activeTab === 'best'}
-            <div class="recommendation-list">
-                {#each bestNow as item}
-                    <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => onSelectBeach(item.beach.name)}>
-                        <span class="score">{item.score}</span>
-                        <span class="row-main">
-                            <strong>{item.beach.name}</strong>
-                            <small>{item.summary}</small>
-                        </span>
-                        <span class="state-pill {item.state}">{stateText[item.state]}</span>
-                    </button>
-                {:else}
-                    <p class="empty-state">No beaches look clearly good right now. Try the Later tab or broaden filters.</p>
-                {/each}
-            </div>
-        {:else if activeTab === 'later'}
-            <div class="recommendation-list">
-                {#each later as item}
-                    <button class="recommendation-row later-row" type="button" onclick={() => {
-                        onSelectBeach(item.beach.name);
-                        hourIndex = item.nextGood.hourIndex;
-                    }}>
-                        <span class="score">{item.nextGood.score}</span>
-                        <span class="row-main">
-                            <strong>{item.beach.name}</strong>
-                            <small>{formatTime(item.nextGood.time)} · {item.nextGood.windSpeed} km/h {item.nextGood.windDirection}</small>
-                        </span>
-                        <span class="state-pill {item.nextGood.state}">{laterStateText[item.nextGood.state]}</span>
-                    </button>
-                {:else}
-                    <p class="empty-state">No better snorkeling windows found in this forecast.</p>
-                {/each}
-            </div>
-        {:else}
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <h2>Beach States</h2>
-                    <div class="chip-row">
-                        {#each RECOMMENDATION_STATES as state}
-                            <label class="filter-chip {state}">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.states[state]}
-                                    onchange={(event) => onStateFilterChange(state, event.currentTarget.checked)}
-                                />
-                                <span>{stateLabels[state]}</span>
-                            </label>
-                        {/each}
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <h2>Rejection</h2>
-                    <div class="score-filter-control">
-                        <label for="minimum-score-filter">
-                            Minimum score
-                            <strong>{filters.minimumScore ?? 0}</strong>
-                        </label>
-                        <input
-                            id="minimum-score-filter"
-                            type="range"
-                            min="0"
-                            max="100"
-                            step="5"
-                            value={filters.minimumScore ?? 0}
-                            oninput={(event) => onToggleFilter('minimumScore', Number(event.currentTarget.value))}
-                        />
-                    </div>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.includeLeastBad} onchange={(event) => onToggleFilter('includeLeastBad', event.currentTarget.checked)} />
-                        <span>Show least-bad avoided beaches</span>
-                    </label>
-                </div>
-
-                <div class="filter-group">
-                    <h2>Map Layers</h2>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showBeaches} onchange={(event) => onToggleFilter('showBeaches', event.currentTarget.checked)} />
-                        <span>Beaches</span>
-                    </label>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showLandmarks} onchange={(event) => onToggleFilter('showLandmarks', event.currentTarget.checked)} />
-                        <span>Landmarks</span>
-                    </label>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showFacilities} onchange={(event) => onToggleFilter('showFacilities', event.currentTarget.checked)} />
-                        <span>Food & facilities</span>
-                    </label>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showUserLocation} onchange={(event) => onToggleFilter('showUserLocation', event.currentTarget.checked)} />
-                        <span>My location</span>
-                    </label>
-                    <label class="toggle-row">
-                        <input type="checkbox" checked={filters.showAllWhenZoomedOut} onchange={(event) => onToggleFilter('showAllWhenZoomedOut', event.currentTarget.checked)} />
-                        <span>Show all beaches when zoomed out</span>
-                    </label>
-                </div>
-            </div>
-        {/if}
+        <div class="recommendation-list">
+            {#each listedRecommendations as item}
+                <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => onSelectBeach(item.beach.name)}>
+                    <span class="score">{item.score}</span>
+                    <span class="row-main">
+                        <strong>{item.beach.name}</strong>
+                        <small>{item.summary}</small>
+                    </span>
+                    <span class="state-pill {item.state}">{stateText[item.state]}</span>
+                </button>
+            {:else}
+                <p class="empty-state">No beaches match the current settings for this time.</p>
+            {/each}
+        </div>
 
         {#if selectedRecommendation}
             <article class="beach-detail {selectedRecommendation.state}">
@@ -475,6 +416,82 @@
         {/if}
     </div>
     </div>
+
+    {#if settingsOpen}
+        <div class="settings-modal" role="dialog" aria-modal="true" aria-label="Recommendation settings">
+            <button class="settings-modal-backdrop" type="button" aria-label="Close recommendation settings" onclick={() => settingsOpen = false}></button>
+            <div class="settings-sheet">
+                <div class="settings-sheet-header">
+                    <h2>Settings</h2>
+                    <button type="button" onclick={() => settingsOpen = false}>Close</button>
+                </div>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <h2>Beach States</h2>
+                        <div class="chip-row">
+                            {#each RECOMMENDATION_STATES as state}
+                                <label class="filter-chip {state}">
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.states[state]}
+                                        onchange={(event) => onStateFilterChange(state, event.currentTarget.checked)}
+                                    />
+                                    <span>{stateLabels[state]}</span>
+                                </label>
+                            {/each}
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h2>Rejection</h2>
+                        <div class="score-filter-control">
+                            <label for="minimum-score-filter">
+                                Minimum score
+                                <strong>{filters.minimumScore ?? 0}</strong>
+                            </label>
+                            <input
+                                id="minimum-score-filter"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="5"
+                                value={filters.minimumScore ?? 0}
+                                oninput={(event) => onToggleFilter('minimumScore', Number(event.currentTarget.value))}
+                            />
+                        </div>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.includeLeastBad} onchange={(event) => onToggleFilter('includeLeastBad', event.currentTarget.checked)} />
+                            <span>Show least-bad avoided beaches</span>
+                        </label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h2>Map Layers</h2>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.showBeaches} onchange={(event) => onToggleFilter('showBeaches', event.currentTarget.checked)} />
+                            <span>Beaches</span>
+                        </label>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.showLandmarks} onchange={(event) => onToggleFilter('showLandmarks', event.currentTarget.checked)} />
+                            <span>Landmarks</span>
+                        </label>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.showFacilities} onchange={(event) => onToggleFilter('showFacilities', event.currentTarget.checked)} />
+                            <span>Food & facilities</span>
+                        </label>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.showUserLocation} onchange={(event) => onToggleFilter('showUserLocation', event.currentTarget.checked)} />
+                            <span>My location</span>
+                        </label>
+                        <label class="toggle-row">
+                            <input type="checkbox" checked={filters.showAllWhenZoomedOut} onchange={(event) => onToggleFilter('showAllWhenZoomedOut', event.currentTarget.checked)} />
+                            <span>Show all beaches when zoomed out</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
 
     {#if selectedPhoto}
         <div class="beach-photo-modal" role="dialog" aria-modal="true" aria-label="Larger beach photo">

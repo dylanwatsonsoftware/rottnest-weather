@@ -73,12 +73,24 @@ test('beach photos can open in a larger modal view', () => {
     assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(74dvh,\s*720px\)/s);
 });
 
-test('good later rows use future recommendation labels instead of now labels', () => {
-    assert.match(recommendationPanel, /const laterStateText = \{/);
-    assert.match(recommendationPanel, /best:\s*'Best later'/);
-    assert.match(recommendationPanel, /good:\s*'Good later'/);
-    assert.match(recommendationPanel, /\{laterStateText\[item\.nextGood\.state\]\}/);
-    assert.doesNotMatch(recommendationPanel, /later-row[\s\S]*\{stateText\[item\.nextGood\.state\]\}/);
+test('recommendation panel has one selected-time list with better-time and settings controls', () => {
+    assert.match(recommendationPanel, /getRecommendationHeading/);
+    assert.match(recommendationPanel, /class="panel-toolbar"/);
+    assert.match(recommendationPanel, /class="better-time-button"/);
+    assert.match(recommendationPanel, /Find better time/);
+    assert.match(recommendationPanel, /aria-label="Open recommendation settings"/);
+    assert.match(recommendationPanel, /class="settings-icon-button"/);
+    assert.doesNotMatch(recommendationPanel, /Good Later/);
+    assert.doesNotMatch(recommendationPanel, /class="panel-tabs"/);
+    assert.doesNotMatch(recommendationPanel, /activeTab/);
+});
+
+test('settings are shown in a dialog instead of a tab', () => {
+    assert.match(recommendationPanel, /let settingsOpen = \$state\(false\)/);
+    assert.match(recommendationPanel, /class="settings-modal"/);
+    assert.match(recommendationPanel, /role="dialog"/);
+    assert.match(recommendationPanel, /Recommendation settings/);
+    assert.match(css, /\.settings-modal\s*{[^}]*position:\s*fixed/s);
 });
 
 test('top beach in the header is selectable', () => {

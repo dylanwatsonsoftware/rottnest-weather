@@ -9,6 +9,8 @@ import {
     getLaterTabHourIndex,
     getNextPanelMode,
     getPanelModeAfterOpenRequest,
+    getRecommendationHeading,
+    getBetterTimeSelection,
     getRangeModeLabel,
     getRangeModeForHourIndex,
     getForecastChartDensity,
@@ -89,6 +91,21 @@ test('getRangeModeLabel returns compact button labels', () => {
     assert.equal(getRangeModeLabel('twoDay'), '2 days');
     assert.equal(getRangeModeLabel('threeDay'), '3 days');
     assert.equal(getRangeModeLabel('tenDay'), '10 days');
+});
+
+test('getRecommendationHeading labels the selected forecast time truthfully', () => {
+    assert.equal(
+        getRecommendationHeading(hourlyForecast, 2, new Date('2026-07-20T12:20')),
+        'Best now'
+    );
+    assert.equal(
+        getRecommendationHeading(hourlyForecast, 3, new Date('2026-07-20T12:20')),
+        'Best at 06:00 PM'
+    );
+    assert.equal(
+        getRecommendationHeading(hourlyForecast, 5, new Date('2026-07-20T12:20')),
+        'Best Tue 06:00 AM'
+    );
 });
 
 test('getForecastChartLabels uses sparse day labels for ten day forecasts', () => {
@@ -189,6 +206,18 @@ test('getLaterTabHourIndex falls back a few hours when no future good window exi
     ];
 
     assert.equal(getLaterTabHourIndex(recommendations, 3, hourlyForecast), 6);
+});
+
+test('getBetterTimeSelection jumps to a better hour and expands the forecast range as needed', () => {
+    const recommendations = [
+        { nextGood: { hourIndex: 8 } },
+        { nextGood: { hourIndex: 5 } }
+    ];
+
+    assert.deepEqual(getBetterTimeSelection(recommendations, 3, hourlyForecast), {
+        hourIndex: 5,
+        rangeMode: 'twoDay'
+    });
 });
 
 test('getRangeModeForHourIndex expands range to include the selected hour', () => {
