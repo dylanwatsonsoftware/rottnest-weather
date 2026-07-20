@@ -227,7 +227,14 @@
         onclick={() => panelMode = getNextPanelMode(panelMode)}
     >
         <span class="sheet-handle" aria-hidden="true"></span>
-        <span>{isCollapsed ? 'Show recommendations' : 'Map view'}</span>
+        <span class="panel-toggle-title">
+            <span>{isCollapsed ? 'Show recommendations' : 'Map view'}</span>
+            {#if isCollapsed}
+                <span class="recommendation-count-badge" aria-label="{listedRecommendations.length} recommendations">
+                    {listedRecommendations.length}
+                </span>
+            {/if}
+        </span>
     </button>
 
     {#if isCollapsed && forecastData}

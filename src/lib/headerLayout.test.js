@@ -52,6 +52,14 @@ test('collapsed tray leaves clearance below the forecast slider thumb', () => {
     assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
 });
 
+test('collapsed recommendation toggle shows a compact count badge', () => {
+    assert.match(recommendationPanel, /class="panel-toggle-title"/);
+    assert.match(recommendationPanel, /class="recommendation-count-badge"/);
+    assert.match(recommendationPanel, /\{listedRecommendations\.length\}/);
+    assert.match(css, /\.recommendation-count-badge\s*{[^}]*border-radius:\s*999px/s);
+    assert.match(css, /\.recommendation-count-badge\s*{[^}]*min-width:\s*28px/s);
+});
+
 test('expanded panel shows compact forecast controls near the top', () => {
     assert.match(recommendationPanel, /class="expanded-time-control"/);
     assert.match(recommendationPanel, /id="expanded-time-slider"/);
