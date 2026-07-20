@@ -3,9 +3,11 @@
     import {
         getDefaultPanelMode,
         getForecastRange,
+        getLaterTabHourIndex,
         getNextPanelMode,
         getPanelModeAfterOpenRequest,
         getRangeModeLabel,
+        getRangeModeForHourIndex,
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
@@ -87,6 +89,15 @@
         });
     }
 
+    function selectTab(tab) {
+        onTabChange(tab);
+        if (tab !== 'later') return;
+
+        const laterHourIndex = getLaterTabHourIndex(recommendations, hourIndex, forecastData);
+        rangeMode = getRangeModeForHourIndex(forecastData, laterHourIndex);
+        hourIndex = laterHourIndex;
+    }
+
     $effect(() => {
         panelMode = getPanelModeAfterOpenRequest(panelMode, panelOpenRequest, lastHandledOpenRequest);
         lastHandledOpenRequest = panelOpenRequest;
@@ -139,9 +150,9 @@
 
     <div id="recommendation-panel-content" class="panel-body" hidden={isCollapsed}>
     <div class="panel-tabs" role="tablist" aria-label="Recommendation views">
-        <button class:active={activeTab === 'best'} onclick={() => onTabChange('best')} type="button">Best Now</button>
-        <button class:active={activeTab === 'later'} onclick={() => onTabChange('later')} type="button">Later</button>
-        <button class:active={activeTab === 'filters'} onclick={() => onTabChange('filters')} type="button">Filters</button>
+        <button class:active={activeTab === 'best'} onclick={() => selectTab('best')} type="button">Best Now</button>
+        <button class:active={activeTab === 'later'} onclick={() => selectTab('later')} type="button">Good Later</button>
+        <button class:active={activeTab === 'filters'} onclick={() => selectTab('filters')} type="button">Filters</button>
     </div>
 
     {#if safetyNotices.length}

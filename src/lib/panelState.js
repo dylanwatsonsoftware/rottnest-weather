@@ -52,6 +52,23 @@ export function getRangeModeLabel(rangeMode) {
     return 'Today';
 }
 
+export function getLaterTabHourIndex(recommendations = [], currentHourIndex = 0, forecastData = null, fallbackHours = 3) {
+    const futureWindows = recommendations
+        .map((item) => item.nextGood?.hourIndex)
+        .filter((index) => Number.isFinite(index) && index > currentHourIndex)
+        .sort((a, b) => a - b);
+
+    if (futureWindows.length) return futureWindows[0];
+
+    return Math.min(currentHourIndex + fallbackHours, getForecastSliderMax(forecastData));
+}
+
+export function getRangeModeForHourIndex(forecastData, hourIndex) {
+    if (hourIndex <= getForecastRange(forecastData, 'today').max) return 'today';
+    if (hourIndex <= getForecastRange(forecastData, 'twoDay').max) return 'twoDay';
+    return 'threeDay';
+}
+
 export function shouldShowConfidenceLabel(confidence) {
     return Boolean(confidence && confidence !== 'normal');
 }

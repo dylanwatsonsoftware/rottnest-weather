@@ -4,9 +4,11 @@ import {
     getDefaultPanelMode,
     getForecastRange,
     getForecastSliderMax,
+    getLaterTabHourIndex,
     getNextPanelMode,
     getPanelModeAfterOpenRequest,
     getRangeModeLabel,
+    getRangeModeForHourIndex,
     shouldShowConfidenceLabel
 } from './panelState.js';
 
@@ -67,6 +69,30 @@ test('getRangeModeLabel returns compact button labels', () => {
     assert.equal(getRangeModeLabel('today'), 'Today');
     assert.equal(getRangeModeLabel('twoDay'), '2 days');
     assert.equal(getRangeModeLabel('threeDay'), '3 days');
+});
+
+test('getLaterTabHourIndex jumps to the earliest future good window', () => {
+    const recommendations = [
+        { nextGood: { hourIndex: 8 } },
+        { nextGood: { hourIndex: 5 } },
+        { nextGood: { hourIndex: 2 } }
+    ];
+
+    assert.equal(getLaterTabHourIndex(recommendations, 3, hourlyForecast), 5);
+});
+
+test('getLaterTabHourIndex falls back a few hours when no future good window exists', () => {
+    const recommendations = [
+        { nextGood: { hourIndex: 1 } }
+    ];
+
+    assert.equal(getLaterTabHourIndex(recommendations, 3, hourlyForecast), 6);
+});
+
+test('getRangeModeForHourIndex expands range to include the selected hour', () => {
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 2), 'today');
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 5), 'twoDay');
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 8), 'threeDay');
 });
 
 test('shouldShowConfidenceLabel hides normal confidence', () => {
