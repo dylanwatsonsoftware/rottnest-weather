@@ -347,19 +347,21 @@
                         <span>{selectedRecommendation.confidence} confidence</span>
                     {/if}
                 </div>
-                {#if selectedBeachImages.length}
-                    <div class="beach-photo-strip" aria-label="{selectedRecommendation.beach.name} photos">
-                        {#each selectedBeachImages as image}
-                            <figure>
-                                <img src={image.src} alt={image.alt} loading="lazy" />
-                                <figcaption>
-                                    <a href={image.sourceUrl} target="_blank" rel="noreferrer">{image.author}</a>
-                                    <span>{image.license}</span>
-                                </figcaption>
-                            </figure>
-                        {/each}
-                    </div>
-                {/if}
+                {#key selectedRecommendation.beach.name}
+                    {#if selectedBeachImages.length}
+                        <div class="beach-photo-strip" aria-label="{selectedRecommendation.beach.name} photos">
+                            {#each selectedBeachImages as image (image.src)}
+                                <figure>
+                                    <img src={image.src} alt={image.alt} loading="lazy" />
+                                    <figcaption>
+                                        <a href={image.sourceUrl} target="_blank" rel="noreferrer">{image.author}</a>
+                                        <span>{image.license}</span>
+                                    </figcaption>
+                                </figure>
+                            {/each}
+                        </div>
+                    {/if}
+                {/key}
                 {#if beachTimeline.length}
                     <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
                         <div class="detail-time-control">

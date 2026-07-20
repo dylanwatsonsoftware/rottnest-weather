@@ -54,7 +54,9 @@ test('collapsed tray leaves clearance below the forecast slider thumb', () => {
 
 test('selected beach detail can show a horizontally scrollable local photo strip', () => {
     assert.match(recommendationPanel, /getBeachImages/);
+    assert.match(recommendationPanel, /\{#key selectedRecommendation\.beach\.name\}/);
     assert.match(recommendationPanel, /class="beach-photo-strip"/);
+    assert.match(recommendationPanel, /\{#each selectedBeachImages as image \(image\.src\)\}/);
     assert.match(recommendationPanel, /loading="lazy"/);
     assert.match(css, /\.beach-photo-strip\s*{[^}]*overflow-x:\s*auto/s);
     assert.match(css, /\.beach-photo-strip img\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
