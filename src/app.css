@@ -567,6 +567,59 @@ main {
     gap: 7px;
 }
 
+.detail-time-control {
+    display: grid;
+    gap: 8px;
+    padding: 2px 0 4px;
+}
+
+.detail-time-control label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #263435;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.detail-time-control strong {
+    color: #0b6476;
+    font-size: 0.78rem;
+    text-align: right;
+}
+
+.detail-time-control input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: #dbe5e5;
+    outline: none;
+}
+
+.detail-time-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0b6476;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+}
+
+.detail-time-control input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0b6476;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+}
+
 .timeline-heading,
 .timeline-labels {
     display: flex;

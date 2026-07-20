@@ -28,3 +28,8 @@ test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
 });
+
+test('beach detail timeline has its own time slider styling', () => {
+    assert.match(css, /\.detail-time-control\s*{/);
+    assert.match(css, /\.detail-time-control input\[type="range"\]/);
+});

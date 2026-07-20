@@ -277,6 +277,19 @@
                 </div>
                 {#if beachTimeline.length}
                     <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
+                        <div class="detail-time-control">
+                            <label for="detail-time-slider">
+                                Forecast time
+                                <strong>{selectedTime}</strong>
+                            </label>
+                            <input
+                                type="range"
+                                id="detail-time-slider"
+                                min={forecastRange.min}
+                                max={forecastRange.max}
+                                bind:value={hourIndex}
+                            />
+                        </div>
                         <div class="timeline-heading">
                             <strong>Status by time</strong>
                             <span>{getRangeModeLabel(rangeMode)}</span>
