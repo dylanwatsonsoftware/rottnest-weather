@@ -2,13 +2,37 @@
     import { onMount } from 'svelte';
     import L from 'leaflet';
     import 'leaflet/dist/leaflet.css';
+    import { ROTTNEST_BOUNDS, shouldUseUserLocationForFocus } from './recommendations.js';
 
-    let { beaches = [], landmarks = [], windDir = 'N' } = $props();
+    let {
+        recommendations = [],
+        landmarks = [],
+        filters = {},
+        selectedBeachName = '',
+        initialFocusRecommendations = [],
+        userLocation = null,
+        onSelectBeach = () => {},
+        onZoomChange = () => {},
+        onUserLocationChange = () => {}
+    } = $props();
 
     let map;
     let mapElement;
     let beachMarkers = [];
     let landmarkMarkers = [];
+    let userLocationMarker = null;
+    let userLocationCircle = null;
+    let currentZoom = $state(12);
+    let didFitInitialFocus = false;
+    let locationResolved = false;
+    let locationFallbackTimer;
+
+    const stateIcons = {
+        best: '★',
+        good: '✓',
+        watch: '!',
+        avoid: '×'
+    };
 
     onMount(() => {
         map = L.map(mapElement).setView([-32.007, 115.51], 12);
@@ -18,18 +42,32 @@
         }).addTo(map);
 
         initUserLocation();
+        locationFallbackTimer = window.setTimeout(() => {
+            locationResolved = true;
+            fitInitialFocus();
+        }, 1800);
+        map.on('zoomend', () => {
+            currentZoom = map.getZoom();
+            onZoomChange(currentZoom);
+            updateBeachLabels();
+            updateLandmarks();
+        });
+        currentZoom = map.getZoom();
+        onZoomChange(currentZoom);
 
         return () => {
+            window.clearTimeout(locationFallbackTimer);
             map.remove();
         };
     });
 
     function initLandmarks() {
-        // Clear existing landmarks
         landmarkMarkers.forEach(m => m.remove());
         landmarkMarkers = [];
 
         landmarks.forEach(landmark => {
+            if (!shouldShowLandmark(landmark)) return;
+
             let iconEmoji = landmark.type === 'business' ? '🏪' : '📍';
             if (landmark.subtype === 'lighthouse') iconEmoji = '🗼';
 
@@ -40,31 +78,31 @@
                 iconAnchor: [14, 14]
             });
             const marker = L.marker([landmark.lat, landmark.lon], { icon })
-                .bindPopup(`<strong>${landmark.name}</strong><br>Type: ${landmark.type}`)
+                .bindPopup(`<strong>${escapeHtml(landmark.name)}</strong><br>Type: ${escapeHtml(landmark.type)}`)
                 .addTo(map);
             landmarkMarkers.push(marker);
         });
     }
 
     function initBeaches() {
-        // Clear existing markers
         beachMarkers.forEach(mObj => mObj.marker.remove());
         beachMarkers = [];
 
-        beaches.forEach(beach => {
+        recommendations.forEach(recommendation => {
+            const beach = recommendation.beach;
             if (beach.lat && beach.lon) {
                 const marker = L.marker([beach.lat, beach.lon], {
-                    icon: L.divIcon({className: 'beach-marker'}) // placeholder
+                    icon: getBeachIcon(recommendation)
                 })
-                .bindPopup('')
+                .on('click', () => onSelectBeach(beach.name))
                 .bindTooltip(beach.name, {
-                    permanent: true,
+                    permanent: currentZoom > 11 || recommendation.state === 'best',
                     direction: 'top',
-                    className: 'beach-label',
+                    className: `beach-label ${recommendation.state}`,
                     offset: [0, -10]
                 })
                 .addTo(map);
-                beachMarkers.push({ marker, beach });
+                beachMarkers.push({ marker, recommendation });
             }
         });
         updateBeaches();
@@ -73,25 +111,14 @@
     function updateBeaches() {
         if (!map || !beachMarkers.length) return;
         beachMarkers.forEach(mObj => {
-            const { marker, beach } = mObj;
-            const isOk = beach.ok_winds.includes(windDir);
-
-            const icon = L.divIcon({
-                className: `beach-marker ${isOk ? 'ok' : 'not-ok'}`,
-                html: `<span>${isOk ? '🤿' : '✖'}</span>`,
-                iconSize: [26, 26],
-                iconAnchor: [13, 13]
-            });
-
-            marker.setIcon(icon);
-            marker.getPopup().setContent(`<strong>${beach.name}</strong><br>Status: ${isOk ? 'OK' : 'Unsuitable'}<br>OK Winds: ${beach.ok_winds.join(', ')}`);
+            const { marker, recommendation } = mObj;
+            marker.setIcon(getBeachIcon(recommendation));
+            marker.setZIndexOffset(recommendation.beach.name === selectedBeachName ? 900 : recommendation.score);
         });
+        updateBeachLabels();
     }
 
     function initUserLocation() {
-        let userLocationMarker = null;
-        let userLocationCircle = null;
-
         const userIcon = L.divIcon({
             className: 'user-location-marker',
             html: '<div class="user-dot"></div>',
@@ -119,13 +146,117 @@
                     weight: 1
                 }).addTo(map);
             }
+            onUserLocationChange({ lat: e.latlng.lat, lon: e.latlng.lng });
+            locationResolved = true;
+            window.clearTimeout(locationFallbackTimer);
+            updateUserLocationVisibility();
+            fitInitialFocus();
+        });
+
+        map.on('locationerror', () => {
+            locationResolved = true;
+            window.clearTimeout(locationFallbackTimer);
+            fitInitialFocus();
         });
 
         map.locate({setView: false, watch: true});
     }
 
+    function getBeachIcon(recommendation) {
+        const selected = recommendation.beach.name === selectedBeachName ? 'selected' : '';
+        return L.divIcon({
+            className: `beach-marker ${recommendation.state} ${selected}`,
+            html: `<span>${stateIcons[recommendation.state]}</span><small>${recommendation.score}</small>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+        });
+    }
+
+    function updateBeachLabels() {
+        beachMarkers.forEach(({ marker, recommendation }) => {
+            const shouldShow = currentZoom > 11 || recommendation.state === 'best' || recommendation.beach.name === selectedBeachName;
+            const tooltip = marker.getTooltip();
+            if (!tooltip) return;
+
+            if (shouldShow) {
+                marker.openTooltip();
+            } else {
+                marker.closeTooltip();
+            }
+        });
+    }
+
+    function shouldShowLandmark(landmark) {
+        if (landmark.type === 'business') {
+            return filters.showBusinesses !== false && currentZoom > 12;
+        }
+        if (filters.showLandmarks === false) return false;
+        return currentZoom > 10 || landmark.subtype === 'lighthouse';
+    }
+
+    function updateLandmarks() {
+        if (map && landmarks.length > 0) {
+            initLandmarks();
+        }
+    }
+
+    function updateUserLocationVisibility() {
+        const visible = filters.showUserLocation !== false;
+        if (userLocationMarker) {
+            if (visible && !map.hasLayer(userLocationMarker)) userLocationMarker.addTo(map);
+            if (!visible && map.hasLayer(userLocationMarker)) userLocationMarker.remove();
+        }
+        if (userLocationCircle) {
+            if (visible && !map.hasLayer(userLocationCircle)) userLocationCircle.addTo(map);
+            if (!visible && map.hasLayer(userLocationCircle)) userLocationCircle.remove();
+        }
+    }
+
+    function fitInitialFocus() {
+        if (!map || didFitInitialFocus || !locationResolved) return;
+
+        const points = initialFocusRecommendations
+            .map((item) => item.beach)
+            .filter((beach) => beach.lat && beach.lon)
+            .map((beach) => [beach.lat, beach.lon]);
+
+        if (shouldUseUserLocationForFocus(initialFocusRecommendations, userLocation)) {
+            points.push([userLocation.lat, userLocation.lon]);
+        }
+
+        const fitPoints = points.length ? points : getRottnestBoundsPoints();
+
+        didFitInitialFocus = true;
+        const bounds = L.latLngBounds(fitPoints);
+        map.fitBounds(bounds, {
+            paddingTopLeft: [42, 96],
+            paddingBottomRight: [42, 280],
+            maxZoom: 14
+        });
+        currentZoom = map.getZoom();
+        onZoomChange(currentZoom);
+    }
+
+    function getRottnestBoundsPoints() {
+        return [
+            [ROTTNEST_BOUNDS.north, ROTTNEST_BOUNDS.west],
+            [ROTTNEST_BOUNDS.north, ROTTNEST_BOUNDS.east],
+            [ROTTNEST_BOUNDS.south, ROTTNEST_BOUNDS.west],
+            [ROTTNEST_BOUNDS.south, ROTTNEST_BOUNDS.east]
+        ];
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
     $effect(() => {
-        if (map && beaches.length > 0) {
+        if (map) {
             initBeaches();
         }
     });
@@ -137,10 +268,24 @@
     });
 
     $effect(() => {
-        // Track dependencies
-        const currentWindDir = windDir;
         if (map && beachMarkers.length > 0) {
             updateBeaches();
+        }
+    });
+
+    $effect(() => {
+        const currentFilters = filters;
+        if (map) {
+            updateLandmarks();
+            updateUserLocationVisibility();
+        }
+    });
+
+    $effect(() => {
+        const focusItems = initialFocusRecommendations;
+        const location = userLocation;
+        if (map) {
+            fitInitialFocus();
         }
     });
 

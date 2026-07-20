@@ -178,6 +178,7 @@
         }
     });
 
+    const maxHour = $derived(forecastData?.time?.length ? forecastData.time.length - 1 : 0);
     const selectedTime = $derived(forecastData ? new Date(forecastData.time[hourIndex]).toLocaleString([], {
         weekday: 'short',
         hour: '2-digit',
@@ -189,7 +190,7 @@
 <div id="controls">
     <div class="slider-container">
         <label for="time-slider">Forecast Time: <span id="selected-time">{selectedTime}</span></label>
-        <input type="range" id="time-slider" min="0" max="47" bind:value={hourIndex} oninput={onSliderChange}>
+        <input type="range" id="time-slider" min="0" max={maxHour} bind:value={hourIndex} oninput={onSliderChange}>
     </div>
     <div class="graph-container">
         <canvas id="forecastChart" bind:this={canvasElement}></canvas>

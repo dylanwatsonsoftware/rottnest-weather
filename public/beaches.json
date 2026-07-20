@@ -8,7 +8,10 @@
             "NW"
         ],
         "lat": -32.0230368,
-        "lon": 115.5282124
+        "lon": 115.5282124,
+        "difficulty": "Confident snorkellers",
+        "access": "Bike and walking access nearby",
+        "exposure_note": "South-east coast reef and bays"
     },
     {
         "name": "Little Salmon Bay",
@@ -22,7 +25,10 @@
             "NW"
         ],
         "lat": -32.024228,
-        "lon": 115.5250939
+        "lon": 115.5250939,
+        "difficulty": "Beginner friendly in calm conditions",
+        "access": "Popular beach stop with easy shore entry",
+        "exposure_note": "Sheltered pocket on the south coast"
     },
     {
         "name": "Salmon Bay",
@@ -33,7 +39,10 @@
             "SE"
         ],
         "lat": -32.021471,
-        "lon": 115.5223315
+        "lon": 115.5223315,
+        "difficulty": "Moderate",
+        "access": "Long sandy bay with shore entry",
+        "exposure_note": "Open south-facing bay"
     },
     {
         "name": "Green Island",
@@ -182,7 +191,10 @@
             "W"
         ],
         "lat": -31.9894373,
-        "lon": 115.5356029
+        "lon": 115.5356029,
+        "difficulty": "Beginner friendly in calm conditions",
+        "access": "Close to settlement facilities",
+        "exposure_note": "Protected north-east beach"
     },
     {
         "name": "Duck Rock",

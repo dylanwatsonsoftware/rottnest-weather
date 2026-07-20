@@ -1,6 +1,6 @@
 <script>
     import Logo from './Logo.svelte';
-    let { windDirDeg, windSpeed, windDir, temp, swellHeight, loading = false } = $props();
+    let { windDirDeg = 0, windSpeed, windDir = 'N', temp, swellHeight, topRecommendation = null, loading = false } = $props();
 </script>
 
 <header>
@@ -20,9 +20,12 @@
                 </svg>
             </div>
             <div id="weather-info">
-                <div><strong>Wind:</strong> {windSpeed} km/h {windDir}</div>
-                <div><strong>Temp:</strong> {temp} °C</div>
-                <div><strong>Swell:</strong> {swellHeight}m</div>
+                <div><strong>Wind:</strong> {windSpeed ?? 'N/A'} km/h {windDir}</div>
+                <div><strong>Temp:</strong> {temp ?? 'N/A'} °C</div>
+                <div><strong>Swell:</strong> {swellHeight ?? 'N/A'}m</div>
+                {#if topRecommendation}
+                    <div><strong>Top:</strong> {topRecommendation.beach.name}</div>
+                {/if}
             </div>
         {/if}
     </div>

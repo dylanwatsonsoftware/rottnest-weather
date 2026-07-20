@@ -2,8 +2,14 @@
     import { onMount } from 'svelte';
     import Header from './lib/Header.svelte';
     import Map from './lib/Map.svelte';
-    import Controls from './lib/Controls.svelte';
-    import Footer from './lib/Footer.svelte';
+    import RecommendationPanel from './lib/RecommendationPanel.svelte';
+    import {
+        buildRecommendations,
+        filterRecommendations,
+        getConditions,
+        getInitialFocusRecommendations,
+        getSafetyNotices
+    } from './lib/recommendations.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -11,33 +17,75 @@
     let forecastData = $state(null);
     let hourIndex = $state(0);
     let loading = $state(true);
+    let loadError = $state('');
+    let mapZoom = $state(12);
+    let selectedBeachName = $state('');
+    let activeTab = $state('best');
+    let userLocation = $state(null);
+    let filters = $state({
+        states: {
+            best: true,
+            good: true,
+            watch: true,
+            avoid: false
+        },
+        showBeaches: true,
+        showLandmarks: true,
+        showBusinesses: true,
+        showUserLocation: true,
+        showAllWhenZoomedOut: false
+    });
 
-    function getDirection(degrees) {
-        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-        const index = Math.round(degrees / 45) % 8;
-        return directions[index];
+    function updateStateFilter(state, value) {
+        filters = {
+            ...filters,
+            states: {
+                ...filters.states,
+                [state]: value
+            }
+        };
+    }
+
+    function updateLayerFilter(name, value) {
+        filters = {
+            ...filters,
+            [name]: value
+        };
     }
 
     onMount(async () => {
         try {
-            const [beachesRes, landmarksRes, weatherRes, marineRes] = await Promise.all([
+            const [beachesRes, landmarksRes] = await Promise.all([
                 fetch('/beaches.json'),
-                fetch('/landmarks.json'),
-                fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=2'),
-                fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=2')
+                fetch('/landmarks.json')
             ]);
 
             beaches = await beachesRes.json();
             landmarks = await landmarksRes.json();
+
+            const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=2');
+            if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
             const weatherJson = await weatherRes.json();
-            const marineJson = await marineRes.json();
 
             forecastData = {
-                ...weatherJson.hourly,
-                swell_wave_height: marineJson.hourly.swell_wave_height
+                ...weatherJson.hourly
             };
 
-            // Set initial hour index to closest current hour
+            try {
+                const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=2');
+                if (marineRes.ok) {
+                    const marineJson = await marineRes.json();
+                    forecastData = {
+                        ...forecastData,
+                        swell_wave_height: marineJson.hourly.swell_wave_height
+                    };
+                } else {
+                    loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
+                }
+            } catch (error) {
+                loadError = 'Marine swell data is unavailable. Recommendations are lower confidence.';
+            }
+
             const now = new Date();
             let minDiff = Infinity;
             forecastData.time.forEach((t, i) => {
@@ -47,35 +95,71 @@
                     hourIndex = i;
                 }
             });
-
-            loading = false;
         } catch (error) {
             console.error('Error loading data:', error);
+            loadError = 'Forecast data is unavailable. Beach recommendations are low confidence.';
+        } finally {
+            loading = false;
         }
     });
 
-    const currentWindDirDeg = $derived(forecastData ? forecastData.winddirection_10m[hourIndex] : 0);
-    const currentWindSpeed = $derived(forecastData ? forecastData.windspeed_10m[hourIndex] : 0);
-    const currentWindDir = $derived(forecastData ? getDirection(currentWindDirDeg) : 'N');
-    const currentTemp = $derived(forecastData ? forecastData.temperature_2m[hourIndex] : 0);
-    const currentSwellHeight = $derived(forecastData ? (forecastData.swell_wave_height ? forecastData.swell_wave_height[hourIndex] : 'N/A') : 'N/A');
+    const currentConditions = $derived(getConditions(forecastData, hourIndex));
+    const recommendations = $derived(buildRecommendations(beaches, forecastData, hourIndex));
+    const initialFocusRecommendations = $derived(
+        getInitialFocusRecommendations(recommendations, forecastData, hourIndex, userLocation)
+    );
+    const visibleRecommendations = $derived(filterRecommendations(recommendations, filters, mapZoom));
+    const selectedRecommendation = $derived(
+        recommendations.find((item) => item.beach.name === selectedBeachName) || recommendations[0] || null
+    );
+    const safetyNotices = $derived([
+        ...getSafetyNotices({
+            windSpeed: currentConditions.windSpeed,
+            swellHeight: currentConditions.swellHeight,
+            forecastData
+        }),
+        ...(loadError ? [loadError] : [])
+    ]);
 
 </script>
 
 <Header
-    windDirDeg={currentWindDirDeg}
-    windSpeed={currentWindSpeed}
-    windDir={currentWindDir}
-    temp={currentTemp}
-    swellHeight={currentSwellHeight}
+    windDirDeg={currentConditions.windDirectionDegrees}
+    windSpeed={currentConditions.windSpeed}
+    windDir={currentConditions.windDirection}
+    temp={currentConditions.temperature}
+    swellHeight={currentConditions.swellHeight}
+    topRecommendation={recommendations[0]}
     {loading}
 />
 
 <main>
-    <Map beaches={$state.snapshot(beaches)} landmarks={$state.snapshot(landmarks)} windDir={currentWindDir} />
-    {#if forecastData}
-        <Controls forecastData={$state.snapshot(forecastData)} bind:hourIndex />
-    {/if}
+    <Map
+        recommendations={$state.snapshot(visibleRecommendations)}
+        landmarks={$state.snapshot(landmarks)}
+        {filters}
+        selectedBeachName={selectedRecommendation?.beach.name}
+        onSelectBeach={(name) => {
+            selectedBeachName = name;
+            activeTab = 'best';
+        }}
+        onZoomChange={(zoom) => mapZoom = zoom}
+        onUserLocationChange={(location) => userLocation = location}
+        initialFocusRecommendations={$state.snapshot(initialFocusRecommendations)}
+        {userLocation}
+    />
+    <RecommendationPanel
+        recommendations={$state.snapshot(recommendations)}
+        landmarks={$state.snapshot(landmarks)}
+        selectedRecommendation={$state.snapshot(selectedRecommendation)}
+        safetyNotices={$state.snapshot(safetyNotices)}
+        forecastData={$state.snapshot(forecastData)}
+        bind:hourIndex
+        {filters}
+        {activeTab}
+        onSelectBeach={(name) => selectedBeachName = name}
+        onTabChange={(tab) => activeTab = tab}
+        onStateFilterChange={updateStateFilter}
+        onToggleFilter={updateLayerFilter}
+    />
 </main>
-
-<Footer />

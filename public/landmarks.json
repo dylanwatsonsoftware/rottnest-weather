@@ -18,5 +18,26 @@
         "lon": 115.5401,
         "type": "landmark",
         "subtype": "lighthouse"
+    },
+    {
+        "name": "Geordie Bay Facilities",
+        "lat": -31.9913,
+        "lon": 115.5209,
+        "type": "business",
+        "subtype": "facilities"
+    },
+    {
+        "name": "The Basin Facilities",
+        "lat": -31.9892,
+        "lon": 115.5351,
+        "type": "business",
+        "subtype": "facilities"
+    },
+    {
+        "name": "Parker Point Stop",
+        "lat": -32.0229,
+        "lon": 115.5277,
+        "type": "business",
+        "subtype": "transport"
     }
 ]
