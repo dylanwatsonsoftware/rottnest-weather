@@ -137,6 +137,11 @@ test('visible beach fit preserves zoom when only panel mode changes', () => {
     assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'collapsed'), 'none');
 });
 
+test('explicit beach selection suppresses visible-beach refits from zoom-driven marker changes', () => {
+    assert.equal(getVisibleBeachFitReason('a|b', 'a|b|c', 'expanded', 'expanded', 'default', 'default', true), 'none');
+    assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'expanded', 'default', 'default', true), 'panel');
+});
+
 test('panel mode pan offset adjusts center without changing zoom', () => {
     assert.deepEqual(getPanelModePanOffset('collapsed', 'expanded'), [0, 300]);
     assert.deepEqual(getPanelModePanOffset('expanded', 'collapsed'), [0, -300]);

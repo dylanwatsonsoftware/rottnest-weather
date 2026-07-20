@@ -19,6 +19,7 @@
         facilities = [],
         filters = {},
         selectedBeachName = '',
+        hasExplicitBeachSelection = false,
         panelMode = 'collapsed',
         mapLayout = 'default',
         mapNavigationRequest = null,
@@ -262,7 +263,8 @@
             previousPanelMode,
             panelMode,
             previousMapLayout,
-            mapLayout
+            mapLayout,
+            hasExplicitBeachSelection
         );
         if (!map || !fitPoints.length || fitReason === 'none') return;
 

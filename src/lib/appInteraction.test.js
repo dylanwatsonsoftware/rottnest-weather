@@ -9,3 +9,7 @@ test('map beach selection navigates with the expanded panel offset it will open 
     assert.match(app, /getBeachSelectionMapTarget\(beach,\s*targetPanelMode,\s*mapLayout\)/);
     assert.match(app, /selectBeach\(name,\s*'expanded'\)/);
 });
+
+test('map knows when a beach was explicitly selected by the user', () => {
+    assert.match(app, /hasExplicitBeachSelection=\{Boolean\(selectedBeachName\)\}/);
+});

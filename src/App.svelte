@@ -211,6 +211,7 @@
         facilities={$state.snapshot(facilities)}
         {filters}
         selectedBeachName={selectedRecommendation?.beach.name}
+        hasExplicitBeachSelection={Boolean(selectedBeachName)}
         {panelMode}
         {mapLayout}
         {mapNavigationRequest}

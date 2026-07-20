@@ -56,11 +56,12 @@ export function getVisibleBeachFitReason(
     previousPanelMode,
     nextPanelMode,
     previousMapLayout = 'default',
-    nextMapLayout = 'default'
+    nextMapLayout = 'default',
+    hasExplicitBeachSelection = false
 ) {
-    if (previousPointsSignature !== nextPointsSignature) return 'points';
     if (previousPanelMode !== nextPanelMode) return 'panel';
     if (previousMapLayout !== nextMapLayout) return 'panel';
+    if (previousPointsSignature !== nextPointsSignature && !hasExplicitBeachSelection) return 'points';
     return 'none';
 }
 
