@@ -10,6 +10,7 @@
         getRecommendationHeading,
         getRangeModeLabel,
         getSliderHeatGradient,
+        getStatusWindowSummary,
         getTimelineScrollLeft,
         RANGE_MODES,
         shouldShowConfidenceLabel
@@ -167,6 +168,15 @@
         betterTimeStatus = 'Showing next good window';
     }
 
+    function getRecommendationWindowSummary(recommendation) {
+        const forecastMax = Math.max((forecastData?.time?.length || 1) - 1, 0);
+        const timeline = buildBeachStatusTimeline(recommendation?.beach, forecastData, {
+            min: 0,
+            max: forecastMax
+        });
+        return getStatusWindowSummary(timeline, hourIndex);
+    }
+
     async function selectRecommendationRow(beachName) {
         onSelectBeach(beachName);
         await tick();
@@ -311,7 +321,7 @@
                     <span class="score">{item.score}</span>
                     <span class="row-main">
                         <strong>{item.beach.name}</strong>
-                        <small>{item.summary}</small>
+                        <small>{getRecommendationWindowSummary(item)}</small>
                     </span>
                     <span class="state-pill {item.state}">{stateText[item.state]}</span>
                 </button>
@@ -323,7 +333,7 @@
         {#if selectedRecommendation}
             <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
                 <div class="detail-heading">
-                    <p class="eyebrow">{selectedRecommendation.summary}</p>
+                    <p class="eyebrow">{getRecommendationWindowSummary(selectedRecommendation)}</p>
                     <h2>{selectedRecommendation.beach.name}</h2>
                     <button
                         class="map-jump-button"

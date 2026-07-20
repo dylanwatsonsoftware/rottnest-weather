@@ -204,6 +204,22 @@ export function getRecommendationHeading(forecastData, hourIndex = 0, now = new 
     return `Best ${formatHeadingDayTime(selectedDate)}`;
 }
 
+export function getStatusWindowSummary(timeline = [], selectedHourIndex = 0) {
+    const selectedIndex = timeline.findIndex((item) => item.hourIndex === selectedHourIndex);
+    if (selectedIndex === -1) return 'Forecast window unavailable';
+
+    const selectedState = timeline[selectedIndex].state;
+    let start = selectedIndex;
+    let end = selectedIndex;
+
+    while (start > 0 && timeline[start - 1].state === selectedState) start -= 1;
+    while (end < timeline.length - 1 && timeline[end + 1].state === selectedState) end += 1;
+
+    const hours = end - start + 1;
+    const label = getWindowStateLabel(selectedState);
+    return `${label} for ${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+}
+
 export function shouldShowConfidenceLabel(confidence) {
     return Boolean(confidence && confidence !== 'normal');
 }
@@ -262,4 +278,11 @@ function formatChartTime(value) {
 function formatChartDay(value) {
     const dayName = value.toLocaleDateString([], { weekday: 'short' });
     return `${dayName} ${value.getDate()}`;
+}
+
+function getWindowStateLabel(state) {
+    if (state === 'best') return 'Best';
+    if (state === 'good') return 'Good';
+    if (state === 'watch') return 'Use caution';
+    return 'Avoid';
 }

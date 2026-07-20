@@ -15,6 +15,7 @@ import {
     getRangeModeForHourIndex,
     getForecastChartDensity,
     getForecastChartLabels,
+    getStatusWindowSummary,
     shouldShowConfidenceLabel
 } from './panelState.js';
 
@@ -106,6 +107,24 @@ test('getRecommendationHeading labels the selected forecast time truthfully', ()
         getRecommendationHeading(hourlyForecast, 5, new Date('2026-07-20T12:20')),
         'Best Tue 6am'
     );
+});
+
+test('getStatusWindowSummary describes the contiguous selected status window', () => {
+    const timeline = [
+        { hourIndex: 0, state: 'avoid' },
+        { hourIndex: 1, state: 'good' },
+        { hourIndex: 2, state: 'good' },
+        { hourIndex: 3, state: 'good' },
+        { hourIndex: 4, state: 'watch' }
+    ];
+
+    assert.equal(getStatusWindowSummary(timeline, 2), 'Good for 3 hours');
+    assert.equal(getStatusWindowSummary(timeline, 4), 'Use caution for 1 hour');
+});
+
+test('getStatusWindowSummary falls back when selected hour is unavailable', () => {
+    assert.equal(getStatusWindowSummary([], 2), 'Forecast window unavailable');
+    assert.equal(getStatusWindowSummary([{ hourIndex: 1, state: 'good' }], 2), 'Forecast window unavailable');
 });
 
 test('getForecastChartLabels uses sparse day labels for ten day forecasts', () => {
