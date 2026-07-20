@@ -137,7 +137,7 @@ main {
 
 .recommendation-panel.collapsed {
     min-height: 0;
-    max-height: 118px;
+    max-height: 132px;
     border-radius: 16px 16px 0 0;
 }
 
@@ -159,7 +159,7 @@ main {
 }
 
 .collapsed-time-control {
-    padding: 0 16px 12px;
+    padding: 0 16px 24px;
     display: grid;
     gap: 6px;
 }
@@ -1015,7 +1015,7 @@ main {
     .recommendation-panel.collapsed {
         width: 300px;
         border-radius: 12px;
-        max-height: 112px;
+        max-height: 126px;
     }
 
     .panel-collapse-toggle {

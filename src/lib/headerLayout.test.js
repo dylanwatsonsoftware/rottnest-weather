@@ -41,3 +41,7 @@ test('active status timeline cell has a clear selected border', () => {
 test('forecast range toggle supports four compact options', () => {
     assert.match(css, /\.range-mode-toggle\s*{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/s);
 });
+
+test('collapsed tray leaves clearance below the forecast slider thumb', () => {
+    assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
+});
