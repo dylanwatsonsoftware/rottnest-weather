@@ -84,6 +84,14 @@ test('buildBestBeachTimeline picks the highest scoring beach for each forecast h
     assert.deepEqual(timeline.map((item) => item.state), ['good', 'good']);
 });
 
+test('buildBestBeachTimeline accepts raw beach data without current-hour recommendations', () => {
+    const timeline = buildBestBeachTimeline(beaches.slice(0, 2), forecast, { min: 0, max: 1 });
+
+    assert.equal(timeline.length, 2);
+    assert.deepEqual(timeline.map((item) => item.beach.name), ['Sheltered Bay', 'Open Reef']);
+    assert.deepEqual(timeline.map((item) => item.summary), ['Good option (96/100)', 'Good option (82/100)']);
+});
+
 test('buildBestBeachTimeline breaks tied scores by beach name without throwing', () => {
     const tiedRecommendations = buildRecommendations([
         { name: 'Zed Bay', ok_winds: ['SW'], lat: -32, lon: 115.5 },

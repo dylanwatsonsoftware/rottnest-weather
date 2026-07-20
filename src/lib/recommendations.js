@@ -173,19 +173,30 @@ export function buildBeachStatusTimeline(beach, forecastData, range = {}) {
 export function buildBestBeachTimeline(recommendations = [], forecastData, range = {}) {
     if (!recommendations.length || !forecastData?.time?.length) return [];
 
+    const min = clamp(range.min ?? 0, 0, forecastData.time.length - 1);
+    const max = clamp(range.max ?? forecastData.time.length - 1, min, forecastData.time.length - 1);
     const bestByHour = new Map();
-    recommendations.forEach((recommendation) => {
-        buildBeachStatusTimeline(recommendation.beach, forecastData, range).forEach((item) => {
-            const current = bestByHour.get(item.hourIndex);
-            const candidateName = recommendation.beach.name;
+    recommendations.forEach((source) => {
+        const beach = source.beach || source;
+        if (!beach?.name) return;
+
+        for (let index = min; index <= max; index += 1) {
+            const recommendation = scoreBeach(beach, getConditions(forecastData, index));
+            const current = bestByHour.get(index);
+            const candidateName = beach.name;
             const currentName = current?.beach?.name || '';
-            if (!current || item.score > current.score || (item.score === current.score && candidateName.localeCompare(currentName) < 0)) {
-                bestByHour.set(item.hourIndex, {
-                    ...item,
-                    beach: recommendation.beach
+            if (!current || recommendation.score > current.score || (recommendation.score === current.score && candidateName.localeCompare(currentName) < 0)) {
+                bestByHour.set(index, {
+                    hourIndex: index,
+                    time: forecastData.time[index],
+                    label: formatTimelineTime(forecastData.time[index]),
+                    state: recommendation.state,
+                    score: recommendation.score,
+                    summary: recommendation.summary,
+                    beach
                 });
             }
-        });
+        }
     });
 
     return [...bestByHour.values()].sort((a, b) => a.hourIndex - b.hourIndex);

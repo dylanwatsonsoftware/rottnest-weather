@@ -19,6 +19,7 @@
 
     let {
         recommendations = [],
+        beaches = [],
         landmarks = [],
         facilities = [],
         selectedRecommendation = null,
@@ -61,7 +62,7 @@
     const isCollapsed = $derived(panelMode === 'collapsed');
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
-    const bestBeachTimeline = $derived(buildBestBeachTimeline(recommendations, forecastData, forecastRange));
+    const bestBeachTimeline = $derived(buildBestBeachTimeline(beaches, forecastData, forecastRange));
     const sliderHeatGradient = $derived(getSliderHeatGradient(bestBeachTimeline, forecastRange));
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));

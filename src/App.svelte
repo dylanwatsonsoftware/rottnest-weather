@@ -222,6 +222,7 @@
         onZoomChange={(zoom) => mapZoom = zoom}
     />
     <RecommendationPanel
+        {beaches}
         recommendations={$state.snapshot(recommendations)}
         landmarks={$state.snapshot(landmarks)}
         facilities={$state.snapshot(facilities)}
