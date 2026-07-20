@@ -102,6 +102,24 @@ export function scoreBeach(beach, conditions) {
     if (flexibility >= 7) score += 4;
     if (flexibility <= 2) score -= 4;
 
+    const safetyTags = beach.safety_tags || [];
+    if (safetyTags.includes('surf_break')) {
+        score -= 10;
+        reasons.push('This is a known surf break, so snorkeling comfort depends heavily on swell and ability.');
+    }
+    if (safetyTags.includes('wildlife_sensitive')) {
+        score -= 4;
+        reasons.push('Local wildlife may be present; keep respectful distance in and out of the water.');
+    }
+    if (beach.advisory?.status === 'watch') {
+        score -= 8;
+        reasons.push(beach.advisory.message || 'Check current local advisories before entering the water.');
+    }
+    if (beach.advisory?.status === 'closed') {
+        score = 0;
+        reasons.push(beach.advisory.message || 'This beach is marked closed in local advisory data.');
+    }
+
     score = clamp(Math.round(score), 0, 100);
     const state = getState(score, directionMatches, flexibility);
     const confidence = conditions.hasForecast && conditions.hasSwell ? 'normal' : 'low';
@@ -158,6 +176,7 @@ export function getBeachDetailNotes(beach = {}) {
     if (beach.exposure_note) notes.push(beach.exposure_note);
     if (beach.facilities?.length) notes.push(`Facilities: ${beach.facilities.join(', ')}`);
     if (beach.activity_tags?.length) notes.push(`Good for: ${beach.activity_tags.join(', ')}`);
+    if (beach.advisory?.message) notes.push(`Advisory: ${beach.advisory.message}`);
     if (beach.guide_note) notes.push(beach.guide_note);
     if (beach.caution_notes?.length) notes.push(...beach.caution_notes);
 

@@ -31,7 +31,11 @@ Optional fields can enrich the detail sheet:
 - `facilities`
 - `guide_note`
 - `caution_notes`
+- `safety_tags`
+- `advisory`
 - `aliases`
+
+Use `safety_tags` for scoring-aware local risks such as `surf_break` and `wildlife_sensitive`. Use `advisory` for manual closure or watch notes, for example `{ "status": "watch", "message": "Check local signage before entering." }`.
 
 Landmark and facility data lives in `public/landmarks.json`. Use `type: "business"` for facilities that should be controlled by the Facilities map toggle.
 
@@ -53,6 +57,7 @@ npm install
 npm run dev
 npm test
 npm run build
+npm run test:responsive
 ```
 
 The app uses Svelte 5, Vite, Leaflet, and Chart.js.

@@ -1,5 +1,27 @@
 [
     {
+        "name": "Henrietta Rocks",
+        "ok_winds": [
+            "N",
+            "NE",
+            "NW"
+        ],
+        "lat": -32.01361,
+        "lon": 115.54148,
+        "difficulty": "Beginner friendly in calm conditions",
+        "access": "Bike, Island Explorer bus stop 3, or Ngank Yira Bidi",
+        "exposure_note": "Southern beach and shipwreck snorkel spot near Porpoise Bay",
+        "activity_tags": [
+            "shipwreck snorkel",
+            "marine life",
+            "shore entry"
+        ],
+        "guide_note": "Official wind guide highlights Henrietta Rocks when winds are coming from the north.",
+        "caution_notes": [
+            "Check signage and conditions around the Shark wreck before entering."
+        ]
+    },
+    {
         "name": "Parker Point",
         "ok_winds": [
             "N",
@@ -78,6 +100,9 @@
             "swim",
             "snorkel"
         ],
+        "safety_tags": [
+            "wildlife_sensitive"
+        ],
         "guide_note": "Official wind guide highlights Green Island when winds are coming from the north.",
         "caution_notes": [
             "Sea lions may be present; keep a respectful distance on land and in water."
@@ -114,9 +139,40 @@
             "secluded swim",
             "surf"
         ],
+        "safety_tags": [
+            "surf_break"
+        ],
         "guide_note": "Official wind guide highlights Mary Cove when winds are coming from the north.",
         "caution_notes": [
             "Known for a reliable surf break; assess swell before swimming or snorkelling."
+        ]
+    },
+    {
+        "name": "Strickland Bay",
+        "aliases": [
+            "Stricko's"
+        ],
+        "ok_winds": [
+            "N",
+            "NE",
+            "NW"
+        ],
+        "lat": -32.01817,
+        "lon": 115.47707,
+        "difficulty": "Advanced water users",
+        "access": "Bike, Island Explorer bus stop 10, or Wardan Nara Bidi",
+        "exposure_note": "Expansive southern bay and one of WA's most consistent surf breaks",
+        "activity_tags": [
+            "surf",
+            "bodyboard",
+            "quieter shoreline swims"
+        ],
+        "safety_tags": [
+            "surf_break"
+        ],
+        "guide_note": "Official wind guide highlights Strickland Bay when winds are coming from the north.",
+        "caution_notes": [
+            "Surf can break over shallow reef; check swell, tide, and ability before entering."
         ]
     },
     {
@@ -164,6 +220,125 @@
         "lon": 115.4559727
     },
     {
+        "name": "Marjorie Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -32.01435,
+        "lon": 115.46347,
+        "access": "Bike, Island Explorer bus stop 12, or Ngank Wen Bidi",
+        "exposure_note": "South-western bay with a long sandy beach framed by low bluffs",
+        "activity_tags": [
+            "calm swim",
+            "secluded beach",
+            "coastal walk"
+        ],
+        "guide_note": "Official wind guide highlights Marjorie Bay when winds are coming from the south."
+    },
+    {
+        "name": "Rocky Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -32.01442,
+        "lon": 115.47223,
+        "access": "Bike, Island Explorer bus stop 13, or Karlinyah Bidi",
+        "exposure_note": "North-facing beach near the isthmus with dunes that help shelter wind",
+        "activity_tags": [
+            "sheltered swim",
+            "west end access",
+            "coastal walk"
+        ],
+        "guide_note": "Official wind guide highlights Rocky Bay when winds are coming from the south."
+    },
+    {
+        "name": "Stark Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -32.00604,
+        "lon": 115.48488,
+        "difficulty": "Advanced water users",
+        "access": "Bike, Island Explorer bus stop 14, or Karlinyah Bidi",
+        "exposure_note": "North-western bay with variable swell exposure",
+        "activity_tags": [
+            "surf",
+            "bodyboard",
+            "seagrass meadow"
+        ],
+        "safety_tags": [
+            "surf_break"
+        ],
+        "guide_note": "Official wind guide highlights Stark Bay when winds are coming from the south.",
+        "caution_notes": [
+            "Known for surf and bodyboarding; check swell as conditions can vary greatly."
+        ]
+    },
+    {
+        "name": "Ricey Beach",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -31.99912,
+        "lon": 115.49044,
+        "access": "Bike, Island Explorer bus stop 15, or Karlinyah Bidi",
+        "exposure_note": "Secluded western beach sheltered by a winding reef",
+        "activity_tags": [
+            "secluded swim",
+            "reef shelter",
+            "quiet beach"
+        ],
+        "guide_note": "Official wind guide highlights Ricey Beach when winds are coming from the south."
+    },
+    {
+        "name": "City of York Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -31.99536,
+        "lon": 115.49562,
+        "access": "Bike, Island Explorer bus stop 16, or Karlinyah Bidi",
+        "exposure_note": "Less-frequented north-west bay near the City of York shipwreck area",
+        "activity_tags": [
+            "quiet swim",
+            "shipwreck history",
+            "secluded bay"
+        ],
+        "guide_note": "Official wind guide highlights City of York Bay when winds are coming from the south.",
+        "caution_notes": [
+            "Remote beach; check conditions, signage, and your return route before swimming."
+        ]
+    },
+    {
+        "name": "Catherine Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW"
+        ],
+        "lat": -31.99277,
+        "lon": 115.50033,
+        "access": "Bike, Island Explorer bus stop 16, or Karlinyah Bidi",
+        "exposure_note": "Long northern shoreline with space to spread out",
+        "activity_tags": [
+            "calm swim",
+            "long beach",
+            "quiet bay"
+        ],
+        "guide_note": "Official wind guide highlights Catherine Bay when winds are coming from the south."
+    },
+    {
         "name": "Little Armstrong Bay",
         "ok_winds": [
             "NE",
@@ -182,6 +357,25 @@
             "sheltered bay"
         ],
         "guide_note": "Official wind guide highlights Little Armstrong Bay when winds are coming from the south."
+    },
+    {
+        "name": "Parakeet Bay",
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -31.98851,
+        "lon": 115.51498,
+        "access": "Island Explorer bus stop 18 or Gabbi Karniny Bidi",
+        "exposure_note": "Popular protected bay on the northern shore with calm shallow water",
+        "activity_tags": [
+            "family swim",
+            "shallow water",
+            "protected bay"
+        ],
+        "guide_note": "Official wind guide highlights Parakeet Bay when winds are coming from the south."
     },
     {
         "name": "Little Parakeet Bay",
@@ -292,6 +486,30 @@
             "Food nearby"
         ],
         "guide_note": "Official wind guide highlights The Basin when winds are coming from the south."
+    },
+    {
+        "name": "Pinky Beach",
+        "aliases": [
+            "Pinkie Beach",
+            "Pinky's Beach",
+            "Pinkys Beach"
+        ],
+        "ok_winds": [
+            "SE",
+            "S",
+            "SW",
+            "W"
+        ],
+        "lat": -31.98895,
+        "lon": 115.53914,
+        "access": "Bike or Gabbi Karniny Bidi",
+        "exposure_note": "Well-protected north-east bay overlooked by Bathurst Lighthouse",
+        "activity_tags": [
+            "sunset",
+            "protected swim",
+            "lighthouse views"
+        ],
+        "guide_note": "Official wind guide highlights Pinky Beach when winds are coming from the south."
     },
     {
         "name": "Duck Rock",

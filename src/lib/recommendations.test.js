@@ -78,6 +78,10 @@ test('getBeachDetailNotes turns local beach metadata into display notes', () => 
         exposure_note: 'Protected north-facing bay',
         facilities: ['Toilets', 'Cafe nearby'],
         activity_tags: ['snorkel', 'family swim'],
+        advisory: {
+            status: 'watch',
+            message: 'Seasonal access may change.'
+        },
         guide_note: 'Best in southerly winds.',
         caution_notes: ['Watch reef edges in swell.']
     });
@@ -86,9 +90,30 @@ test('getBeachDetailNotes turns local beach metadata into display notes', () => 
         'Protected north-facing bay',
         'Facilities: Toilets, Cafe nearby',
         'Good for: snorkel, family swim',
+        'Advisory: Seasonal access may change.',
         'Best in southerly winds.',
         'Watch reef edges in swell.'
     ]);
+});
+
+test('safety tags temper snorkeling scores and explain local risks', () => {
+    const recommendations = buildRecommendations([
+        { name: 'Quiet Snorkel', ok_winds: ['SW'], lat: -32, lon: 115.5 },
+        {
+            name: 'Surf Break',
+            ok_winds: ['SW'],
+            lat: -32,
+            lon: 115.51,
+            safety_tags: ['surf_break', 'wildlife_sensitive']
+        }
+    ], forecast, 0);
+
+    const quiet = recommendations.find((item) => item.beach.name === 'Quiet Snorkel');
+    const surfBreak = recommendations.find((item) => item.beach.name === 'Surf Break');
+
+    assert.ok(surfBreak.score < quiet.score);
+    assert.ok(surfBreak.reasons.some((reason) => reason.includes('surf break')));
+    assert.ok(surfBreak.reasons.some((reason) => reason.includes('wildlife')));
 });
 
 test('filterRecommendations applies state filters and low-zoom simplification', () => {

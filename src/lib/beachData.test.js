@@ -3,6 +3,30 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const beaches = JSON.parse(readFileSync(new URL('../../public/beaches.json', import.meta.url), 'utf8'));
+const NORTH_WIND_GUIDE_BEACHES = [
+    'Henrietta Rocks',
+    'Parker Point',
+    'Salmon Bay',
+    'Green Island',
+    'Mary Cove',
+    'Strickland Bay'
+];
+const SOUTH_WIND_GUIDE_BEACHES = [
+    'Marjorie Bay',
+    'Rocky Bay',
+    'Stark Bay',
+    'Ricey Beach',
+    'City of York Bay',
+    'Catherine Bay',
+    'Little Armstrong Bay',
+    'Parakeet Bay',
+    'Little Parakeet Bay',
+    'Geordie Bay',
+    'Fays Bay',
+    'Longreach Bay',
+    'The Basin',
+    'Pinky Beach'
+];
 
 function beachNamed(name) {
     const beach = beaches.find((item) => item.name === name);
@@ -19,11 +43,38 @@ test('Parker Point follows north-wind guide guidance', () => {
 });
 
 test('guide-backed beaches expose local detail metadata', () => {
-    for (const name of ['Parker Point', 'Green Island', 'Little Armstrong Bay', 'Geordie Bay', 'The Basin']) {
+    for (const name of [...NORTH_WIND_GUIDE_BEACHES, ...SOUTH_WIND_GUIDE_BEACHES]) {
         const beach = beachNamed(name);
 
         assert.ok(beach.guide_note);
         assert.ok(beach.activity_tags?.length);
         assert.ok(beach.exposure_note);
+        assert.ok(Number.isFinite(beach.lat));
+        assert.ok(Number.isFinite(beach.lon));
+    }
+});
+
+test('official north-wind guide beaches accept northerly winds', () => {
+    for (const name of NORTH_WIND_GUIDE_BEACHES) {
+        const beach = beachNamed(name);
+
+        assert.ok(beach.ok_winds.includes('N'), `${name} should accept north winds`);
+    }
+});
+
+test('official south-wind guide beaches accept southerly winds', () => {
+    for (const name of SOUTH_WIND_GUIDE_BEACHES) {
+        const beach = beachNamed(name);
+
+        assert.ok(beach.ok_winds.includes('S'), `${name} should accept south winds`);
+    }
+});
+
+test('surf and wildlife-sensitive beaches carry safety tags', () => {
+    for (const name of ['Green Island', 'Mary Cove', 'Strickland Bay', 'Stark Bay']) {
+        const beach = beachNamed(name);
+
+        assert.ok(beach.safety_tags?.length, `${name} should expose safety tags`);
+        assert.ok(beach.caution_notes?.length, `${name} should expose caution notes`);
     }
 });
