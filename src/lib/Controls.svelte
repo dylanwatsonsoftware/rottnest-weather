@@ -3,7 +3,7 @@
     import { Chart, registerables } from 'chart.js';
     import ChartDataLabels from 'chartjs-plugin-datalabels';
     import annotationPlugin from 'chartjs-plugin-annotation';
-    import { getRangeModeLabel, RANGE_MODES } from './panelState.js';
+    import { getForecastChartDensity, getForecastChartLabels, getRangeModeLabel, RANGE_MODES } from './panelState.js';
 
     Chart.register(...registerables, ChartDataLabels, annotationPlugin);
 
@@ -43,6 +43,7 @@
     function initChart() {
         if (!canvasElement) return;
         const chartData = getChartData();
+        const density = chartData.density;
 
         chart = new Chart(canvasElement, {
             type: 'line',
@@ -56,10 +57,12 @@
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         fill: true,
                         tension: 0.4,
+                        pointRadius: density.pointRadius,
+                        pointHoverRadius: Math.max(density.pointRadius + 2, 4),
                         yAxisID: 'y',
                         datalabels: {
                             display: function(context) {
-                                return context.dataIndex % 4 === 0;
+                                return context.dataIndex % density.windArrowEvery === 0;
                             },
                             formatter: function(value, context) {
                                 return getWindArrow(forecastData.winddirection_10m[forecastRange.min + context.dataIndex]);
@@ -67,7 +70,7 @@
                             align: 'top',
                             offset: 5,
                             font: {
-                                size: 14,
+                                size: density.windArrowSize,
                                 weight: 'bold'
                             },
                             color: '#0056b3'
@@ -95,7 +98,7 @@
                         ticks: {
                             maxRotation: 0,
                             autoSkip: true,
-                            maxTicksLimit: 12
+                            maxTicksLimit: density.maxTicksLimit
                         }
                     },
                     y: {
@@ -178,12 +181,11 @@
         const end = forecastRange.max + 1;
 
         return {
-            labels: forecastData.time
-                .slice(start, end)
-                .map(t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})),
+            labels: getForecastChartLabels(forecastData.time, forecastRange, rangeMode),
             windSpeed: forecastData.windspeed_10m?.slice(start, end) || [],
             windDirection: forecastData.winddirection_10m?.slice(start, end) || [],
-            swellHeight: forecastData.swell_wave_height?.slice(start, end) || []
+            swellHeight: forecastData.swell_wave_height?.slice(start, end) || [],
+            density: getForecastChartDensity(rangeMode, forecastRange)
         };
     }
 
@@ -197,6 +199,13 @@
         chart.data.labels = chartData.labels;
         chart.data.datasets[0].data = chartData.windSpeed;
         chart.data.datasets[1].data = chartData.swellHeight;
+        chart.data.datasets[0].pointRadius = chartData.density.pointRadius;
+        chart.data.datasets[0].pointHoverRadius = Math.max(chartData.density.pointRadius + 2, 4);
+        chart.data.datasets[0].datalabels.display = function(context) {
+            return context.dataIndex % chartData.density.windArrowEvery === 0;
+        };
+        chart.data.datasets[0].datalabels.font.size = chartData.density.windArrowSize;
+        chart.options.scales.x.ticks.maxTicksLimit = chartData.density.maxTicksLimit;
         chart.options.plugins.annotation.annotations.line1.xMin = getChartHourIndex();
         chart.options.plugins.annotation.annotations.line1.xMax = getChartHourIndex();
         chart.update('none');

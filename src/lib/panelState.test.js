@@ -9,6 +9,8 @@ import {
     getPanelModeAfterOpenRequest,
     getRangeModeLabel,
     getRangeModeForHourIndex,
+    getForecastChartDensity,
+    getForecastChartLabels,
     shouldShowConfidenceLabel
 } from './panelState.js';
 
@@ -85,6 +87,37 @@ test('getRangeModeLabel returns compact button labels', () => {
     assert.equal(getRangeModeLabel('twoDay'), '2 days');
     assert.equal(getRangeModeLabel('threeDay'), '3 days');
     assert.equal(getRangeModeLabel('tenDay'), '10 days');
+});
+
+test('getForecastChartLabels uses sparse day labels for ten day forecasts', () => {
+    const labels = getForecastChartLabels(
+        [
+            '2026-07-20T00:00',
+            '2026-07-20T12:00',
+            '2026-07-21T00:00',
+            '2026-07-21T12:00',
+            '2026-07-22T00:00'
+        ],
+        { min: 0, max: 4 },
+        'tenDay'
+    );
+
+    assert.deepEqual(labels, ['Mon 20', '', 'Tue 21', '', 'Wed 22']);
+});
+
+test('getForecastChartDensity reduces visual noise for long ranges', () => {
+    assert.deepEqual(getForecastChartDensity('today', { min: 6, max: 18 }), {
+        windArrowEvery: 3,
+        maxTicksLimit: 6,
+        pointRadius: 3,
+        windArrowSize: 14
+    });
+    assert.deepEqual(getForecastChartDensity('tenDay', { min: 0, max: 239 }), {
+        windArrowEvery: 24,
+        maxTicksLimit: 8,
+        pointRadius: 0,
+        windArrowSize: 11
+    });
 });
 
 test('getLaterTabHourIndex jumps to the earliest future good window', () => {
