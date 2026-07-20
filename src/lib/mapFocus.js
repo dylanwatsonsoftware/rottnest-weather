@@ -1,10 +1,10 @@
 export function getInitialFitSettings({ hasBeachFocus }) {
     if (hasBeachFocus) {
         return {
-            minZoom: 13,
+            minZoom: 14,
             fitBoundsOptions: {
                 paddingTopLeft: [42, 96],
-                paddingBottomRight: [42, 160],
+                paddingBottomRight: [42, 132],
                 maxZoom: 14
             }
         };

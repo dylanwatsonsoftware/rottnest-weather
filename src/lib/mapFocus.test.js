@@ -5,8 +5,8 @@ import { getInitialFitSettings } from './mapFocus.js';
 test('focused beach startup avoids over-zooming out on mobile', () => {
     const settings = getInitialFitSettings({ hasBeachFocus: true });
 
-    assert.equal(settings.minZoom, 13);
-    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] <= 170);
+    assert.equal(settings.minZoom, 14);
+    assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] <= 140);
 });
 
 test('whole-island startup can fit all of Rottnest when no beaches look good', () => {
