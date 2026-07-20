@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import {
     FACILITY_TYPE_LABELS,
     getFacilityIcon,
+    getFacilityTypeLabel,
     getNearbyFacilities,
     mergeFacilityEnrichment
 } from './facilities.js';
@@ -57,6 +58,13 @@ test('facility type labels and icons cover food and practical beach facilities',
     assert.equal(FACILITY_TYPE_LABELS.toilets, 'Toilets');
     assert.equal(getFacilityIcon('bus_stop'), '🚌');
     assert.equal(getFacilityIcon('unknown'), '📍');
+});
+
+test('getFacilityTypeLabel turns raw facility categories into user-friendly copy', () => {
+    assert.equal(getFacilityTypeLabel({ category: 'bicycle_parking' }), 'Bike parking');
+    assert.equal(getFacilityTypeLabel({ category: 'drinking_water' }), 'Water');
+    assert.equal(getFacilityTypeLabel({ subtype: 'lighthouse' }), 'Lighthouse');
+    assert.equal(getFacilityTypeLabel({ category: 'picnic_area' }), 'Picnic area');
 });
 
 test('facility data contains named food venues instead of settlement cafe grouping', () => {

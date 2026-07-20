@@ -26,6 +26,15 @@ export function getFacilityIcon(category) {
     return FACILITY_TYPE_ICONS[category] || '📍';
 }
 
+export function getFacilityTypeLabel(place = {}) {
+    const category = place.category || place.subtype || place.type;
+    if (!category) return 'Place';
+    if (FACILITY_TYPE_LABELS[category]) return FACILITY_TYPE_LABELS[category];
+
+    const label = String(category).replaceAll('_', ' ').toLowerCase();
+    return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 export function getNearbyFacilities(beach, facilities = [], limit = 5, maxDistanceKm = 1) {
     if (!Number.isFinite(beach?.lat) || !Number.isFinite(beach?.lon)) return [];
 
@@ -37,7 +46,7 @@ export function getNearbyFacilities(beach, facilities = [], limit = 5, maxDistan
                 ...facility,
                 type: facility.type || 'facility',
                 distanceKm: roundDistance(getDistanceKm(beach.lat, beach.lon, facility.lat, facility.lon)),
-                label: FACILITY_TYPE_LABELS[category] || 'Place',
+                label: getFacilityTypeLabel(facility),
                 icon: getFacilityIcon(category)
             };
         })
