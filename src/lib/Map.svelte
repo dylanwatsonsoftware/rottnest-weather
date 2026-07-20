@@ -9,6 +9,7 @@
         landmarks = [],
         filters = {},
         selectedBeachName = '',
+        mapNavigationRequest = null,
         onSelectBeach = () => {},
         onZoomChange = () => {},
         onUserLocationChange = () => {}
@@ -22,6 +23,7 @@
     let userLocationCircle = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
+    let lastNavigationRequestId = null;
 
     const stateIcons = {
         best: '★',
@@ -209,6 +211,19 @@
         onZoomChange(currentZoom);
     }
 
+    function navigateToMapRequest(request) {
+        if (!map || !request || request.requestId === lastNavigationRequestId) return;
+        if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
+
+        lastNavigationRequestId = request.requestId;
+        map.flyTo([request.lat, request.lon], request.zoom || 15, {
+            animate: true,
+            duration: 0.45
+        });
+        currentZoom = map.getZoom();
+        onZoomChange(currentZoom);
+    }
+
     function escapeHtml(value) {
         return String(value)
             .replaceAll('&', '&amp;')
@@ -248,6 +263,13 @@
         const focusLandmarks = landmarks;
         if (map) {
             fitInitialFocus();
+        }
+    });
+
+    $effect(() => {
+        const request = mapNavigationRequest;
+        if (map) {
+            navigateToMapRequest(request);
         }
     });
 

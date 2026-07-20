@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
     getInitialFitSettings,
-    getLandmarkFitPoints
+    getLandmarkFitPoints,
+    getMapNavigationTarget
 } from './mapFocus.js';
 
 test('getLandmarkFitPoints uses every known landmark coordinate for initial load', () => {
@@ -24,4 +25,17 @@ test('initial landmark fit keeps controls and collapsed tray clear', () => {
     assert.equal(settings.minZoom, null);
     assert.deepEqual(settings.fitBoundsOptions.paddingTopLeft, [42, 150]);
     assert.ok(settings.fitBoundsOptions.paddingBottomRight[1] >= 180);
+});
+
+test('getMapNavigationTarget creates a stable map destination', () => {
+    assert.deepEqual(getMapNavigationTarget({ name: 'The Basin', lat: -31.9892, lon: 115.5351 }), {
+        name: 'The Basin',
+        lat: -31.9892,
+        lon: 115.5351,
+        zoom: 15
+    });
+});
+
+test('getMapNavigationTarget ignores unmappable places', () => {
+    assert.equal(getMapNavigationTarget({ name: 'Missing' }), null);
 });

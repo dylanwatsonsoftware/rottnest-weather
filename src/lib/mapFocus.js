@@ -14,3 +14,14 @@ export function getLandmarkFitPoints(landmarks = []) {
         .filter((landmark) => Number.isFinite(landmark.lat) && Number.isFinite(landmark.lon))
         .map((landmark) => [landmark.lat, landmark.lon]);
 }
+
+export function getMapNavigationTarget(place, zoom = 15) {
+    if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
+
+    return {
+        name: place.name,
+        lat: place.lat,
+        lon: place.lon,
+        zoom
+    };
+}

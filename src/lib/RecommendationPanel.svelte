@@ -10,6 +10,7 @@
         shouldShowConfidenceLabel
     } from './panelState.js';
     import { formatTime, RECOMMENDATION_STATES } from './recommendations.js';
+    import { getMapNavigationTarget } from './mapFocus.js';
 
     let {
         recommendations = [],
@@ -24,7 +25,8 @@
         onSelectBeach = () => {},
         onTabChange = () => {},
         onStateFilterChange = () => {},
-        onToggleFilter = () => {}
+        onToggleFilter = () => {},
+        onNavigateToMap = () => {}
     } = $props();
 
     const stateLabels = {
@@ -73,6 +75,15 @@
 
     function toRadians(value) {
         return value * Math.PI / 180;
+    }
+
+    function navigatePlaceToMap(place) {
+        const target = getMapNavigationTarget(place);
+        if (!target) return;
+        onNavigateToMap({
+            ...target,
+            type: place.type
+        });
     }
 
     $effect(() => {
@@ -220,9 +231,18 @@
 
         {#if selectedRecommendation}
             <article class="beach-detail {selectedRecommendation.state}">
-                <div>
+                <div class="detail-heading">
                     <p class="eyebrow">{selectedRecommendation.summary}</p>
                     <h2>{selectedRecommendation.beach.name}</h2>
+                    <button
+                        class="map-jump-button"
+                        type="button"
+                        aria-label="Show {selectedRecommendation.beach.name} on map"
+                        title="Show on map"
+                        onclick={() => navigatePlaceToMap(selectedRecommendation.beach)}
+                    >
+                        ⌖
+                    </button>
                 </div>
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
@@ -250,7 +270,10 @@
                     <div class="nearby-list">
                         <strong>Nearby</strong>
                         {#each nearbyLandmarks as landmark}
-                            <span>{landmark.name} · {landmark.distanceKm.toFixed(1)} km</span>
+                            <button type="button" onclick={() => navigatePlaceToMap(landmark)}>
+                                <span>{landmark.name}</span>
+                                <small>{landmark.distanceKm.toFixed(1)} km</small>
+                            </button>
                         {/each}
                     </div>
                 {/if}

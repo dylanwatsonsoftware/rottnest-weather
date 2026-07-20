@@ -21,6 +21,7 @@
     let selectedBeachName = $state('');
     let activeTab = $state('best');
     let panelOpenRequest = $state(0);
+    let mapNavigationRequest = $state(null);
     let filters = $state({
         states: {
             best: true,
@@ -50,6 +51,22 @@
             ...filters,
             [name]: value
         };
+    }
+
+    function navigateToMapTarget(target) {
+        if (!target) return;
+        mapNavigationRequest = {
+            ...target,
+            requestId: Date.now()
+        };
+
+        if (target.type === 'landmark' || target.type === 'business') {
+            filters = {
+                ...filters,
+                showLandmarks: true,
+                showBusinesses: true
+            };
+        }
     }
 
     onMount(async () => {
@@ -135,6 +152,7 @@
         landmarks={$state.snapshot(landmarks)}
         {filters}
         selectedBeachName={selectedRecommendation?.beach.name}
+        {mapNavigationRequest}
         onSelectBeach={(name) => {
             selectedBeachName = name;
             activeTab = 'best';
@@ -156,5 +174,6 @@
         onTabChange={(tab) => activeTab = tab}
         onStateFilterChange={updateStateFilter}
         onToggleFilter={updateLayerFilter}
+        onNavigateToMap={navigateToMapTarget}
     />
 </main>
