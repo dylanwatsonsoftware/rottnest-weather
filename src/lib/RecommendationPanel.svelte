@@ -44,14 +44,14 @@
     const stateLabels = {
         best: 'Best',
         good: 'Good',
-        watch: 'Watch',
+        watch: 'Caution',
         avoid: 'Avoid'
     };
 
     const stateText = {
         best: 'Best',
         good: 'Good',
-        watch: 'Watch',
+        watch: 'Caution',
         avoid: 'Avoid'
     };
 

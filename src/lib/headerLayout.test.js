@@ -134,6 +134,11 @@ test('recommendation panel has one selected-time list with better-time and setti
     assert.doesNotMatch(recommendationPanel, /activeTab/);
 });
 
+test('recommendation panel labels watch-state recommendations as caution', () => {
+    assert.match(recommendationPanel, /watch:\s*'Caution'/);
+    assert.doesNotMatch(recommendationPanel, /watch:\s*'Watch'/);
+});
+
 test('settings are shown in a dialog instead of a tab', () => {
     assert.match(recommendationPanel, /let settingsOpen = \$state\(false\)/);
     assert.match(recommendationPanel, /class="settings-modal"/);
