@@ -100,11 +100,11 @@ test('getRecommendationHeading labels the selected forecast time truthfully', ()
     );
     assert.equal(
         getRecommendationHeading(hourlyForecast, 3, new Date('2026-07-20T12:20')),
-        'Best at 06:00 PM'
+        'Best at 6pm'
     );
     assert.equal(
         getRecommendationHeading(hourlyForecast, 5, new Date('2026-07-20T12:20')),
-        'Best Tue 06:00 AM'
+        'Best Tue 6am'
     );
 });
 

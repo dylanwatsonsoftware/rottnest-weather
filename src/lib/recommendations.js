@@ -1,3 +1,5 @@
+import { formatCompactTime } from './timeFormat.js';
+
 export const RECOMMENDATION_STATES = ['best', 'good', 'watch', 'avoid'];
 export const ROTTNEST_BOUNDS = {
     north: -31.975,
@@ -337,11 +339,7 @@ export function getSafetyNotices({ windSpeed, swellHeight, forecastData }) {
 
 export function formatTime(time) {
     if (!time) return 'Later';
-    return new Date(time).toLocaleString([], {
-        weekday: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatCompactTime(time, { weekday: true });
 }
 
 function getState(score, directionMatches, flexibility) {
@@ -359,10 +357,7 @@ function getSummary(state, score) {
 }
 
 function formatTimelineTime(time) {
-    return new Date(time).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatCompactTime(time);
 }
 
 function clamp(value, min, max) {

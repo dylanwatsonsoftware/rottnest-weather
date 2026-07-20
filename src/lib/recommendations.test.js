@@ -66,7 +66,7 @@ test('buildBeachStatusTimeline scores one beach across a selected time range', (
     assert.equal(timeline.length, 3);
     assert.deepEqual(timeline.map((item) => item.hourIndex), [0, 1, 2]);
     assert.deepEqual(timeline.map((item) => item.state), ['good', 'avoid', 'avoid']);
-    assert.deepEqual(timeline.map((item) => item.label), ['08:00 AM', '09:00 AM', '10:00 AM']);
+    assert.deepEqual(timeline.map((item) => item.label), ['8am', '9am', '10am']);
 });
 
 test('buildBeachStatusTimeline returns no items without beach or forecast times', () => {

@@ -1,3 +1,5 @@
+import { formatCompactTime } from './timeFormat.js';
+
 export const PANEL_MODES = {
     expanded: 'expanded',
     collapsed: 'collapsed'
@@ -245,10 +247,7 @@ function clampIndex(index, length) {
 }
 
 function formatHeadingTime(value) {
-    return value.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatCompactTime(value);
 }
 
 function formatHeadingDayTime(value) {
@@ -257,10 +256,7 @@ function formatHeadingDayTime(value) {
 }
 
 function formatChartTime(value) {
-    return new Date(value).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    return formatCompactTime(value);
 }
 
 function formatChartDay(value) {

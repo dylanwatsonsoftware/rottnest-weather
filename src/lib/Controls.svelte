@@ -4,6 +4,7 @@
     import ChartDataLabels from 'chartjs-plugin-datalabels';
     import annotationPlugin from 'chartjs-plugin-annotation';
     import { getForecastChartDensity, getForecastChartLabels, getRangeModeLabel, RANGE_MODES } from './panelState.js';
+    import { formatCompactTime } from './timeFormat.js';
 
     Chart.register(...registerables, ChartDataLabels, annotationPlugin);
 
@@ -224,11 +225,7 @@
         }
     });
 
-    const selectedTime = $derived(forecastData ? new Date(forecastData.time[hourIndex]).toLocaleString([], {
-        weekday: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
-    }) : 'Now');
+    const selectedTime = $derived(forecastData ? formatCompactTime(forecastData.time[hourIndex], { weekday: true }) : 'Now');
 
 </script>
 
