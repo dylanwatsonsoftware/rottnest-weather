@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
+const mapSearch = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 
 function getMobileHeaderRule() {
@@ -29,6 +30,14 @@ test('mobile header uses content height instead of fixed extra vertical space', 
 test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
+});
+
+test('floating map search sits below the header and clear of zoom controls', () => {
+    assert.match(mapSearch, /class="map-search"/);
+    assert.match(mapSearch, /placeholder="Search beaches or places"/);
+    assert.match(css, /\.map-search\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/s);
+    assert.match(css, /\.map-search\s*{[^}]*left:\s*96px/s);
+    assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.map-search\s*{[^}]*right:\s*10px/s);
 });
 
 test('selected nearby map places have an obvious marker and label', () => {

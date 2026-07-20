@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import Header from './lib/Header.svelte';
     import Map from './lib/Map.svelte';
+    import MapSearch from './lib/MapSearch.svelte';
     import RecommendationPanel from './lib/RecommendationPanel.svelte';
     import {
         buildRecommendations,
@@ -92,6 +93,11 @@
     }
 
     function selectTopRecommendation(name) {
+        selectBeach(name, 'expanded');
+        panelOpenRequest += 1;
+    }
+
+    function selectSearchBeach(name) {
         selectBeach(name, 'expanded');
         panelOpenRequest += 1;
     }
@@ -254,6 +260,15 @@
             panelOpenRequest += 1;
         }}
         onZoomChange={(zoom) => mapZoom = zoom}
+    />
+    <MapSearch
+        beaches={$state.snapshot(beaches)}
+        landmarks={$state.snapshot(landmarks)}
+        facilities={$state.snapshot(facilities)}
+        {panelMode}
+        {mapLayout}
+        onSelectBeach={selectSearchBeach}
+        onNavigateToMap={navigateToMapTarget}
     />
     {#if hasLoadedForecast}
         <RecommendationPanel

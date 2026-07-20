@@ -43,3 +43,16 @@ test('recommendation panel waits until forecast data is ready', () => {
     assert.match(app, /const hasLoadedForecast = \$derived\(!loading && Boolean\(forecastData\?\.time\?\.length\)\);/);
     assert.match(app, /\{#if hasLoadedForecast\}[\s\S]*<RecommendationPanel/);
 });
+
+test('app wires floating map search to all map data and navigation callbacks', () => {
+    assert.match(app, /import MapSearch from '\.\/lib\/MapSearch\.svelte';/);
+    assert.match(app, /<MapSearch/);
+    assert.match(app, /beaches=\{\$state\.snapshot\(beaches\)\}/);
+    assert.match(app, /landmarks=\{\$state\.snapshot\(landmarks\)\}/);
+    assert.match(app, /facilities=\{\$state\.snapshot\(facilities\)\}/);
+    assert.match(app, /onSelectBeach=\{selectSearchBeach\}/);
+    assert.match(app, /onNavigateToMap=\{navigateToMapTarget\}/);
+    assert.match(app, /function selectSearchBeach\(name\)/);
+    assert.match(app, /selectBeach\(name,\s*'expanded'\)/);
+    assert.match(app, /panelOpenRequest \+= 1/);
+});
