@@ -136,11 +136,34 @@ main {
 .map-search {
     position: fixed;
     top: calc(var(--header-offset) + 8px);
-    left: 96px;
     right: 14px;
     z-index: 1250;
-    max-width: 420px;
+    width: 42px;
     color: #203133;
+}
+
+.map-search.open {
+    width: min(420px, calc(100vw - 110px));
+}
+
+.map-search-toggle {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(34, 60, 63, 0.16);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0b6476;
+    box-shadow: 0 8px 24px rgba(13, 34, 38, 0.2);
+    backdrop-filter: blur(12px);
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.map-search-toggle:focus-visible {
+    outline: 3px solid #0b6476;
+    outline-offset: 2px;
 }
 
 .map-search-input-wrap {
@@ -1427,9 +1450,17 @@ main {
     }
 
     .map-search {
-        left: 78px;
         right: 10px;
-        max-width: none;
+        width: 40px;
+    }
+
+    .map-search.open {
+        width: calc(100vw - 98px);
+    }
+
+    .map-search-toggle {
+        width: 40px;
+        height: 40px;
     }
 
     .map-search-input-wrap {
@@ -1464,9 +1495,11 @@ main {
     }
 
     .map-search {
-        left: 98px;
         right: min(420px, 58vw);
-        max-width: none;
+    }
+
+    .map-search.open {
+        width: min(360px, calc(42vw - 20px));
     }
 
     .recommendation-panel {
@@ -1518,8 +1551,10 @@ main {
     }
 
     .map-search {
-        left: 102px;
-        right: auto;
+        right: 18px;
+    }
+
+    .map-search.open {
         width: 360px;
     }
 

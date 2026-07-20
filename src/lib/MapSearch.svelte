@@ -1,4 +1,5 @@
 <script>
+    import { tick } from 'svelte';
     import { buildPlaceSearchIndex, searchPlaces } from './placeSearch.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
@@ -14,9 +15,16 @@
 
     let query = $state('');
     let isOpen = $state(false);
+    let searchInput = $state(null);
     const searchIndex = $derived(buildPlaceSearchIndex({ beaches, landmarks, facilities }));
     const results = $derived(searchPlaces(searchIndex, query, 8));
     const hasQuery = $derived(query.trim().length > 0);
+
+    async function openSearch() {
+        isOpen = true;
+        await tick();
+        searchInput?.focus();
+    }
 
     function clearSearch() {
         query = '';
@@ -51,21 +59,25 @@
     }
 </script>
 
-<section class="map-search" aria-label="Search map places">
-    <div class="map-search-input-wrap">
-        <span class="map-search-icon" aria-hidden="true">⌕</span>
-        <input
-            type="search"
-            placeholder="Search beaches or places"
-            aria-label="Search beaches or places"
-            bind:value={query}
-            onfocus={() => isOpen = true}
-            onkeydown={handleKeydown}
-        />
-        {#if hasQuery}
+<section class="map-search" class:open={isOpen} aria-label="Search map places">
+    {#if isOpen}
+        <div class="map-search-input-wrap">
+            <span class="map-search-icon" aria-hidden="true">⌕</span>
+            <input
+                bind:this={searchInput}
+                type="search"
+                placeholder="Search beaches or places"
+                aria-label="Search beaches or places"
+                bind:value={query}
+                onkeydown={handleKeydown}
+            />
             <button class="map-search-clear" type="button" aria-label="Clear search" onclick={clearSearch}>×</button>
-        {/if}
-    </div>
+        </div>
+    {:else}
+        <button class="map-search-toggle" type="button" aria-label="Open map search" onclick={openSearch}>
+            <span aria-hidden="true">⌕</span>
+        </button>
+    {/if}
 
     {#if isOpen && hasQuery}
         <div class="map-search-results" aria-label="Search results">

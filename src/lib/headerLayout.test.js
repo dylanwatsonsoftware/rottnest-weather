@@ -37,12 +37,17 @@ test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
 });
 
-test('floating map search sits below the header and clear of zoom controls', () => {
+test('floating map search is a compact icon until opened', () => {
     assert.match(mapSearch, /class="map-search"/);
+    assert.match(mapSearch, /class:open=\{isOpen\}/);
+    assert.match(mapSearch, /aria-label="Open map search"/);
+    assert.match(mapSearch, /class="map-search-toggle"/);
     assert.match(mapSearch, /placeholder="Search beaches or places"/);
     assert.match(css, /\.map-search\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/s);
-    assert.match(css, /\.map-search\s*{[^}]*left:\s*96px/s);
-    assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.map-search\s*{[^}]*right:\s*10px/s);
+    assert.match(css, /\.map-search\s*{[^}]*right:\s*14px/s);
+    assert.match(css, /\.map-search\s*{[^}]*width:\s*42px/s);
+    assert.match(css, /\.map-search\.open\s*{[^}]*width:\s*min\(420px,\s*calc\(100vw - 110px\)\)/s);
+    assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.map-search\.open\s*{[^}]*width:\s*calc\(100vw - 98px\)/s);
 });
 
 test('selected nearby map places have an obvious marker and label', () => {
