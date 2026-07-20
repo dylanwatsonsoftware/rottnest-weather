@@ -103,6 +103,22 @@ h1 {
     white-space: nowrap;
 }
 
+.top-beach-button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    text-align: left;
+    font-weight: inherit;
+    white-space: nowrap;
+}
+
+.top-beach-button:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
 main {
     height: 100%;
     position: relative;

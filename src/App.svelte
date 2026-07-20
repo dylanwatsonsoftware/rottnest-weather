@@ -90,6 +90,12 @@
         if (target) navigateToMapTarget(target);
     }
 
+    function selectTopRecommendation(name) {
+        selectBeach(name);
+        activeTab = 'best';
+        panelOpenRequest += 1;
+    }
+
     onMount(async () => {
         try {
             const [beachesRes, landmarksRes, facilitiesRes, enrichmentRes] = await Promise.all([
@@ -167,6 +173,7 @@
     temp={currentConditions.temperature}
     swellHeight={currentConditions.swellHeight}
     topRecommendation={recommendations[0]}
+    onTopRecommendationSelect={selectTopRecommendation}
     {loading}
 />
 

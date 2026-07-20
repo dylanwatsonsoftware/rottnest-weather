@@ -1,6 +1,15 @@
 <script>
     import Logo from './Logo.svelte';
-    let { windDirDeg = 0, windSpeed, windDir = 'N', temp, swellHeight, topRecommendation = null, loading = false } = $props();
+    let {
+        windDirDeg = 0,
+        windSpeed,
+        windDir = 'N',
+        temp,
+        swellHeight,
+        topRecommendation = null,
+        loading = false,
+        onTopRecommendationSelect = () => {}
+    } = $props();
 </script>
 
 <header>
@@ -24,7 +33,14 @@
                 <div><strong>Temp:</strong> {temp ?? 'N/A'} °C</div>
                 <div><strong>Swell:</strong> {swellHeight ?? 'N/A'}m</div>
                 {#if topRecommendation}
-                    <div><strong>Top:</strong> {topRecommendation.beach.name}</div>
+                    <button
+                        class="top-beach-button"
+                        type="button"
+                        aria-label="Show {topRecommendation.beach.name}"
+                        onclick={() => onTopRecommendationSelect(topRecommendation.beach.name)}
+                    >
+                        <strong>Top:</strong> {topRecommendation.beach.name}
+                    </button>
                 {/if}
             </div>
         {/if}

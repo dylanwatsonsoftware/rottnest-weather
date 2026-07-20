@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
+const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
 
 function getMobileHeaderRule() {
     const mediaStart = css.indexOf('@media (max-width: 620px)');
@@ -44,4 +45,9 @@ test('forecast range toggle supports four compact options', () => {
 
 test('collapsed tray leaves clearance below the forecast slider thumb', () => {
     assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
+});
+
+test('top beach in the header is selectable', () => {
+    assert.match(header, /class="top-beach-button"/);
+    assert.match(header, /aria-label="Show \{topRecommendation\.beach\.name\}"/);
 });
