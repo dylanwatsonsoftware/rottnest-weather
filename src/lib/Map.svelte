@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import L from 'leaflet';
     import 'leaflet/dist/leaflet.css';
+    import { getInitialFitSettings } from './mapFocus.js';
     import { ROTTNEST_BOUNDS, shouldUseUserLocationForFocus } from './recommendations.js';
 
     let {
@@ -224,15 +225,16 @@
             points.push([userLocation.lat, userLocation.lon]);
         }
 
-        const fitPoints = points.length ? points : getRottnestBoundsPoints();
+        const hasBeachFocus = points.length > 0;
+        const fitPoints = hasBeachFocus ? points : getRottnestBoundsPoints();
+        const fitSettings = getInitialFitSettings({ hasBeachFocus });
 
         didFitInitialFocus = true;
         const bounds = L.latLngBounds(fitPoints);
-        map.fitBounds(bounds, {
-            paddingTopLeft: [42, 96],
-            paddingBottomRight: [42, 280],
-            maxZoom: 14
-        });
+        map.fitBounds(bounds, fitSettings.fitBoundsOptions);
+        if (fitSettings.minZoom && map.getZoom() < fitSettings.minZoom) {
+            map.setView(bounds.getCenter(), fitSettings.minZoom, { animate: false });
+        }
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
     }
