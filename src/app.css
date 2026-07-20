@@ -132,7 +132,7 @@ main {
 
 .recommendation-panel.collapsed {
     min-height: 0;
-    max-height: 58px;
+    max-height: 118px;
     border-radius: 16px 16px 0 0;
 }
 
@@ -151,6 +151,50 @@ main {
 
 .panel-collapse-toggle span:last-child {
     font-size: 0.78rem;
+}
+
+.collapsed-time-control {
+    padding: 0 16px 12px;
+    display: grid;
+    gap: 6px;
+}
+
+.collapsed-time-control label {
+    color: #0b6476;
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-align: center;
+}
+
+.collapsed-time-control input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: #dbe5e5;
+    outline: none;
+}
+
+.collapsed-time-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0b6476;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+}
+
+.collapsed-time-control input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0b6476;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
 }
 
 .sheet-handle {
@@ -204,11 +248,17 @@ main {
 }
 
 .panel-content {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: auto;
     padding: 0 12px 14px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .panel-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
     min-height: 0;
     overflow: hidden;
 }
@@ -677,9 +727,9 @@ main {
     }
 
     .recommendation-panel.collapsed {
-        width: 210px;
+        width: 300px;
         border-radius: 12px;
-        max-height: 52px;
+        max-height: 112px;
     }
 
     .panel-collapse-toggle {

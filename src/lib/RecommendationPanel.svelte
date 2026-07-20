@@ -1,6 +1,12 @@
 <script>
     import Controls from './Controls.svelte';
-    import { getNextPanelMode } from './panelState.js';
+    import {
+        getDefaultPanelMode,
+        getForecastSliderMax,
+        getNextPanelMode,
+        getPanelModeAfterOpenRequest,
+        shouldShowConfidenceLabel
+    } from './panelState.js';
     import { formatTime, RECOMMENDATION_STATES } from './recommendations.js';
 
     let {
@@ -12,6 +18,7 @@
         hourIndex = $bindable(0),
         filters,
         activeTab = 'best',
+        panelOpenRequest = 0,
         onSelectBeach = () => {},
         onTabChange = () => {},
         onStateFilterChange = () => {},
@@ -35,8 +42,11 @@
     const bestNow = $derived(recommendations.filter((item) => item.state === 'best' || item.state === 'good').slice(0, 6));
     const later = $derived(recommendations.filter((item) => item.nextGood).slice(0, 8));
     const nearbyLandmarks = $derived(getNearbyLandmarks(selectedRecommendation?.beach, landmarks));
-    let panelMode = $state('expanded');
+    let panelMode = $state(getDefaultPanelMode());
+    let lastHandledOpenRequest = $state(0);
     const isCollapsed = $derived(panelMode === 'collapsed');
+    const collapsedSliderMax = $derived(getForecastSliderMax(forecastData));
+    const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
 
     function getNearbyLandmarks(beach, allLandmarks) {
         if (!beach?.lat || !beach?.lon) return [];
@@ -61,6 +71,11 @@
     function toRadians(value) {
         return value * Math.PI / 180;
     }
+
+    $effect(() => {
+        panelMode = getPanelModeAfterOpenRequest(panelMode, panelOpenRequest, lastHandledOpenRequest);
+        lastHandledOpenRequest = panelOpenRequest;
+    });
 </script>
 
 <section class="recommendation-panel" class:collapsed={isCollapsed} aria-label="Snorkelling recommendations">
@@ -74,6 +89,19 @@
         <span class="sheet-handle" aria-hidden="true"></span>
         <span>{isCollapsed ? 'Show recommendations' : 'Map view'}</span>
     </button>
+
+    {#if isCollapsed && forecastData}
+        <div class="collapsed-time-control" aria-label="Forecast time control">
+            <label for="collapsed-time-slider">{selectedTime}</label>
+            <input
+                type="range"
+                id="collapsed-time-slider"
+                min="0"
+                max={collapsedSliderMax}
+                bind:value={hourIndex}
+            />
+        </div>
+    {/if}
 
     <div id="recommendation-panel-content" class="panel-body" hidden={isCollapsed}>
     <div class="panel-tabs" role="tablist" aria-label="Recommendation views">
@@ -177,7 +205,9 @@
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                     <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
-                    <span>{selectedRecommendation.confidence} confidence</span>
+                    {#if shouldShowConfidenceLabel(selectedRecommendation.confidence)}
+                        <span>{selectedRecommendation.confidence} confidence</span>
+                    {/if}
                 </div>
                 <ul>
                     {#each selectedRecommendation.reasons.slice(0, 3) as reason}

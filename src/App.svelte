@@ -22,6 +22,7 @@
     let selectedBeachName = $state('');
     let activeTab = $state('best');
     let userLocation = $state(null);
+    let panelOpenRequest = $state(0);
     let filters = $state({
         states: {
             best: true,
@@ -142,6 +143,7 @@
         onSelectBeach={(name) => {
             selectedBeachName = name;
             activeTab = 'best';
+            panelOpenRequest += 1;
         }}
         onZoomChange={(zoom) => mapZoom = zoom}
         onUserLocationChange={(location) => userLocation = location}
@@ -157,6 +159,7 @@
         bind:hourIndex
         {filters}
         {activeTab}
+        {panelOpenRequest}
         onSelectBeach={(name) => selectedBeachName = name}
         onTabChange={(tab) => activeTab = tab}
         onStateFilterChange={updateStateFilter}
