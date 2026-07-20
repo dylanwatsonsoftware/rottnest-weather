@@ -70,6 +70,7 @@ test('beach photos can open in a larger modal view', () => {
     assert.match(recommendationPanel, /class="beach-photo-modal"/);
     assert.match(recommendationPanel, /class="beach-photo-modal-close"/);
     assert.match(css, /\.beach-photo-modal\s*{[^}]*position:\s*fixed/s);
+    assert.match(css, /\.beach-photo-modal-content\s*{[^}]*background:\s*#061b20/s);
     assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(74dvh,\s*720px\)/s);
 });
 
