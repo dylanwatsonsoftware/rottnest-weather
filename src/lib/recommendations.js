@@ -178,8 +178,12 @@ export function filterRecommendations(recommendations = [], filters = {}, zoom =
     if (filters.showBeaches === false) return [];
 
     const states = filters.states || {};
+    const minimumScore = Number.isFinite(filters.minimumScore) ? filters.minimumScore : 0;
     const enabledStates = RECOMMENDATION_STATES.filter((state) => states[state] !== false);
-    let filtered = recommendations.filter((item) => enabledStates.includes(item.state));
+    let filtered = recommendations.filter((item) =>
+        item.score >= minimumScore
+        && (enabledStates.includes(item.state) || (filters.includeLeastBad && item.state === 'avoid'))
+    );
 
     if (zoom <= 11 && filters.showAllWhenZoomedOut === false) {
         const topSafe = filtered.filter((item) => item.state !== 'avoid').slice(0, 6);

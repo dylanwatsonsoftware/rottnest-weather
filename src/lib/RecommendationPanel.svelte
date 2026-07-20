@@ -205,6 +205,29 @@
                 </div>
 
                 <div class="filter-group">
+                    <h2>Rejection</h2>
+                    <div class="score-filter-control">
+                        <label for="minimum-score-filter">
+                            Minimum score
+                            <strong>{filters.minimumScore ?? 0}</strong>
+                        </label>
+                        <input
+                            id="minimum-score-filter"
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="5"
+                            value={filters.minimumScore ?? 0}
+                            oninput={(event) => onToggleFilter('minimumScore', Number(event.currentTarget.value))}
+                        />
+                    </div>
+                    <label class="toggle-row">
+                        <input type="checkbox" checked={filters.includeLeastBad} onchange={(event) => onToggleFilter('includeLeastBad', event.currentTarget.checked)} />
+                        <span>Show least-bad avoided beaches</span>
+                    </label>
+                </div>
+
+                <div class="filter-group">
                     <h2>Map Layers</h2>
                     <label class="toggle-row">
                         <input type="checkbox" checked={filters.showBeaches} onchange={(event) => onToggleFilter('showBeaches', event.currentTarget.checked)} />

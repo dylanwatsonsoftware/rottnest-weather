@@ -34,7 +34,9 @@
         showLandmarks: true,
         showBusinesses: true,
         showUserLocation: true,
-        showAllWhenZoomedOut: false
+        showAllWhenZoomedOut: false,
+        minimumScore: 0,
+        includeLeastBad: false
     });
 
     function updateStateFilter(state, value) {

@@ -91,6 +91,41 @@ test('filterRecommendations applies state filters and low-zoom simplification', 
     assert.ok(simplified.every((item) => item.state !== 'avoid'));
 });
 
+test('filterRecommendations applies a score cutoff across enabled beach states', () => {
+    const recommendations = [
+        { beach: { name: 'Very poor' }, state: 'avoid', score: 12 },
+        { beach: { name: 'Least bad' }, state: 'avoid', score: 39 },
+        { beach: { name: 'Watchable' }, state: 'watch', score: 55 },
+        { beach: { name: 'Good' }, state: 'good', score: 72 }
+    ];
+
+    const filtered = filterRecommendations(recommendations, {
+        states: { best: true, good: true, watch: true, avoid: true },
+        showBeaches: true,
+        showAllWhenZoomedOut: true,
+        minimumScore: 38
+    }, 13);
+
+    assert.deepEqual(filtered.map((item) => item.beach.name), ['Least bad', 'Watchable', 'Good']);
+});
+
+test('filterRecommendations can surface least-bad avoid beaches when enabled', () => {
+    const recommendations = [
+        { beach: { name: 'Worst' }, state: 'avoid', score: 15 },
+        { beach: { name: 'Less bad' }, state: 'avoid', score: 36 }
+    ];
+
+    const filtered = filterRecommendations(recommendations, {
+        states: { best: true, good: true, watch: true, avoid: false },
+        showBeaches: true,
+        showAllWhenZoomedOut: true,
+        minimumScore: 30,
+        includeLeastBad: true
+    }, 13);
+
+    assert.deepEqual(filtered.map((item) => item.beach.name), ['Less bad']);
+});
+
 test('getSafetyNotices surfaces risk and missing data', () => {
     assert.deepEqual(getSafetyNotices({ windSpeed: 34, swellHeight: 1.6, forecastData: forecast }), [
         'Strong wind may make entry, exit, and surface swims harder.',
