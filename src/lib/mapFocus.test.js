@@ -4,6 +4,7 @@ import {
     getInitialFitSettings,
     getLandmarkFitPoints,
     getMapNavigationTarget,
+    getPanelModePanOffset,
     getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
     getVisibleBeachFitSettings
@@ -78,4 +79,10 @@ test('visible beach fit preserves zoom when only panel mode changes', () => {
     assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'expanded'), 'panel');
     assert.equal(getVisibleBeachFitReason('a|b', 'a|c', 'collapsed', 'collapsed'), 'points');
     assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'collapsed', 'collapsed'), 'none');
+});
+
+test('panel mode pan offset adjusts center without changing zoom', () => {
+    assert.deepEqual(getPanelModePanOffset('collapsed', 'expanded'), [0, 180]);
+    assert.deepEqual(getPanelModePanOffset('expanded', 'collapsed'), [0, -180]);
+    assert.deepEqual(getPanelModePanOffset('collapsed', 'collapsed'), [0, 0]);
 });

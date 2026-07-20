@@ -5,6 +5,7 @@
     import {
         getInitialFitSettings,
         getLandmarkFitPoints,
+        getPanelModePanOffset,
         getVisibleBeachFitReason,
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
@@ -224,10 +225,11 @@
     function fitVisibleBeaches() {
         const fitPoints = getVisibleBeachFitPoints(recommendations);
         const pointsSignature = fitPoints.map((point) => point.join(',')).join('|');
+        const previousPanelMode = lastVisibleBeachPanelMode;
         const fitReason = getVisibleBeachFitReason(
             lastVisibleBeachPointsSignature,
             pointsSignature,
-            lastVisibleBeachPanelMode,
+            previousPanelMode,
             panelMode
         );
         if (!map || !fitPoints.length || fitReason === 'none') return;
@@ -243,9 +245,7 @@
                 duration: 0.35
             });
         } else if (fitReason === 'panel') {
-            const bounds = L.latLngBounds(fitPoints);
-            map.panInsideBounds(bounds, {
-                ...fitSettings.fitBoundsOptions,
+            map.panBy(getPanelModePanOffset(previousPanelMode, panelMode), {
                 animate: true,
                 duration: 0.35
             });

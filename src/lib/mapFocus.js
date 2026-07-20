@@ -41,6 +41,11 @@ export function getVisibleBeachFitReason(previousPointsSignature, nextPointsSign
     return 'none';
 }
 
+export function getPanelModePanOffset(previousPanelMode, nextPanelMode) {
+    if (previousPanelMode === nextPanelMode) return [0, 0];
+    return nextPanelMode === 'collapsed' ? [0, -180] : [0, 180];
+}
+
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 
