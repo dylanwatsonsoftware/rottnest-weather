@@ -216,12 +216,21 @@
         if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
 
         lastNavigationRequestId = request.requestId;
-        map.flyTo([request.lat, request.lon], request.zoom || 15, {
+        const zoom = request.zoom || 15;
+        const center = getOffsetCenter(request, zoom);
+        map.flyTo(center, zoom, {
             animate: true,
             duration: 0.45
         });
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
+    }
+
+    function getOffsetCenter(request, zoom) {
+        const offset = request.offset || [0, 0];
+        const targetPoint = map.project([request.lat, request.lon], zoom);
+        const centerPoint = targetPoint.add(L.point(offset[0], offset[1]));
+        return map.unproject(centerPoint, zoom);
     }
 
     function escapeHtml(value) {

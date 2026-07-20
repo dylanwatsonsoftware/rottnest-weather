@@ -32,7 +32,8 @@ test('getMapNavigationTarget creates a stable map destination', () => {
         name: 'The Basin',
         lat: -31.9892,
         lon: 115.5351,
-        zoom: 15
+        zoom: 15,
+        offset: [0, 180]
     });
 });
 

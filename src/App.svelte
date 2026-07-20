@@ -22,6 +22,7 @@
     let activeTab = $state('best');
     let panelOpenRequest = $state(0);
     let mapNavigationRequest = $state(null);
+    let mapNavigationSequence = 0;
     let filters = $state({
         states: {
             best: true,
@@ -55,9 +56,10 @@
 
     function navigateToMapTarget(target) {
         if (!target) return;
+        mapNavigationSequence += 1;
         mapNavigationRequest = {
             ...target,
-            requestId: Date.now()
+            requestId: mapNavigationSequence
         };
 
         if (target.type === 'landmark' || target.type === 'business') {
