@@ -37,3 +37,7 @@ test('beach detail timeline has its own time slider styling', () => {
 test('active status timeline cell has a clear selected border', () => {
     assert.match(css, /\.timeline-cell\.active\s*{[^}]*border:\s*3px solid white/s);
 });
+
+test('forecast range toggle supports four compact options', () => {
+    assert.match(css, /\.range-mode-toggle\s*{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/s);
+});

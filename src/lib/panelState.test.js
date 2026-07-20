@@ -23,7 +23,21 @@ const hourlyForecast = {
         '2026-07-21T18:00',
         '2026-07-22T06:00',
         '2026-07-22T18:00',
-        '2026-07-23T06:00'
+        '2026-07-23T06:00',
+        '2026-07-23T18:00',
+        '2026-07-24T06:00',
+        '2026-07-24T18:00',
+        '2026-07-25T06:00',
+        '2026-07-25T18:00',
+        '2026-07-26T06:00',
+        '2026-07-26T18:00',
+        '2026-07-27T06:00',
+        '2026-07-27T18:00',
+        '2026-07-28T06:00',
+        '2026-07-28T18:00',
+        '2026-07-29T06:00',
+        '2026-07-29T18:00',
+        '2026-07-30T06:00'
     ]
 };
 
@@ -56,9 +70,10 @@ test('getForecastRange defaults to 6am through 6pm today', () => {
     assert.deepEqual(getForecastRange(hourlyForecast, 'today'), { min: 1, max: 3 });
 });
 
-test('getForecastRange expands to two and three day forecast windows', () => {
+test('getForecastRange expands to two, three, and ten day forecast windows', () => {
     assert.deepEqual(getForecastRange(hourlyForecast, 'twoDay'), { min: 0, max: 6 });
     assert.deepEqual(getForecastRange(hourlyForecast, 'threeDay'), { min: 0, max: 8 });
+    assert.deepEqual(getForecastRange(hourlyForecast, 'tenDay'), { min: 0, max: 22 });
 });
 
 test('getForecastRange falls back to all times when daylight hours are missing', () => {
@@ -69,6 +84,7 @@ test('getRangeModeLabel returns compact button labels', () => {
     assert.equal(getRangeModeLabel('today'), 'Today');
     assert.equal(getRangeModeLabel('twoDay'), '2 days');
     assert.equal(getRangeModeLabel('threeDay'), '3 days');
+    assert.equal(getRangeModeLabel('tenDay'), '10 days');
 });
 
 test('getLaterTabHourIndex jumps to the earliest future good window', () => {
@@ -93,6 +109,7 @@ test('getRangeModeForHourIndex expands range to include the selected hour', () =
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 2), 'today');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 5), 'twoDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 8), 'threeDay');
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 13), 'tenDay');
 });
 
 test('shouldShowConfidenceLabel hides normal confidence', () => {

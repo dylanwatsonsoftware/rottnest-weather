@@ -3,7 +3,7 @@ export const PANEL_MODES = {
     collapsed: 'collapsed'
 };
 
-export const RANGE_MODES = ['today', 'twoDay', 'threeDay'];
+export const RANGE_MODES = ['today', 'twoDay', 'threeDay', 'tenDay'];
 
 export function getDefaultPanelMode() {
     return PANEL_MODES.collapsed;
@@ -24,10 +24,16 @@ export function getForecastRange(forecastData, rangeMode = 'today') {
     const times = forecastData?.time || [];
     if (!times.length) return { min: 0, max };
 
-    if (rangeMode === 'twoDay' || rangeMode === 'threeDay') {
+    if (rangeMode === 'twoDay' || rangeMode === 'threeDay' || rangeMode === 'tenDay') {
+        const dayCount = {
+            twoDay: 2,
+            threeDay: 3,
+            tenDay: 10
+        }[rangeMode];
+
         return {
             min: 0,
-            max: getForecastDayRangeMax(times, rangeMode === 'twoDay' ? 2 : 3)
+            max: getForecastDayRangeMax(times, dayCount)
         };
     }
 
@@ -49,6 +55,7 @@ export function getForecastRange(forecastData, rangeMode = 'today') {
 export function getRangeModeLabel(rangeMode) {
     if (rangeMode === 'twoDay') return '2 days';
     if (rangeMode === 'threeDay') return '3 days';
+    if (rangeMode === 'tenDay') return '10 days';
     return 'Today';
 }
 
@@ -66,7 +73,8 @@ export function getLaterTabHourIndex(recommendations = [], currentHourIndex = 0,
 export function getRangeModeForHourIndex(forecastData, hourIndex) {
     if (hourIndex <= getForecastRange(forecastData, 'today').max) return 'today';
     if (hourIndex <= getForecastRange(forecastData, 'twoDay').max) return 'twoDay';
-    return 'threeDay';
+    if (hourIndex <= getForecastRange(forecastData, 'threeDay').max) return 'threeDay';
+    return 'tenDay';
 }
 
 export function shouldShowConfidenceLabel(confidence) {
