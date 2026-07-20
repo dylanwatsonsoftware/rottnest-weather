@@ -76,3 +76,18 @@ test('facility data contains named food venues instead of settlement cafe groupi
     assert.ok(facilityNames.includes('Dome Cafe'));
     assert.equal(facilityNames.includes('Settlement Cafes'), false);
 });
+
+test('named food venues record coordinate provenance', () => {
+    const namedFoodVenues = facilityData.filter((facility) => (
+        facility.source === 'rottnest_official_eat_drink' &&
+        ['cafe', 'restaurant'].includes(facility.category)
+    ));
+
+    assert.ok(namedFoodVenues.length >= 8);
+    namedFoodVenues.forEach((facility) => {
+        assert.ok(facility.coordinate_source, `${facility.name} is missing coordinate_source`);
+        assert.ok(facility.coordinate_checked_at, `${facility.name} is missing coordinate_checked_at`);
+    });
+    assert.equal(facilityData.find((facility) => facility.id === 'pinkys-rottnest-island')?.osm_id, 9409361909);
+    assert.equal(facilityData.find((facility) => facility.id === 'the-lane-cafe')?.osm_id, 4583455993);
+});

@@ -1,4 +1,4 @@
-export const FORECAST_CACHE_KEY = 'rottnest-snorkelling-app-cache-v2';
+export const FORECAST_CACHE_KEY = 'rottnest-snorkelling-app-cache-v3';
 export const FORECAST_CACHE_MAX_AGE_MS = 1000 * 60 * 60 * 6;
 
 function hasForecastTimes(payload) {

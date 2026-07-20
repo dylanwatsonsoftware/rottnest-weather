@@ -14,122 +14,185 @@
     {
         "id": "the-lane-cafe",
         "name": "The Lane Cafe",
-        "lat": -31.99718,
-        "lon": 115.54148,
+        "lat": -31.9955204,
+        "lon": 115.5406025,
         "type": "facility",
         "category": "cafe",
         "address": "Maley St",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/the-lane",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 4583455993,
+        "osm_tags": {
+            "amenity": "cafe"
+        }
     },
     {
         "id": "rottnest-bakery",
         "name": "Rottnest Bakery",
-        "lat": -31.99705,
-        "lon": 115.54136,
+        "lat": -31.9957128,
+        "lon": 115.5402824,
         "type": "facility",
         "category": "cafe",
         "address": "Maley St",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/rottnest-bakery",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 4583455994,
+        "osm_tags": {
+            "shop": "bakery"
+        }
     },
     {
         "id": "subway-rottnest",
         "name": "Subway",
-        "lat": -31.99716,
-        "lon": 115.54164,
+        "lat": -31.995608,
+        "lon": 115.5406805,
         "type": "facility",
         "category": "restaurant",
         "address": "Settlement Mall",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/subway",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 2774072504,
+        "osm_tags": {
+            "amenity": "fast_food"
+        }
     },
     {
         "id": "dome-cafe-rottnest",
         "name": "Dome Cafe",
-        "lat": -31.9961,
-        "lon": 115.54105,
+        "lat": -31.9969045,
+        "lon": 115.5411598,
         "type": "facility",
         "category": "cafe",
         "address": "Colebatch Ave",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/dome-cafe",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "way",
+        "osm_id": 45353458,
+        "osm_tags": {
+            "amenity": "cafe"
+        }
     },
     {
         "id": "pinkys-rottnest-island",
         "name": "Pinky's Rottnest Island",
-        "lat": -31.98845,
-        "lon": 115.53875,
+        "lat": -31.9895018,
+        "lon": 115.5388461,
         "type": "facility",
         "category": "restaurant",
         "address": "Strue Rd",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/pinkys-rottnest-island",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 9409361909,
+        "osm_name": "Pinky's Beach Club",
+        "osm_tags": {
+            "leisure": "beach_resort"
+        }
     },
     {
         "id": "hotel-rottnest",
         "name": "Hotel Rottnest",
-        "lat": -31.99605,
-        "lon": 115.5422,
+        "lat": -31.998175,
+        "lon": 115.5419823,
         "type": "facility",
         "category": "restaurant",
         "address": "1 Bedford Ave",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/hotel-rottnest",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 5325306189,
+        "osm_tags": {
+            "amenity": "restaurant"
+        }
     },
     {
         "id": "bayside-bar",
         "name": "Bayside Bar",
-        "lat": -31.99555,
-        "lon": 115.54252,
+        "lat": -31.9984794,
+        "lon": 115.5425304,
         "type": "facility",
         "category": "restaurant",
         "address": "1 Bedford Ave",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/bayside-bar",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 12512264072,
+        "osm_tags": {
+            "amenity": "bar"
+        }
     },
     {
         "id": "frankies-on-rotto",
         "name": "Frankie's on Rotto",
-        "lat": -31.9971,
-        "lon": 115.54125,
+        "lat": -31.99555,
+        "lon": 115.54045,
         "type": "facility",
         "category": "restaurant",
         "address": "Somerville Dr",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/frankie-s-on-rotto",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "official_location_description",
+        "coordinate_checked_at": "2026-07-20",
+        "coordinate_note": "Official page places Frankie's in Thomson Bay settlement mall, opposite Rottnest Bakery; set near the OSM bakery node."
     },
     {
         "id": "lontara",
         "name": "Lontara",
-        "lat": -31.99565,
-        "lon": 115.54262,
+        "lat": -31.9987801,
+        "lon": 115.5424838,
         "type": "facility",
         "category": "restaurant",
         "address": "McCallum Ave",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/lontara",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "osm_nominatim",
+        "coordinate_checked_at": "2026-07-20",
+        "osm_type": "node",
+        "osm_id": 12512264073,
+        "osm_tags": {
+            "amenity": "restaurant"
+        }
     },
     {
         "id": "isola-bar-e-cibo",
         "name": "Isola Bar E Cibo",
-        "lat": -31.99815,
-        "lon": 115.54315,
+        "lat": -31.99835,
+        "lon": 115.54225,
         "type": "facility",
         "category": "restaurant",
         "address": "Colebatch Ave",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/isola-rottnest",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "official_location_description",
+        "coordinate_checked_at": "2026-07-20",
+        "coordinate_note": "Official page places Isola in South Thomson Bay, near the main jetty and Visitor Centre; set on Colebatch Ave near adjacent OSM food venues."
     },
     {
         "id": "settlement-bike-parking",
@@ -174,7 +237,10 @@
         "address": "Katemeraire Rd",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/geordies-cafe-art-gallery",
-        "checked_at": "2026-07-20"
+        "checked_at": "2026-07-20",
+        "coordinate_source": "official_location_description",
+        "coordinate_checked_at": "2026-07-20",
+        "coordinate_note": "Official page places Geordie's in Geordie Bay; reused existing Geordie Bay cafe-area seed pending an OSM/Google exact match."
     },
     {
         "id": "geordie-bay-facilities",
