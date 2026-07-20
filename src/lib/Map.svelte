@@ -6,6 +6,7 @@
         getInitialFitSettings,
         getLandmarkFitPoints,
         getPanelModePanOffset,
+        getVisibleMapAnchorOffset,
         getVisibleBeachFitReason,
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
@@ -298,21 +299,51 @@
         if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
 
         lastNavigationRequestId = request.requestId;
-        const zoom = request.zoom || 15;
-        const center = getOffsetCenter(request, zoom);
-        map.flyTo(center, zoom, {
-            animate: true,
-            duration: 0.45
+        requestAnimationFrame(() => {
+            if (!map) return;
+            const zoom = request.zoom || 15;
+            const center = getOffsetCenter(request, zoom);
+            map.flyTo(center, zoom, {
+                animate: true,
+                duration: 0.45
+            });
+            currentZoom = map.getZoom();
+            onZoomChange(currentZoom);
         });
-        currentZoom = map.getZoom();
-        onZoomChange(currentZoom);
     }
 
     function getOffsetCenter(request, zoom) {
-        const offset = request.offset || [0, 0];
+        const offset = getNavigationOffset(request);
         const targetPoint = map.project([request.lat, request.lon], zoom);
         const centerPoint = targetPoint.add(L.point(offset[0], offset[1]));
         return map.unproject(centerPoint, zoom);
+    }
+
+    function getNavigationOffset(request) {
+        if (!request.visibleAnchor) return request.offset || [0, 0];
+
+        const visibleBounds = getVisibleMapBounds();
+        return getVisibleMapAnchorOffset({
+            ...visibleBounds,
+            targetXRatio: request.visibleAnchor.targetXRatio,
+            targetYRatio: request.visibleAnchor.targetYRatio
+        });
+    }
+
+    function getVisibleMapBounds() {
+        const mapRect = mapElement.getBoundingClientRect();
+        const headerRect = document.querySelector('header')?.getBoundingClientRect();
+        const panelRect = document.querySelector('.recommendation-panel')?.getBoundingClientRect();
+        const isSidePanel = mapLayout === 'shortLandscape';
+
+        return {
+            mapWidth: mapRect.width,
+            mapHeight: mapRect.height,
+            visibleLeft: 0,
+            visibleRight: isSidePanel && panelRect ? Math.max(panelRect.left - mapRect.left, 0) : mapRect.width,
+            visibleTop: headerRect ? Math.max(headerRect.bottom - mapRect.top, 0) : 0,
+            visibleBottom: !isSidePanel && panelRect ? Math.max(panelRect.top - mapRect.top, 0) : mapRect.height
+        };
     }
 
     function escapeHtml(value) {

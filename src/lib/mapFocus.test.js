@@ -9,6 +9,7 @@ import {
     getMapNavigationTarget,
     getPanelModeMapOffset,
     getPanelModePanOffset,
+    getVisibleMapAnchorOffset,
     getVisibleBeachFitReason,
     getVisibleBeachFitPoints,
     getVisibleBeachFitSettings
@@ -55,7 +56,11 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
         lat: -32.023,
         lon: 115.528,
         zoom: 15,
-        offset: [0, 320]
+        offset: [0, 320],
+        visibleAnchor: {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5
+        }
     });
 });
 
@@ -73,7 +78,11 @@ test('getMapLayoutChangeTarget recenters selected beach when orientation layout 
         lat: -32.0242,
         lon: 115.5251,
         zoom: 15,
-        offset: [360, 0]
+        offset: [360, 0],
+        visibleAnchor: {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5
+        }
     });
     assert.equal(getMapLayoutChangeTarget(beach, 'expanded', 'default', 'default'), null);
 });
@@ -139,4 +148,22 @@ test('panel mode map offsets leave extra room for expanded sheet', () => {
     assert.deepEqual(getPanelModeMapOffset('expanded'), [0, 320]);
     assert.deepEqual(getPanelModeMapOffset('collapsed', 'shortLandscape'), [170, 90]);
     assert.deepEqual(getPanelModeMapOffset('expanded', 'shortLandscape'), [360, 0]);
+});
+
+test('visible map anchor offset centers selected items inside the unobscured map area', () => {
+    assert.deepEqual(getVisibleMapAnchorOffset({
+        mapWidth: 390,
+        mapHeight: 800,
+        visibleTop: 80,
+        visibleBottom: 500,
+        targetYRatio: 0.5
+    }), [0, 110]);
+
+    assert.deepEqual(getVisibleMapAnchorOffset({
+        mapWidth: 800,
+        mapHeight: 390,
+        visibleRight: 480,
+        targetXRatio: 0.5,
+        targetYRatio: 0.5
+    }), [160, 0]);
 });

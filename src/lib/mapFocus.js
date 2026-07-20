@@ -80,7 +80,16 @@ export function getPanelModeMapOffset(panelMode = 'collapsed', mapLayout = 'defa
 }
 
 export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLayout = 'default') {
-    return getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
+    const target = getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
+    if (!target) return null;
+
+    return {
+        ...target,
+        visibleAnchor: {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5
+        }
+    };
 }
 
 export function getMapLayoutChangeTarget(beach, panelMode = 'collapsed', previousMapLayout = 'default', nextMapLayout = 'default') {
@@ -98,4 +107,41 @@ export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
         zoom,
         offset
     };
+}
+
+export function getVisibleMapAnchorOffset({
+    mapWidth = 0,
+    mapHeight = 0,
+    visibleLeft = 0,
+    visibleRight = mapWidth,
+    visibleTop = 0,
+    visibleBottom = mapHeight,
+    targetXRatio = 0.5,
+    targetYRatio = 0.5
+} = {}) {
+    const safeMapWidth = Math.max(mapWidth, 0);
+    const safeMapHeight = Math.max(mapHeight, 0);
+    const left = clampPixel(visibleLeft, 0, safeMapWidth);
+    const right = clampPixel(visibleRight, left, safeMapWidth);
+    const top = clampPixel(visibleTop, 0, safeMapHeight);
+    const bottom = clampPixel(visibleBottom, top, safeMapHeight);
+    const xRatio = clampRatio(targetXRatio);
+    const yRatio = clampRatio(targetYRatio);
+    const targetX = left + (right - left) * xRatio;
+    const targetY = top + (bottom - top) * yRatio;
+
+    return [
+        Math.round(safeMapWidth / 2 - targetX),
+        Math.round(safeMapHeight / 2 - targetY)
+    ];
+}
+
+function clampPixel(value, min, max) {
+    if (!Number.isFinite(value)) return min;
+    return Math.max(min, Math.min(value, max));
+}
+
+function clampRatio(value) {
+    if (!Number.isFinite(value)) return 0.5;
+    return Math.max(0, Math.min(value, 1));
 }

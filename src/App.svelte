@@ -84,15 +84,15 @@
         }
     }
 
-    function selectBeach(name) {
+    function selectBeach(name, targetPanelMode = panelMode) {
         selectedBeachName = name;
         const beach = beaches.find((item) => item.name === name);
-        const target = getBeachSelectionMapTarget(beach, panelMode, mapLayout);
+        const target = getBeachSelectionMapTarget(beach, targetPanelMode, mapLayout);
         if (target) navigateToMapTarget(target);
     }
 
     function selectTopRecommendation(name) {
-        selectBeach(name);
+        selectBeach(name, 'expanded');
         activeTab = 'best';
         panelOpenRequest += 1;
     }
@@ -215,7 +215,7 @@
         {mapLayout}
         {mapNavigationRequest}
         onSelectBeach={(name) => {
-            selectBeach(name);
+            selectBeach(name, 'expanded');
             activeTab = 'best';
             panelOpenRequest += 1;
         }}
