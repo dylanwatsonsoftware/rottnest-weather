@@ -53,6 +53,13 @@
         avoid: 'Avoid'
     };
 
+    const laterStateText = {
+        best: 'Best later',
+        good: 'Good later',
+        watch: 'Watch later',
+        avoid: 'Avoid later'
+    };
+
     const bestNow = $derived(recommendations.filter((item) => item.state === 'best' || item.state === 'good').slice(0, 6));
     const later = $derived(recommendations.filter((item) => item.nextGood).slice(0, 8));
     const nearbyPlaces = $derived(getNearbyPlaces(selectedRecommendation?.beach, landmarks, facilities));
@@ -258,7 +265,7 @@
                             <strong>{item.beach.name}</strong>
                             <small>{formatTime(item.nextGood.time)} · {item.nextGood.windSpeed} km/h {item.nextGood.windDirection}</small>
                         </span>
-                        <span class="state-pill {item.nextGood.state}">{stateText[item.nextGood.state]}</span>
+                        <span class="state-pill {item.nextGood.state}">{laterStateText[item.nextGood.state]}</span>
                     </button>
                 {:else}
                     <p class="empty-state">No better snorkeling windows found in this forecast.</p>

@@ -73,6 +73,14 @@ test('beach photos can open in a larger modal view', () => {
     assert.match(css, /\.beach-photo-modal-image\s*{[^}]*max-height:\s*min\(74dvh,\s*720px\)/s);
 });
 
+test('good later rows use future recommendation labels instead of now labels', () => {
+    assert.match(recommendationPanel, /const laterStateText = \{/);
+    assert.match(recommendationPanel, /best:\s*'Best later'/);
+    assert.match(recommendationPanel, /good:\s*'Good later'/);
+    assert.match(recommendationPanel, /\{laterStateText\[item\.nextGood\.state\]\}/);
+    assert.doesNotMatch(recommendationPanel, /later-row[\s\S]*\{stateText\[item\.nextGood\.state\]\}/);
+});
+
 test('top beach in the header is selectable', () => {
     assert.match(header, /class="top-beach-button"/);
     assert.match(header, /aria-label="Show \{topRecommendation\.beach\.name\}"/);
