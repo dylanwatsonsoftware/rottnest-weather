@@ -584,6 +584,55 @@ main {
     font-size: 0.76rem;
 }
 
+.beach-photo-strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(168px, 72%);
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.beach-photo-strip figure {
+    margin: 0;
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+.beach-photo-strip img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+    background: #dbe5e5;
+}
+
+.beach-photo-strip figcaption {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    margin-top: 4px;
+    color: #607072;
+    font-size: 0.66rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.beach-photo-strip a {
+    min-width: 0;
+    color: #0b6476;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.beach-photo-strip span {
+    flex: 0 0 auto;
+}
+
 .status-timeline {
     margin: 10px 0;
     display: grid;

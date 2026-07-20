@@ -43,6 +43,8 @@ Facility data lives in `public/facilities.json` using OSM-style tags where possi
 
 Optional place ratings/details live in `public/place-enrichment.json`, keyed by facility `id`. Do not scrape Google pages into this file; only use manually curated details or data exported through permitted APIs and record the source/check date with each entry.
 
+Beach photo metadata lives in `src/lib/beachMedia.js`; local resized image files live in `public/beach-images/`. Only add images with a reuse-friendly license, and include `sourceUrl`, `author`, `license`, and `licenseUrl` for every image so the beach detail sheet can display attribution.
+
 ## Recommendation Model
 
 Recommendations are derived in `src/lib/recommendations.js`. Raw beach JSON is not mutated. The model weighs:

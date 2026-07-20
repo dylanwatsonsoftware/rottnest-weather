@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
+const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 
 function getMobileHeaderRule() {
     const mediaStart = css.indexOf('@media (max-width: 620px)');
@@ -49,6 +50,14 @@ test('forecast range toggle supports four compact options', () => {
 
 test('collapsed tray leaves clearance below the forecast slider thumb', () => {
     assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
+});
+
+test('selected beach detail can show a horizontally scrollable local photo strip', () => {
+    assert.match(recommendationPanel, /getBeachImages/);
+    assert.match(recommendationPanel, /class="beach-photo-strip"/);
+    assert.match(recommendationPanel, /loading="lazy"/);
+    assert.match(css, /\.beach-photo-strip\s*{[^}]*overflow-x:\s*auto/s);
+    assert.match(css, /\.beach-photo-strip img\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
 });
 
 test('top beach in the header is selectable', () => {

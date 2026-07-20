@@ -14,6 +14,7 @@
         shouldShowConfidenceLabel
     } from './panelState.js';
     import { getFacilityIcon, getNearbyFacilities } from './facilities.js';
+    import { getBeachImages } from './beachMedia.js';
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
@@ -66,6 +67,7 @@
     const sliderHeatGradient = $derived(getSliderHeatGradient(bestBeachTimeline, forecastRange));
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
+    const selectedBeachImages = $derived(getBeachImages(selectedRecommendation?.beach.name));
 
     function getNearbyLandmarks(beach, allLandmarks) {
         if (!beach?.lat || !beach?.lon) return [];
@@ -345,6 +347,19 @@
                         <span>{selectedRecommendation.confidence} confidence</span>
                     {/if}
                 </div>
+                {#if selectedBeachImages.length}
+                    <div class="beach-photo-strip" aria-label="{selectedRecommendation.beach.name} photos">
+                        {#each selectedBeachImages as image}
+                            <figure>
+                                <img src={image.src} alt={image.alt} loading="lazy" />
+                                <figcaption>
+                                    <a href={image.sourceUrl} target="_blank" rel="noreferrer">{image.author}</a>
+                                    <span>{image.license}</span>
+                                </figcaption>
+                            </figure>
+                        {/each}
+                    </div>
+                {/if}
                 {#if beachTimeline.length}
                     <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
                         <div class="detail-time-control">
