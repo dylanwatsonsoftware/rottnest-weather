@@ -6,6 +6,7 @@
         getInitialFitSettings,
         getLandmarkFitPoints,
         getNavigationSettleDelay,
+        getMapZoomRecenterTarget,
         getPanelModePanOffset,
         shouldShowBeachLabel,
         shouldShowPlaceLabel,
@@ -66,7 +67,9 @@
 
         initUserLocation();
         map.on('zoomend', () => {
-            currentZoom = map.getZoom();
+            const nextZoom = map.getZoom();
+            currentZoom = nextZoom;
+            recenterSelectedNavigationOnZoom(nextZoom);
             onZoomChange(currentZoom);
             updateBeachLabels();
             updateLandmarks();
@@ -361,6 +364,15 @@
         const targetPoint = map.project([request.lat, request.lon], zoom);
         const centerPoint = targetPoint.add(L.point(offset[0], offset[1]));
         return map.unproject(centerPoint, zoom);
+    }
+
+    function recenterSelectedNavigationOnZoom(zoom) {
+        const request = getMapZoomRecenterTarget(mapNavigationRequest, zoom);
+        if (!request) return;
+
+        map.setView(getOffsetCenter(request, zoom), zoom, {
+            animate: false
+        });
     }
 
     function getNavigationOffset(request) {
