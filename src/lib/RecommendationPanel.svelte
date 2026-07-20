@@ -303,7 +303,7 @@
                             />
                         </div>
                         <div class="timeline-heading">
-                            <strong>Status by time</strong>
+                            <strong>Score by time</strong>
                             <span>{getRangeModeLabel(rangeMode)}</span>
                         </div>
                         <div class="timeline-chart">
