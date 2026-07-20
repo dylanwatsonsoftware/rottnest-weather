@@ -3,6 +3,8 @@ export const PANEL_MODES = {
     collapsed: 'collapsed'
 };
 
+export const RANGE_MODES = ['today', 'twoDay', 'threeDay'];
+
 export function getDefaultPanelMode() {
     return PANEL_MODES.collapsed;
 }
@@ -17,10 +19,57 @@ export function getForecastSliderMax(forecastData) {
     return Math.max((forecastData?.time?.length || 1) - 1, 0);
 }
 
+export function getForecastRange(forecastData, rangeMode = 'today') {
+    const max = getForecastSliderMax(forecastData);
+    const times = forecastData?.time || [];
+    if (!times.length) return { min: 0, max };
+
+    if (rangeMode === 'twoDay' || rangeMode === 'threeDay') {
+        return {
+            min: 0,
+            max: getForecastDayRangeMax(times, rangeMode === 'twoDay' ? 2 : 3)
+        };
+    }
+
+    const firstDate = getDateKey(times[0]);
+    const daylightIndexes = times
+        .map((time, index) => ({ time: new Date(time), index }))
+        .filter(({ time }) => getDateKey(time) === firstDate)
+        .filter(({ time }) => time.getHours() >= 6 && time.getHours() <= 18)
+        .map(({ index }) => index);
+
+    if (!daylightIndexes.length) return { min: 0, max };
+
+    return {
+        min: daylightIndexes[0],
+        max: daylightIndexes[daylightIndexes.length - 1]
+    };
+}
+
+export function getRangeModeLabel(rangeMode) {
+    if (rangeMode === 'twoDay') return '2 days';
+    if (rangeMode === 'threeDay') return '3 days';
+    return 'Today';
+}
+
 export function shouldShowConfidenceLabel(confidence) {
     return Boolean(confidence && confidence !== 'normal');
 }
 
 export function getPanelModeAfterOpenRequest(mode, openRequest, lastHandledRequest) {
     return openRequest !== lastHandledRequest ? PANEL_MODES.expanded : mode;
+}
+
+function getForecastDayRangeMax(times, dayCount) {
+    const firstDate = new Date(times[0]);
+    const endDate = new Date(firstDate);
+    endDate.setDate(firstDate.getDate() + dayCount);
+
+    const maxIndex = times.findLastIndex((time) => new Date(time) < endDate);
+    return maxIndex >= 0 ? maxIndex : times.length - 1;
+}
+
+function getDateKey(value) {
+    const date = value instanceof Date ? value : new Date(value);
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }

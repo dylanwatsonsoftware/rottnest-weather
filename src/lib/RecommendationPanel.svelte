@@ -2,9 +2,11 @@
     import Controls from './Controls.svelte';
     import {
         getDefaultPanelMode,
-        getForecastSliderMax,
+        getForecastRange,
         getNextPanelMode,
         getPanelModeAfterOpenRequest,
+        getRangeModeLabel,
+        RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
     import { formatTime, RECOMMENDATION_STATES } from './recommendations.js';
@@ -44,8 +46,9 @@
     const nearbyLandmarks = $derived(getNearbyLandmarks(selectedRecommendation?.beach, landmarks));
     let panelMode = $state(getDefaultPanelMode());
     let lastHandledOpenRequest = $state(0);
+    let rangeMode = $state('today');
     const isCollapsed = $derived(panelMode === 'collapsed');
-    const collapsedSliderMax = $derived(getForecastSliderMax(forecastData));
+    const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
 
     function getNearbyLandmarks(beach, allLandmarks) {
@@ -76,6 +79,12 @@
         panelMode = getPanelModeAfterOpenRequest(panelMode, panelOpenRequest, lastHandledOpenRequest);
         lastHandledOpenRequest = panelOpenRequest;
     });
+
+    $effect(() => {
+        const range = forecastRange;
+        if (hourIndex < range.min) hourIndex = range.min;
+        if (hourIndex > range.max) hourIndex = range.max;
+    });
 </script>
 
 <section class="recommendation-panel" class:collapsed={isCollapsed} aria-label="Snorkelling recommendations">
@@ -92,12 +101,25 @@
 
     {#if isCollapsed && forecastData}
         <div class="collapsed-time-control" aria-label="Forecast time control">
+            <div class="range-mode-toggle" aria-label="Forecast range">
+                {#each RANGE_MODES as mode}
+                    <button
+                        type="button"
+                        class:active={rangeMode === mode}
+                        onclick={() => rangeMode = mode}
+                    >
+                        {getRangeModeLabel(mode)}
+                    </button>
+                {/each}
+            </div>
             <label for="collapsed-time-slider">{selectedTime}</label>
             <input
                 type="range"
                 id="collapsed-time-slider"
-                min="0"
-                max={collapsedSliderMax}
+                min={forecastRange.min}
+                aria-valuemin={forecastRange.min}
+                aria-valuemax={forecastRange.max}
+                max={forecastRange.max}
                 bind:value={hourIndex}
             />
         </div>
@@ -236,7 +258,13 @@
         {/if}
 
         {#if forecastData}
-            <Controls {forecastData} bind:hourIndex />
+            <Controls
+                {forecastData}
+                {forecastRange}
+                {rangeMode}
+                onRangeModeChange={(mode) => rangeMode = mode}
+                bind:hourIndex
+            />
         {/if}
     </div>
     </div>

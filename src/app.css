@@ -160,6 +160,28 @@ main {
     gap: 6px;
 }
 
+.range-mode-toggle {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.range-mode-toggle button {
+    min-height: 32px;
+    border: 1px solid #d4e0e0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.74);
+    color: #34494b;
+    font-size: 0.75rem;
+    font-weight: 850;
+}
+
+.range-mode-toggle button.active {
+    border-color: #0b6476;
+    background: #0b6476;
+    color: white;
+}
+
 .collapsed-time-control label {
     color: #0b6476;
     font-size: 0.78rem;
@@ -482,11 +504,12 @@ main {
 
 .slider-container {
     margin-bottom: 8px;
+    display: grid;
+    gap: 8px;
 }
 
 .slider-container label {
     display: block;
-    margin-bottom: 8px;
     color: #263435;
     font-size: 0.85rem;
     font-weight: 800;

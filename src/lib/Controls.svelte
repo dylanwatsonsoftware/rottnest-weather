@@ -3,10 +3,18 @@
     import { Chart, registerables } from 'chart.js';
     import ChartDataLabels from 'chartjs-plugin-datalabels';
     import annotationPlugin from 'chartjs-plugin-annotation';
+    import { getRangeModeLabel, RANGE_MODES } from './panelState.js';
 
     Chart.register(...registerables, ChartDataLabels, annotationPlugin);
 
-    let { forecastData, hourIndex = $bindable(0), onSliderChange } = $props();
+    let {
+        forecastData,
+        forecastRange = { min: 0, max: 0 },
+        rangeMode = 'today',
+        hourIndex = $bindable(0),
+        onSliderChange,
+        onRangeModeChange = () => {}
+    } = $props();
 
     let chart;
     let canvasElement;
@@ -34,16 +42,16 @@
 
     function initChart() {
         if (!canvasElement) return;
-        const labels = forecastData.time.map(t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+        const chartData = getChartData();
 
         chart = new Chart(canvasElement, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: chartData.labels,
                 datasets: [
                     {
                         label: 'Wind Speed (km/h)',
-                        data: forecastData.windspeed_10m,
+                        data: chartData.windSpeed,
                         borderColor: '#007bff',
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         fill: true,
@@ -54,7 +62,7 @@
                                 return context.dataIndex % 4 === 0;
                             },
                             formatter: function(value, context) {
-                                return getWindArrow(forecastData.winddirection_10m[context.dataIndex]);
+                                return getWindArrow(forecastData.winddirection_10m[forecastRange.min + context.dataIndex]);
                             },
                             align: 'top',
                             offset: 5,
@@ -67,7 +75,7 @@
                     },
                     {
                         label: 'Swell Height (m)',
-                        data: forecastData.swell_wave_height,
+                        data: chartData.swellHeight,
                         borderColor: '#28a745',
                         backgroundColor: 'transparent',
                         fill: false,
@@ -134,8 +142,9 @@
                                 if (context.parsed.y !== null) {
                                     label += context.parsed.y;
                                     if (context.datasetIndex === 0) {
-                                        const dir = getDirection(forecastData.winddirection_10m[context.dataIndex]);
-                                        const arrow = getWindArrow(forecastData.winddirection_10m[context.dataIndex]);
+                                        const absoluteIndex = forecastRange.min + context.dataIndex;
+                                        const dir = getDirection(forecastData.winddirection_10m[absoluteIndex]);
+                                        const arrow = getWindArrow(forecastData.winddirection_10m[absoluteIndex]);
                                         label += ' km/h ' + dir + ' ' + arrow;
                                     } else {
                                         label += 'm';
@@ -149,8 +158,8 @@
                         annotations: {
                             line1: {
                                 type: 'line',
-                                xMin: hourIndex,
-                                xMax: hourIndex,
+                                xMin: getChartHourIndex(),
+                                xMax: getChartHourIndex(),
                                 borderColor: 'red',
                                 borderWidth: 2,
                             }
@@ -164,11 +173,38 @@
         });
     }
 
+    function getChartData() {
+        const start = forecastRange.min;
+        const end = forecastRange.max + 1;
+
+        return {
+            labels: forecastData.time
+                .slice(start, end)
+                .map(t => new Date(t).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})),
+            windSpeed: forecastData.windspeed_10m?.slice(start, end) || [],
+            windDirection: forecastData.winddirection_10m?.slice(start, end) || [],
+            swellHeight: forecastData.swell_wave_height?.slice(start, end) || []
+        };
+    }
+
+    function getChartHourIndex() {
+        return Math.max(0, Math.min(hourIndex - forecastRange.min, forecastRange.max - forecastRange.min));
+    }
+
+    function updateChartData() {
+        if (!chart || !forecastData) return;
+        const chartData = getChartData();
+        chart.data.labels = chartData.labels;
+        chart.data.datasets[0].data = chartData.windSpeed;
+        chart.data.datasets[1].data = chartData.swellHeight;
+        chart.options.plugins.annotation.annotations.line1.xMin = getChartHourIndex();
+        chart.options.plugins.annotation.annotations.line1.xMax = getChartHourIndex();
+        chart.update('none');
+    }
+
     $effect(() => {
         if (chart && forecastData) {
-            chart.options.plugins.annotation.annotations.line1.xMin = hourIndex;
-            chart.options.plugins.annotation.annotations.line1.xMax = hourIndex;
-            chart.update('none');
+            updateChartData();
         }
     });
 
@@ -178,7 +214,6 @@
         }
     });
 
-    const maxHour = $derived(forecastData?.time?.length ? forecastData.time.length - 1 : 0);
     const selectedTime = $derived(forecastData ? new Date(forecastData.time[hourIndex]).toLocaleString([], {
         weekday: 'short',
         hour: '2-digit',
@@ -189,8 +224,19 @@
 
 <div id="controls">
     <div class="slider-container">
+        <div class="range-mode-toggle" aria-label="Forecast range">
+            {#each RANGE_MODES as mode}
+                <button
+                    type="button"
+                    class:active={rangeMode === mode}
+                    onclick={() => onRangeModeChange(mode)}
+                >
+                    {getRangeModeLabel(mode)}
+                </button>
+            {/each}
+        </div>
         <label for="time-slider">Forecast Time: <span id="selected-time">{selectedTime}</span></label>
-        <input type="range" id="time-slider" min="0" max={maxHour} bind:value={hourIndex} oninput={onSliderChange}>
+        <input type="range" id="time-slider" min={forecastRange.min} max={forecastRange.max} bind:value={hourIndex} oninput={onSliderChange}>
     </div>
     <div class="graph-container">
         <canvas id="forecastChart" bind:this={canvasElement}></canvas>
