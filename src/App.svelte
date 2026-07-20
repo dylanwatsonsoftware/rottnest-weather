@@ -10,7 +10,7 @@
         getSafetyNotices
     } from './lib/recommendations.js';
     import { mergeFacilityEnrichment } from './lib/facilities.js';
-    import { getBeachSelectionMapTarget, getMapLayout } from './lib/mapFocus.js';
+    import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -99,14 +99,21 @@
 
     onMount(() => {
         function updateMapLayout() {
-            mapLayout = getMapLayout({
+            const nextMapLayout = getMapLayout({
                 width: window.innerWidth,
                 height: window.innerHeight
             });
+            const previousMapLayout = mapLayout;
+            mapLayout = nextMapLayout;
+
+            const beach = beaches.find((item) => item.name === selectedBeachName);
+            const target = getMapLayoutChangeTarget(beach, panelMode, previousMapLayout, nextMapLayout);
+            if (target) navigateToMapTarget(target);
         }
 
         updateMapLayout();
         window.addEventListener('resize', updateMapLayout);
+        window.addEventListener('orientationchange', updateMapLayout);
 
         async function loadAppData() {
             try {
@@ -165,6 +172,7 @@
 
         return () => {
             window.removeEventListener('resize', updateMapLayout);
+            window.removeEventListener('orientationchange', updateMapLayout);
         };
     });
 

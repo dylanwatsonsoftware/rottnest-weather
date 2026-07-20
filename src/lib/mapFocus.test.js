@@ -4,6 +4,7 @@ import {
     getInitialFitSettings,
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
+    getMapLayoutChangeTarget,
     getMapLayout,
     getMapNavigationTarget,
     getPanelModeMapOffset,
@@ -62,6 +63,19 @@ test('getMapLayout detects short landscape phones', () => {
     assert.equal(getMapLayout({ width: 780, height: 390 }), 'shortLandscape');
     assert.equal(getMapLayout({ width: 390, height: 780 }), 'default');
     assert.equal(getMapLayout({ width: 900, height: 700 }), 'default');
+});
+
+test('getMapLayoutChangeTarget recenters selected beach when orientation layout changes', () => {
+    const beach = { name: 'Little Salmon Bay', lat: -32.0242, lon: 115.5251 };
+
+    assert.deepEqual(getMapLayoutChangeTarget(beach, 'expanded', 'default', 'shortLandscape'), {
+        name: 'Little Salmon Bay',
+        lat: -32.0242,
+        lon: 115.5251,
+        zoom: 15,
+        offset: [360, 0]
+    });
+    assert.equal(getMapLayoutChangeTarget(beach, 'expanded', 'default', 'default'), null);
 });
 
 test('getVisibleBeachFitPoints uses currently shown beach recommendations', () => {

@@ -83,6 +83,11 @@ export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLa
     return getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
 }
 
+export function getMapLayoutChangeTarget(beach, panelMode = 'collapsed', previousMapLayout = 'default', nextMapLayout = 'default') {
+    if (previousMapLayout === nextMapLayout) return null;
+    return getBeachSelectionMapTarget(beach, panelMode, nextMapLayout);
+}
+
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 

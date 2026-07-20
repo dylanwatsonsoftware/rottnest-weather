@@ -334,6 +334,7 @@
         const currentPanelMode = panelMode;
         const currentMapLayout = mapLayout;
         if (map) {
+            map.invalidateSize({ pan: false });
             fitVisibleBeaches();
         }
     });
