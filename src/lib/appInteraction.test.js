@@ -19,6 +19,10 @@ test('nearby facility and business navigation enables the places layer', () => {
     assert.match(app, /target\.type === 'facility' \|\| target\.type === 'business'/);
 });
 
+test('food and facilities layer is visible by default', () => {
+    assert.match(app, /showLandmarks: true,\s+showFacilities: true,\s+showUserLocation: true/);
+});
+
 test('recommendation rows describe the selected status window instead of repeating score summaries', () => {
     const panel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 

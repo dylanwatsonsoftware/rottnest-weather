@@ -37,7 +37,7 @@
         },
         showBeaches: true,
         showLandmarks: true,
-        showFacilities: false,
+        showFacilities: true,
         showUserLocation: true,
         showAllWhenZoomedOut: false,
         minimumScore: 0,
