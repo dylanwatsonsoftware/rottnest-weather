@@ -160,6 +160,15 @@ export function getSliderHeatGradient(timeline = [], range = {}) {
     return `linear-gradient(to right, ${stops.join(', ')})`;
 }
 
+export function getRangeProgressPercent(range = {}, hourIndex = 0) {
+    const min = Number.isFinite(range.min) ? range.min : 0;
+    const max = Number.isFinite(range.max) ? range.max : min;
+    if (max <= min) return 0;
+
+    const clampedHour = Math.max(min, Math.min(hourIndex, max));
+    return Math.round((clampedHour - min) / (max - min) * 100);
+}
+
 export function getLaterTabHourIndex(recommendations = [], currentHourIndex = 0, forecastData = null, fallbackHours = 3) {
     const futureWindows = recommendations
         .map((item) => item.nextGood?.hourIndex)

@@ -9,6 +9,7 @@
         getPanelModeAfterOpenRequest,
         getRecommendationHeading,
         getRangeModeLabel,
+        getRangeProgressPercent,
         getSliderHeatGradient,
         getStatusWindowSummary,
         getTimelineScrollLeft,
@@ -177,6 +178,15 @@
         return getStatusWindowSummary(timeline, hourIndex);
     }
 
+    function getRecommendationHeatbar(recommendation) {
+        const timeline = buildBeachStatusTimeline(recommendation?.beach, forecastData, forecastRange);
+        return {
+            gradient: getSliderHeatGradient(timeline, forecastRange),
+            progress: `${getRangeProgressPercent(forecastRange, hourIndex)}%`,
+            summary: getStatusWindowSummary(timeline, hourIndex)
+        };
+    }
+
     async function selectRecommendationRow(beachName) {
         onSelectBeach(beachName);
         await tick();
@@ -324,11 +334,22 @@
     <div class="panel-content">
         <div class="recommendation-list">
             {#each listedRecommendations as item}
+                {@const heatbar = getRecommendationHeatbar(item)}
                 <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => selectRecommendationRow(item.beach.name)}>
                     <span class="score">{item.score}</span>
                     <span class="row-main">
                         <strong>{item.beach.name}</strong>
-                        <small>{getRecommendationWindowSummary(item)}</small>
+                        <span
+                            class="recommendation-heatbar"
+                            style:--recommendation-heat={heatbar.gradient}
+                            aria-label={heatbar.summary}
+                        >
+                            <span
+                                class="recommendation-heatbar-marker"
+                                style:--recommendation-progress={heatbar.progress}
+                                aria-hidden="true"
+                            ></span>
+                        </span>
                     </span>
                     <span class="state-pill {item.state}">{stateText[item.state]}</span>
                 </button>

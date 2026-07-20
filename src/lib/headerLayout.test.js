@@ -139,6 +139,15 @@ test('recommendation panel labels watch-state recommendations as caution', () =>
     assert.doesNotMatch(recommendationPanel, /watch:\s*'Watch'/);
 });
 
+test('recommendation rows show a status heatbar instead of window summary text', () => {
+    assert.match(recommendationPanel, /getRecommendationHeatbar\(item\)/);
+    assert.match(recommendationPanel, /class="recommendation-heatbar"/);
+    assert.match(recommendationPanel, /class="recommendation-heatbar-marker"/);
+    assert.doesNotMatch(recommendationPanel, /<small>\{getRecommendationWindowSummary\(item\)\}<\/small>/);
+    assert.match(css, /\.recommendation-heatbar\s*{[^}]*background:\s*var\(--recommendation-heat,/s);
+    assert.match(css, /\.recommendation-heatbar-marker\s*{[^}]*left:\s*var\(--recommendation-progress,\s*0%\)/s);
+});
+
 test('settings are shown in a dialog instead of a tab', () => {
     assert.match(recommendationPanel, /let settingsOpen = \$state\(false\)/);
     assert.match(recommendationPanel, /class="settings-modal"/);

@@ -440,6 +440,30 @@ main {
     font-size: 0.78rem;
 }
 
+.recommendation-heatbar {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 10px;
+    margin-top: 7px;
+    border-radius: 999px;
+    background: var(--recommendation-heat, #dbe5e5);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+}
+
+.recommendation-heatbar-marker {
+    position: absolute;
+    top: 50%;
+    left: var(--recommendation-progress, 0%);
+    width: 4px;
+    height: 16px;
+    border-radius: 999px;
+    background: white;
+    box-shadow: 0 0 0 1px rgba(20, 44, 47, 0.28), 0 1px 4px rgba(20, 44, 47, 0.22);
+    transform: translate(-50%, -50%);
+}
+
 .recommendation-row.best .row-main small,
 .recommendation-row.good .row-main small,
 .recommendation-row.watch .row-main small,

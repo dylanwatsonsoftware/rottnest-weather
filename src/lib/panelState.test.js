@@ -15,6 +15,7 @@ import {
     getRangeModeForHourIndex,
     getForecastChartDensity,
     getForecastChartLabels,
+    getRangeProgressPercent,
     getStatusWindowSummary,
     shouldShowConfidenceLabel
 } from './panelState.js';
@@ -207,6 +208,14 @@ test('getSliderHeatGradient shows unknown color for missing timeline hours', () 
 
 test('getSliderHeatGradient falls back to a neutral track without timeline data', () => {
     assert.equal(getSliderHeatGradient([], { min: 0, max: 2 }), '#dbe5e5');
+});
+
+test('getRangeProgressPercent locates the selected hour within a forecast range', () => {
+    assert.equal(getRangeProgressPercent({ min: 6, max: 18 }, 6), 0);
+    assert.equal(getRangeProgressPercent({ min: 6, max: 18 }, 12), 50);
+    assert.equal(getRangeProgressPercent({ min: 6, max: 18 }, 18), 100);
+    assert.equal(getRangeProgressPercent({ min: 6, max: 18 }, 20), 100);
+    assert.equal(getRangeProgressPercent({ min: 6, max: 6 }, 6), 0);
 });
 
 test('getLaterTabHourIndex jumps to the earliest future good window', () => {

@@ -23,11 +23,12 @@ test('food and facilities layer is visible by default', () => {
     assert.match(app, /showLandmarks: true,\s+showFacilities: true,\s+showUserLocation: true/);
 });
 
-test('recommendation rows describe the selected status window instead of repeating score summaries', () => {
+test('recommendation rows show status heatbars instead of repeating score summaries', () => {
     const panel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 
     assert.match(panel, /getStatusWindowSummary/);
-    assert.match(panel, /getRecommendationWindowSummary\(item\)/);
+    assert.match(panel, /getRecommendationHeatbar\(item\)/);
+    assert.match(panel, /class="recommendation-heatbar"/);
     assert.doesNotMatch(panel, /<small>\{item\.summary\}<\/small>/);
 });
 
