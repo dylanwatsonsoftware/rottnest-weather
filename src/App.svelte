@@ -22,6 +22,7 @@
         parseSharedLocationKey,
         slugifyLocationName
     } from './lib/urlState.js';
+    import { formatCompactTime } from './lib/timeFormat.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -224,10 +225,6 @@
         return links;
     }
 
-    function selectTopRecommendation(name) {
-        revealBeachInPanel(name);
-    }
-
     function selectSearchBeach(name) {
         revealBeachInPanel(name);
     }
@@ -366,6 +363,7 @@
     });
 
     const currentConditions = $derived(getConditions(forecastData, hourIndex));
+    const selectedForecastTime = $derived(formatCompactTime(forecastData?.time?.[hourIndex], { weekday: true }));
     const recommendations = $derived(buildRecommendations(beaches, forecastData, hourIndex));
     const visibleRecommendations = $derived(filterRecommendations(recommendations, filters, mapZoom));
     const selectedRecommendation = $derived(
@@ -419,8 +417,7 @@
     windDir={currentConditions.windDirection}
     temp={currentConditions.temperature}
     swellHeight={currentConditions.swellHeight}
-    topRecommendation={recommendations[0]}
-    onTopRecommendationSelect={selectTopRecommendation}
+    {selectedForecastTime}
     {loading}
 />
 

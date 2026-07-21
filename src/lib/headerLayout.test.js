@@ -325,9 +325,12 @@ test('settings are shown in a dialog instead of a tab', () => {
     assert.match(css, /\.settings-modal\s*{[^}]*position:\s*fixed/s);
 });
 
-test('top beach in the header is selectable', () => {
-    assert.match(header, /class="top-beach-button"/);
-    assert.match(header, /aria-label="Show \{topRecommendation\.beach\.name\}"/);
+test('header shows the selected forecast time instead of a top beach button', () => {
+    assert.match(header, /selectedForecastTime = ''/);
+    assert.match(header, /class="forecast-time-chip"/);
+    assert.match(header, /<strong>Time:<\/strong> \{selectedForecastTime\}/);
+    assert.doesNotMatch(header, /topRecommendation/);
+    assert.doesNotMatch(header, /class="top-beach-button"/);
 });
 
 test('short landscape panel uses available height without forcing desktop width', () => {
