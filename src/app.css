@@ -1521,35 +1521,6 @@ main {
     outline: 3px solid rgba(255, 255, 255, 0.8);
 }
 
-.good-beach-overlay {
-    filter: drop-shadow(0 8px 18px rgba(13, 34, 38, 0.24));
-    stroke-linejoin: round;
-    stroke-linecap: round;
-}
-
-.good-beach-overlay-label {
-    border: 0;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.86);
-    color: #223335;
-    box-shadow: 0 8px 24px rgba(13, 34, 38, 0.2);
-    font-size: 13px;
-    font-weight: 900;
-    padding: 5px 10px;
-}
-
-.good-beach-overlay-label::before {
-    display: none;
-}
-
-.good-beach-overlay-label.best {
-    color: #116345;
-}
-
-.good-beach-overlay-label.good {
-    color: #126c68;
-}
-
 .beach-marker span {
     font-size: 16px;
     font-weight: 900;

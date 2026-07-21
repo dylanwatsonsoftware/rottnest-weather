@@ -12,7 +12,6 @@ import {
     getPanelModeMapOffset,
     getPanelModePanOffset,
     getBeachMarkerSize,
-    getGoodBeachOverlayAreas,
     shouldShowBeachLabel,
     shouldShowBeachMarker,
     shouldShowPlaceMarker,
@@ -303,27 +302,12 @@ test('beach marker sizes shrink lower ranked beaches at cluttered zooms', () => 
     ), { size: 34, anchor: 17 });
 });
 
-test('good beach overlay groups nearby beaches into generalized areas', () => {
-    const areas = getGoodBeachOverlayAreas([
-        { beach: { name: 'North A', lat: -31.99, lon: 115.52 }, state: 'good', score: 74 },
-        { beach: { name: 'North B', lat: -31.991, lon: 115.523 }, state: 'best', score: 88 },
-        { beach: { name: 'South', lat: -32.03, lon: 115.54 }, state: 'good', score: 72 },
-        { beach: { name: 'Avoided', lat: -32.04, lon: 115.55 }, state: 'avoid', score: 18 }
-    ]);
-
-    assert.equal(areas.length, 2);
-    assert.equal(areas[0].state, 'best');
-    assert.deepEqual(areas[0].beachNames, ['North A', 'North B']);
-    assert.equal(areas[0].points.length, 4);
-    assert.ok(areas[0].points.every((point) => Number.isFinite(point[0]) && Number.isFinite(point[1])));
-    assert.deepEqual(areas[1].beachNames, ['South']);
-});
-
-test('low zoom beach markers only show selected, best, and top ranked beaches over the overlay', () => {
+test('low zoom keeps all beach markers visible without area overlay filtering', () => {
     assert.equal(shouldShowBeachMarker({ beach: { name: 'Selected' }, state: 'avoid' }, 12, 'Selected', 12), true);
     assert.equal(shouldShowBeachMarker({ beach: { name: 'Best' }, state: 'best' }, 12, '', 12), true);
     assert.equal(shouldShowBeachMarker({ beach: { name: 'Top ranked' }, state: 'good' }, 12, '', 1), true);
-    assert.equal(shouldShowBeachMarker({ beach: { name: 'Lower ranked' }, state: 'good' }, 12, '', 4), false);
+    assert.equal(shouldShowBeachMarker({ beach: { name: 'Lower ranked' }, state: 'good' }, 12, '', 4), true);
+    assert.equal(shouldShowBeachMarker({ beach: { name: 'Avoid lower ranked' }, state: 'avoid' }, 11, '', 14), true);
     assert.equal(shouldShowBeachMarker({ beach: { name: 'Zoomed in' }, state: 'good' }, 13, '', 12), true);
 });
 

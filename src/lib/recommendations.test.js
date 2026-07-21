@@ -160,23 +160,20 @@ test('safety tags temper snorkeling scores and explain local risks', () => {
     assert.ok(surfBreak.reasons.some((reason) => reason.includes('wildlife')));
 });
 
-test('filterRecommendations applies state filters and low-zoom simplification', () => {
+test('filterRecommendations applies state filters without low-zoom simplification', () => {
     const recommendations = buildRecommendations(beaches, forecast, 0);
 
     const bestOnly = filterRecommendations(recommendations, {
         states: { best: true, good: false, watch: false, avoid: false },
-        showBeaches: true,
-        showAllWhenZoomedOut: true
+        showBeaches: true
     }, 13);
     assert.deepEqual(bestOnly.map((item) => item.state), ['best']);
 
-    const simplified = filterRecommendations(recommendations, {
+    const zoomedOut = filterRecommendations(recommendations, {
         states: { best: true, good: true, watch: true, avoid: true },
-        showBeaches: true,
-        showAllWhenZoomedOut: false
+        showBeaches: true
     }, 10);
-    assert.equal(simplified.length, 2);
-    assert.ok(simplified.every((item) => item.state !== 'avoid'));
+    assert.deepEqual(zoomedOut.map((item) => item.beach.name), recommendations.map((item) => item.beach.name));
 });
 
 test('filterRecommendations applies a score cutoff across enabled beach states', () => {
@@ -190,7 +187,6 @@ test('filterRecommendations applies a score cutoff across enabled beach states',
     const filtered = filterRecommendations(recommendations, {
         states: { best: true, good: true, watch: true, avoid: true },
         showBeaches: true,
-        showAllWhenZoomedOut: true,
         minimumScore: 38
     }, 13);
 
@@ -206,7 +202,6 @@ test('filterRecommendations can surface least-bad avoid beaches when enabled', (
     const filtered = filterRecommendations(recommendations, {
         states: { best: true, good: true, watch: true, avoid: false },
         showBeaches: true,
-        showAllWhenZoomedOut: true,
         minimumScore: 30,
         includeLeastBad: true
     }, 13);

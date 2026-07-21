@@ -802,10 +802,6 @@
                             <input type="checkbox" checked={filters.showUserLocation} onchange={(event) => onToggleFilter('showUserLocation', event.currentTarget.checked)} />
                             <span>My location</span>
                         </label>
-                        <label class="toggle-row">
-                            <input type="checkbox" checked={filters.showAllWhenZoomedOut} onchange={(event) => onToggleFilter('showAllWhenZoomedOut', event.currentTarget.checked)} />
-                            <span>Show all beaches when zoomed out</span>
-                        </label>
                     </div>
                 </div>
             </div>

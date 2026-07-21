@@ -56,7 +56,6 @@
         showLandmarks: true,
         showFacilities: true,
         showUserLocation: true,
-        showAllWhenZoomedOut: false,
         minimumScore: 0,
         includeLeastBad: false
     });
