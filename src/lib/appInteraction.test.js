@@ -58,6 +58,13 @@ test('app hydrates cached forecast data before refreshing from the network', () 
     assert.match(app, /writeForecastCache\(localStorage,/);
 });
 
+test('app skips cached data that cannot satisfy an incoming shared forecast time', () => {
+    assert.match(app, /isSharedTimeCoveredByForecast/);
+    assert.match(app, /function hasPendingSharedTime\(\)/);
+    assert.match(app, /if \(hasPendingSharedTime\(\) && !isSharedTimeCoveredByForecast\(cachedAppData\.forecastData,\s*sharedLocationState\.time\)\) return false/);
+    assert.match(app, /if \(hasPendingSharedTime\(\)\) return/);
+});
+
 test('recommendation panel waits until forecast data is ready', () => {
     assert.match(app, /const hasLoadedForecast = \$derived\(!loading && Boolean\(forecastData\?\.time\?\.length\)\);/);
     assert.match(app, /\{#if hasLoadedForecast\}[\s\S]*<RecommendationPanel/);

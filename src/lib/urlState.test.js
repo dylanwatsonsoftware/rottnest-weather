@@ -5,6 +5,7 @@ import {
     findNearestSharedHourIndex,
     getLocationKey,
     getSharedLocationFromUrl,
+    isSharedTimeCoveredByForecast,
     parseSharedLocationKey
 } from './urlState.js';
 
@@ -57,4 +58,18 @@ test('findNearestSharedHourIndex resolves shared timestamps to the nearest forec
 
     assert.equal(findNearestSharedHourIndex(forecastData, '2026-07-21T07:20'), 1);
     assert.equal(findNearestSharedHourIndex(forecastData, 'nope'), null);
+});
+
+test('shared forecast times must be covered before they are resolved', () => {
+    const cachedForecast = {
+        time: [
+            '2026-07-21T06:00',
+            '2026-07-21T07:00',
+            '2026-07-21T08:00'
+        ]
+    };
+
+    assert.equal(isSharedTimeCoveredByForecast(cachedForecast, '2026-07-21T07:20'), true);
+    assert.equal(isSharedTimeCoveredByForecast(cachedForecast, '2026-07-30T10:00'), false);
+    assert.equal(findNearestSharedHourIndex(cachedForecast, '2026-07-30T10:00'), null);
 });

@@ -74,6 +74,39 @@ test('time-only shared URLs preserve future forecast dates', async ({ page }) =>
     await expect.poll(() => page.url()).not.toContain('location=');
 });
 
+test('time-only shared URLs ignore stale cached forecasts that miss the requested date', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    const sharedTime = new Date();
+    sharedTime.setMinutes(0, 0, 0);
+    sharedTime.setHours(sharedTime.getHours() + 216);
+    const sharedTimeValue = sharedTime.toISOString().slice(0, 16);
+
+    await page.addInitScript(() => {
+        const staleForecastTime = new Date();
+        staleForecastTime.setMinutes(0, 0, 0);
+        localStorage.setItem('rottnest-snorkelling-app-cache-v4', JSON.stringify({
+            beaches: [],
+            landmarks: [],
+            facilities: [],
+            forecastData: {
+                time: [staleForecastTime.toISOString().slice(0, 16)],
+                windspeed_10m: [18],
+                winddirection_10m: [225],
+                temperature_2m: [17],
+                swell_wave_height: [1]
+            },
+            savedAt: new Date().toISOString()
+        }));
+    });
+
+    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}`);
+
+    await expect(page.locator('.recommendation-panel')).toBeVisible();
+    await expect.poll(() => page.url()).toContain(`time=${encodeURIComponent(sharedTimeValue)}`);
+});
+
 test('map search autocomplete shows distance when browser location is available', async ({ browser }) => {
     const context = await browser.newContext({
         geolocation: { latitude: -31.9523, longitude: 115.8613 },

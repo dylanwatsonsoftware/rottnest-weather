@@ -48,7 +48,7 @@ export function getSharedLocationFromUrl(urlValue) {
 
 export function findNearestSharedHourIndex(forecastData, sharedTime) {
     const selectedTime = new Date(sharedTime).getTime();
-    if (!Number.isFinite(selectedTime) || !forecastData?.time?.length) return null;
+    if (!Number.isFinite(selectedTime) || !isSharedTimeCoveredByForecast(forecastData, sharedTime)) return null;
 
     let nearestIndex = 0;
     let nearestDiff = Infinity;
@@ -61,4 +61,16 @@ export function findNearestSharedHourIndex(forecastData, sharedTime) {
     });
 
     return nearestIndex;
+}
+
+export function isSharedTimeCoveredByForecast(forecastData, sharedTime) {
+    const selectedTime = new Date(sharedTime).getTime();
+    const times = forecastData?.time || [];
+    if (!Number.isFinite(selectedTime) || !times.length) return false;
+
+    const firstTime = new Date(times[0]).getTime();
+    const lastTime = new Date(times[times.length - 1]).getTime();
+    if (!Number.isFinite(firstTime) || !Number.isFinite(lastTime)) return false;
+
+    return selectedTime >= firstTime && selectedTime <= lastTime;
 }

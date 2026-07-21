@@ -18,6 +18,7 @@
         getSharedLocationFromUrl,
         getLocationKey,
         findNearestSharedHourIndex,
+        isSharedTimeCoveredByForecast,
         parseSharedLocationKey,
         slugifyLocationName
     } from './lib/urlState.js';
@@ -146,13 +147,21 @@
         return collection.find((place) => slugifyLocationName(place.id || place.name) === parsedLocation.slug) || null;
     }
 
+    function hasPendingSharedTime() {
+        return Boolean(sharedLocationState.time && !didApplySharedLocationState);
+    }
+
     function applySharedLocationState(appData) {
         if (didApplySharedLocationState) return;
-        didApplySharedLocationState = true;
 
         const sharedHourIndex = findNearestSharedHourIndex(appData.forecastData, sharedLocationState.time);
         if (Number.isInteger(sharedHourIndex)) {
             hourIndex = sharedHourIndex;
+            didApplySharedLocationState = true;
+        } else if (sharedLocationState.time) {
+            return;
+        } else {
+            didApplySharedLocationState = true;
         }
 
         const parsedLocation = parseSharedLocationKey(sharedLocationState.locationKey);
@@ -180,6 +189,7 @@
 
     function updateShareUrl() {
         if (typeof window === 'undefined' || !forecastData?.time?.length) return;
+        if (hasPendingSharedTime()) return;
 
         const locationKey = selectedMapPlace
             ? getLocationKey(selectedMapPlace)
@@ -254,6 +264,7 @@
 
     function applyCachedAppData(cachedAppData) {
         if (!cachedAppData) return false;
+        if (hasPendingSharedTime() && !isSharedTimeCoveredByForecast(cachedAppData.forecastData, sharedLocationState.time)) return false;
         applyAppData(cachedAppData);
         loading = false;
         loadError = '';
