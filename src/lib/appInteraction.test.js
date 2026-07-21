@@ -129,7 +129,7 @@ test('selected map places request a close zoom level', () => {
 test('map and search beach selections request the panel detail scroll', () => {
     assert.match(app, /let panelScrollRequest = \$state\(0\)/);
     assert.match(app, /function revealBeachInPanel\(name\)/);
-    assert.match(app, /panelOpenRequest \+= 1;\s+panelScrollRequest \+= 1;/);
+    assert.match(app, /panelMode = 'open';\s+panelOpenRequest \+= 1;\s+panelScrollRequest \+= 1;/);
     assert.match(app, /onSelectBeach=\{revealBeachInPanel\}/);
     assert.match(app, /\{panelScrollRequest\}/);
 });
@@ -147,7 +147,7 @@ test('selected beach details receive user location for distance labels', () => {
 test('selected beach and place state is encoded in the address bar for sharing', () => {
     assert.match(app, /import \{[\s\S]*buildShareUrl[\s\S]*getSharedLocationFromUrl[\s\S]*getLocationKey[\s\S]*findNearestSharedHourIndex[\s\S]*parseSharedLocationKey[\s\S]*slugifyLocationName[\s\S]*\} from '\.\/lib\/urlState\.js';/);
     assert.match(app, /let sharedLocationState = \$state/);
-    assert.match(app, /let currentShareUrl = \$state\(''\)/);
+    assert.match(app, /let currentShareUrl = \$state\(getInitialUrl\(\)\)/);
     assert.match(app, /function updateShareUrl\(\)/);
     assert.match(app, /time:\s*forecastData\.time\[hourIndex\]/);
     assert.match(app, /panelMode/);
@@ -158,13 +158,14 @@ test('selected beach and place state is encoded in the address bar for sharing',
 });
 
 test('social meta follows selected location time recommendations conditions and image', () => {
-    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount,\s*updateDocumentSocialMeta \} from '\.\/lib\/socialMeta\.js';/);
+    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount \} from '\.\/lib\/socialMeta\.js';/);
     assert.match(app, /const selectedSocialLocationName = \$derived/);
     assert.match(app, /const selectedSocialImage = \$derived/);
     assert.match(app, /getPrimaryPlaceImage\(selectedMapPlace\)/);
     assert.match(app, /getBeachImages\(selectedRecommendation\?\.beach\?\.name\)\[0\]/);
     assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl[\s\S]*imageUrl:\s*selectedSocialImage\?\.src/);
-    assert.match(app, /updateDocumentSocialMeta\(document,\s*currentSocialMeta\)/);
+    assert.match(app, /<svelte:head>[\s\S]*currentSocialMeta\.title/);
+    assert.doesNotMatch(app, /updateDocumentSocialMeta\(document/);
 });
 
 test('incoming shared beach and place links are restored after app data loads', () => {

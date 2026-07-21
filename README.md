@@ -1,6 +1,6 @@
 # Rottnest Snorkelling Weather
 
-A mobile-first Svelte/Vite app for choosing Rottnest Island snorkeling spots from current forecast conditions. It combines a Leaflet satellite map with Open-Meteo weather and marine data, then ranks beaches using a simple heuristic model.
+A mobile-first SvelteKit app for choosing Rottnest Island snorkeling spots from current forecast conditions. It combines a Leaflet satellite map with Open-Meteo weather and marine data, then ranks beaches using a simple heuristic model.
 
 ## Features
 
@@ -58,6 +58,8 @@ The output is heuristic guidance for planning, not safety advice.
 
 ## Development
 
+Node.js 20.19 or newer is required by the current SvelteKit/Vite toolchain.
+
 ```sh
 npm install
 npm run dev
@@ -66,4 +68,19 @@ npm run build
 npm run test:responsive
 ```
 
-The app uses Svelte 5, Vite, Leaflet, and Chart.js.
+The app uses Svelte 5, SvelteKit, Vite, Leaflet, and Chart.js. Leaflet and Chart.js are dynamically imported after hydration so the route remains safe to render on the server.
+
+## SSR and Vercel deployment
+
+The root route is rendered with SvelteKit SSR and `@sveltejs/adapter-vercel`. Vercel should detect SvelteKit automatically; the project does not need a static-output directory or SPA rewrite. Use the standard commands:
+
+```sh
+npm ci
+npm run build
+```
+
+Each server request loads the bundled beach, landmark, facility, and enrichment data, then makes a best-effort Open-Meteo weather and marine request with a five-second timeout. Successful pages are CDN-cacheable for 15 minutes with stale responses allowed during revalidation. If Open-Meteo is unavailable, SSR still returns location-specific titles and bundled image metadata; the browser then uses its existing forecast cache and live refresh behavior.
+
+Shared URLs keep the existing `location`, `time`, and `panel` query parameters. The server resolves those values into initial HTML and Open Graph/Twitter metadata before hydration. Browser-only state such as geolocation and local storage is applied only after hydration.
+
+No API keys or paid services are required. Set the Vercel project runtime to Node.js 20 or newer.

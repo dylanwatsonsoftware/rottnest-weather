@@ -15,7 +15,7 @@
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import { getBeachImages } from './lib/beachMedia.js';
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
-    import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
+    import { buildSocialMeta, getRecommendedBeachCount } from './lib/socialMeta.js';
     import {
         buildShareUrl,
         getSharedLocationFromUrl,
@@ -28,12 +28,18 @@
     import { formatCompactTime } from './lib/timeFormat.js';
     import './app.css';
 
-    let beaches = $state([]);
-    let landmarks = $state([]);
-    let facilities = $state([]);
-    let forecastData = $state(null);
-    let hourIndex = $state(0);
-    let loading = $state(true);
+    let {
+        initialData = {},
+        initialUrlState = { locationKey: '', time: '', panelMode: '' },
+        initialUrl = ''
+    } = $props();
+
+    let beaches = $state(getInitialData('beaches', []));
+    let landmarks = $state(getInitialData('landmarks', []));
+    let facilities = $state(getInitialData('facilities', []));
+    let forecastData = $state(getInitialData('forecastData', null));
+    let hourIndex = $state(getInitialData('hourIndex', 0));
+    let loading = $state(!getInitialData('forecastData', null)?.time?.length);
     let loadError = $state('');
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
@@ -43,8 +49,8 @@
     let mapNavigationRequest = $state(null);
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
-    let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
-    let currentShareUrl = $state('');
+    let sharedLocationState = $state(getInitialUrlState());
+    let currentShareUrl = $state(getInitialUrl());
     let mapNavigationSequence = 0;
     let didApplySharedLocationState = false;
     let mapLayout = $state('default');
@@ -62,6 +68,18 @@
         minimumScore: 0,
         includeLeastBad: false
     });
+
+    function getInitialData(key, fallback) {
+        return initialData[key] ?? fallback;
+    }
+
+    function getInitialUrlState() {
+        return initialUrlState;
+    }
+
+    function getInitialUrl() {
+        return initialUrl;
+    }
 
     function updateStateFilter(state, value) {
         filters = {
@@ -177,7 +195,8 @@
             hourIndex = sharedHourIndex;
             didApplySharedLocationState = true;
         } else if (sharedLocationState.time) {
-            return;
+            // Apply the location immediately for useful SSR HTML, then resolve the
+            // requested hour when a covering forecast becomes available.
         } else {
             didApplySharedLocationState = true;
         }
@@ -242,8 +261,10 @@
 
     function revealBeachInPanel(name) {
         selectBeach(name, 'open');
+        panelMode = 'open';
         panelOpenRequest += 1;
         panelScrollRequest += 1;
+        updateShareUrl();
     }
 
     function getNearestForecastHourIndex(nextForecastData, now = new Date()) {
@@ -363,7 +384,7 @@
         }
 
         const cachedAppData = readForecastCache(localStorage);
-        applyCachedAppData(cachedAppData);
+        if (!forecastData?.time?.length) applyCachedAppData(cachedAppData);
 
         loadAppData();
 
@@ -372,6 +393,14 @@
             window.removeEventListener('orientationchange', updateMapLayout);
         };
     });
+
+    applyInitialSharedState();
+
+    function applyInitialSharedState() {
+        if (beaches.length || landmarks.length || facilities.length) {
+            applySharedLocationState({ beaches, landmarks, facilities, forecastData });
+        }
+    }
 
     const currentConditions = $derived(getConditions(forecastData, hourIndex));
     const selectedForecastTime = $derived(formatCompactTime(forecastData?.time?.[hourIndex], { weekday: true }));
@@ -436,11 +465,21 @@
         updateShareUrl();
     });
 
-    $effect(() => {
-        updateDocumentSocialMeta(document, currentSocialMeta);
-    });
-
 </script>
+
+<svelte:head>
+    <title>{currentSocialMeta.title}</title>
+    <meta name="description" content={currentSocialMeta.description} />
+    <meta property="og:title" content={currentSocialMeta.title} />
+    <meta property="og:description" content={currentSocialMeta.description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={currentSocialMeta.url} />
+    <meta property="og:image" content={currentSocialMeta.image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={currentSocialMeta.title} />
+    <meta name="twitter:description" content={currentSocialMeta.description} />
+    <meta name="twitter:image" content={currentSocialMeta.image} />
+</svelte:head>
 
 <Header
     windDirDeg={currentConditions.windDirectionDegrees}

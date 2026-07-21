@@ -7,7 +7,7 @@ import {
     updateDocumentSocialMeta
 } from './socialMeta.js';
 
-const indexHtml = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+const page = readFileSync(new URL('../App.svelte', import.meta.url), 'utf8');
 
 test('buildSocialMeta includes selected beach time recommendations wind and swell', () => {
     const meta = buildSocialMeta({
@@ -96,10 +96,11 @@ test('updateDocumentSocialMeta writes standard Open Graph and Twitter tags', () 
     assert.equal(tags.get('meta[name="twitter:image"]').content, 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg');
 });
 
-test('index has static social meta fallbacks for crawlers that do not run JavaScript', () => {
-    assert.match(indexHtml, /<meta name="description"/);
-    assert.match(indexHtml, /<meta property="og:title"/);
-    assert.match(indexHtml, /<meta property="og:description"/);
-    assert.match(indexHtml, /<meta property="og:type" content="website"/);
-    assert.match(indexHtml, /<meta name="twitter:card" content="summary_large_image"/);
+test('SvelteKit page renders social metadata for crawlers that do not run JavaScript', () => {
+    assert.match(page, /<svelte:head>/);
+    assert.match(page, /<meta name="description"/);
+    assert.match(page, /<meta property="og:title"/);
+    assert.match(page, /<meta property="og:description"/);
+    assert.match(page, /<meta property="og:type" content="website"/);
+    assert.match(page, /<meta name="twitter:card" content="summary_large_image"/);
 });

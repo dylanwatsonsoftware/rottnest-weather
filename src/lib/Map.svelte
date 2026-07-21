@@ -1,6 +1,5 @@
 <script>
     import { onMount } from 'svelte';
-    import L from 'leaflet';
     import 'leaflet/dist/leaflet.css';
     import {
         getInitialFitSettings,
@@ -39,6 +38,7 @@
         onUserLocationChange = () => {}
     } = $props();
 
+    let L;
     let map;
     let mapElement;
     let beachMarkers = [];
@@ -73,28 +73,45 @@
     };
 
     onMount(() => {
-        map = L.map(mapElement).setView([-32.007, 115.51], 12);
+        let disposed = false;
+        let cleanup;
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
-        }).addTo(map);
+        void (async () => {
+            const leaflet = await import('leaflet');
+            if (disposed) return;
+            L = leaflet.default;
+            map = L.map(mapElement).setView([-32.007, 115.51], 12);
 
-        initUserLocation();
-        mapElement.addEventListener('click', handleMapElementClick);
-        map.on('zoomend', () => {
-            const nextZoom = map.getZoom();
-            currentZoom = nextZoom;
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+            }).addTo(map);
+
+            initUserLocation();
+            mapElement.addEventListener('click', handleMapElementClick);
+            map.on('zoomend', () => {
+                const nextZoom = map.getZoom();
+                currentZoom = nextZoom;
+                onZoomChange(currentZoom);
+                recenterSelectedNavigationOnZoom(nextZoom);
+                updateBeachLabels();
+                updateLandmarks();
+            });
+            currentZoom = map.getZoom();
             onZoomChange(currentZoom);
-            recenterSelectedNavigationOnZoom(nextZoom);
-            updateBeachLabels();
-            updateLandmarks();
-        });
-        currentZoom = map.getZoom();
-        onZoomChange(currentZoom);
+            initBeaches();
+            initLandmarks();
+            fitInitialFocus();
+
+            cleanup = () => {
+                mapElement.removeEventListener('click', handleMapElementClick);
+                map?.remove();
+                map = null;
+            };
+        })();
 
         return () => {
-            mapElement.removeEventListener('click', handleMapElementClick);
-            map.remove();
+            disposed = true;
+            cleanup?.();
         };
     });
 
@@ -539,6 +556,8 @@
     }
 
     $effect(() => {
+        const currentRecommendations = recommendations;
+        const currentSelectedBeachName = selectedBeachName;
         if (map) {
             initBeaches();
         }
