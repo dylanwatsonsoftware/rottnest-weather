@@ -58,3 +58,15 @@ test('map shows a good beach overlay when zoomed out', () => {
     assert.doesNotMatch(mapSource, /L\.circleMarker/);
     assert.match(mapSource, /shouldShowBeachMarker\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*index\)/);
 });
+
+test('beach marker rebuilding does not consume panel-mode recenter transitions', () => {
+    const initBeachesStart = mapSource.indexOf('function initBeaches()');
+    assert.notEqual(initBeachesStart, -1);
+    const updateBeachesStart = mapSource.indexOf('function updateBeaches()', initBeachesStart);
+    assert.notEqual(updateBeachesStart, -1);
+    const initBeachesBody = mapSource.slice(initBeachesStart, updateBeachesStart);
+
+    assert.doesNotMatch(initBeachesBody, /fitVisibleBeaches\(\)/);
+    assert.match(mapSource, /const currentPanelMode = panelMode;[\s\S]*fitVisibleBeaches\(\)/);
+    assert.match(mapSource, /getPanelModeSelectionMapTarget/);
+});

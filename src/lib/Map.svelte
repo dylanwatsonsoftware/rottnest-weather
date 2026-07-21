@@ -147,7 +147,6 @@
         });
         updateBeaches();
         updateBeachQualityOverlay();
-        fitVisibleBeaches();
     }
 
     function updateBeaches() {
