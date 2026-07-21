@@ -1,5 +1,6 @@
 const DEFAULT_TITLE = 'Rottnest Weather';
-const DEFAULT_DESCRIPTION = 'Find Rottnest beaches, food, facilities, and snorkelling conditions by forecast time.';
+const DEFAULT_DESCRIPTION = 'Find the best Rottnest beach for the current weather, with wind, swell, food, and facilities by forecast time.';
+const DESCRIPTION_PROMISE = 'Find the best Rottnest beach for this weather.';
 const DEFAULT_IMAGE = '/beach-images/little-salmon-bay-01.jpg';
 
 export function getRecommendedBeachCount(recommendations = []) {
@@ -55,7 +56,7 @@ function buildTitle(locationName, selectedTime) {
 }
 
 function buildDescription(recommendedBeachCount, conditions = {}) {
-    const parts = [formatRecommendationCount(recommendedBeachCount)];
+    const parts = [DESCRIPTION_PROMISE, formatRecommendationCount(recommendedBeachCount)];
     const wind = formatWind(conditions);
     const swell = formatSwell(conditions);
 
