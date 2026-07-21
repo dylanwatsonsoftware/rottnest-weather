@@ -128,18 +128,6 @@ export function getForecastChartDensity(rangeMode = 'today', forecastRange = { m
     };
 }
 
-export function getTimelineScrollLeft({
-    activeLeft = 0,
-    activeWidth = 0,
-    containerWidth = 0,
-    currentScrollLeft = 0,
-    maxScrollLeft = 0
-} = {}) {
-    const activeCenter = currentScrollLeft + activeLeft + activeWidth / 2;
-    const target = activeCenter - containerWidth / 2;
-    return Math.max(0, Math.min(Math.round(target), maxScrollLeft));
-}
-
 export function getSliderHeatGradient(timeline = [], range = {}) {
     if (!timeline.length) return SLIDER_STATE_COLORS.unknown;
 

@@ -84,8 +84,10 @@ test('beach detail timeline has its own time slider styling', () => {
     assert.doesNotMatch(recommendationPanel, />Score by time</);
 });
 
-test('active status timeline cell has a clear selected border', () => {
-    assert.match(css, /\.timeline-cell\.active\s*{[^}]*border:\s*3px solid white/s);
+test('beach detail uses only the forecast slider for time selection', () => {
+    assert.match(recommendationPanel, /id="detail-time-slider"/);
+    assert.doesNotMatch(recommendationPanel, /class="timeline-chart"/);
+    assert.doesNotMatch(recommendationPanel, /class="timeline-cell/);
 });
 
 test('recommendation row subtitles stay readable on colored cards', () => {

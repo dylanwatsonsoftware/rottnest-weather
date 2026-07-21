@@ -12,7 +12,6 @@
         getRangeProgressPercent,
         getSliderHeatGradient,
         getStatusWindowSummary,
-        getTimelineScrollLeft,
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
@@ -64,8 +63,6 @@
     let lastHandledOpenRequest = $state(0);
     let lastHandledScrollRequest = $state(0);
     let rangeMode = $state('today');
-    let timelineChartElement = $state(null);
-    let timelineCellElements = new Map();
     let selectedPhoto = $state(null);
     let settingsOpen = $state(false);
     let betterTimeStatus = $state('');
@@ -127,36 +124,6 @@
             distanceKm: place.distanceKm,
             distanceLabel: Number.isFinite(place.distanceKm) ? formatDistanceLabel(place.distanceKm) : '',
             ratingLabel: getFacilityRatingLabel(place)
-        });
-    }
-
-    function bindTimelineCell(element, hour) {
-        if (element) {
-            timelineCellElements.set(hour, element);
-        }
-
-        return {
-            destroy() {
-                timelineCellElements.delete(hour);
-            }
-        };
-    }
-
-    function syncTimelineScroll() {
-        const activeCell = timelineCellElements.get(hourIndex);
-        if (!timelineChartElement || !activeCell) return;
-        const activeRect = activeCell.getBoundingClientRect();
-        const chartRect = timelineChartElement.getBoundingClientRect();
-
-        timelineChartElement.scrollTo({
-            left: getTimelineScrollLeft({
-                activeLeft: activeRect.left - chartRect.left,
-                activeWidth: activeRect.width,
-                containerWidth: timelineChartElement.clientWidth,
-                currentScrollLeft: timelineChartElement.scrollLeft,
-                maxScrollLeft: timelineChartElement.scrollWidth - timelineChartElement.clientWidth
-            }),
-            behavior: 'smooth'
         });
     }
 
@@ -243,11 +210,6 @@
         }
     });
 
-    $effect(() => {
-        const currentHourIndex = hourIndex;
-        const timelineCount = beachTimeline.length;
-        requestAnimationFrame(syncTimelineScroll);
-    });
 </script>
 
 <section class="recommendation-panel" class:collapsed={isCollapsed} class:closed={isClosed} class:semi={isSemi} class:open={isOpen} aria-label="Snorkelling recommendations">
@@ -413,21 +375,6 @@
                                 max={forecastRange.max}
                                 bind:value={hourIndex}
                             />
-                        </div>
-                        <div class="timeline-chart" bind:this={timelineChartElement}>
-                            {#each beachTimeline as item}
-                                <button
-                                    type="button"
-                                    use:bindTimelineCell={item.hourIndex}
-                                    class="timeline-cell {item.state}"
-                                    class:active={item.hourIndex === hourIndex}
-                                    title="{item.label}: {item.summary}"
-                                    aria-label="{item.label}: {item.summary}"
-                                    onclick={() => hourIndex = item.hourIndex}
-                                >
-                                    <span>{item.score}</span>
-                                </button>
-                            {/each}
                         </div>
                         <div class="timeline-labels">
                             <span>{beachTimeline[0].label}</span>

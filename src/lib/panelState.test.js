@@ -5,7 +5,6 @@ import {
     getForecastRange,
     getForecastSliderMax,
     getSliderHeatGradient,
-    getTimelineScrollLeft,
     getLaterTabHourIndex,
     getNextPanelMode,
     getPanelModeAfterOpenRequest,
@@ -158,30 +157,6 @@ test('getForecastChartDensity reduces visual noise for long ranges', () => {
         pointRadius: 0,
         windArrowSize: 11
     });
-});
-
-test('getTimelineScrollLeft centers the selected timeline cell in long ranges', () => {
-    assert.equal(getTimelineScrollLeft({
-        activeLeft: 720,
-        activeWidth: 28,
-        containerWidth: 280,
-        currentScrollLeft: 0,
-        maxScrollLeft: 900
-    }), 594);
-    assert.equal(getTimelineScrollLeft({
-        activeLeft: 20,
-        activeWidth: 28,
-        containerWidth: 280,
-        currentScrollLeft: 0,
-        maxScrollLeft: 900
-    }), 0);
-    assert.equal(getTimelineScrollLeft({
-        activeLeft: 1100,
-        activeWidth: 28,
-        containerWidth: 280,
-        currentScrollLeft: 0,
-        maxScrollLeft: 900
-    }), 900);
 });
 
 test('getSliderHeatGradient paints hard stops for each forecast hour', () => {
