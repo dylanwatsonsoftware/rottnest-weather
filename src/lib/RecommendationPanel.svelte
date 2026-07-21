@@ -16,7 +16,7 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
-    import { formatDistanceLabel, getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities, sortNearbyPlaces } from './facilities.js';
+    import { formatDistanceLabel, getDistanceKm, getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities, sortNearbyPlaces } from './facilities.js';
     import { getBeachImages } from './beachMedia.js';
     import { getPlaceImages } from './placeMedia.js';
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
@@ -32,6 +32,7 @@
         selectedRecommendation = null,
         safetyNotices = [],
         forecastData = null,
+        userLocation = null,
         hourIndex = $bindable(0),
         panelMode = $bindable(getDefaultPanelMode()),
         filters,
@@ -78,6 +79,7 @@
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
     const selectedBeachImages = $derived(getBeachImages(selectedRecommendation?.beach.name));
+    const selectedBeachDistanceLabel = $derived(getSelectedBeachDistanceLabel(selectedRecommendation?.beach, userLocation));
 
     function getListedRecommendations(allRecommendations, currentFilters) {
         const states = currentFilters?.states || {};
@@ -109,19 +111,6 @@
             ...getNearbyFacilities(beach, allFacilities, 5, NEARBY_RADIUS_KM),
             ...getNearbyLandmarks(beach, allLandmarks)
         ]).slice(0, 6);
-    }
-
-    function getDistanceKm(lat1, lon1, lat2, lon2) {
-        const radius = 6371;
-        const dLat = toRadians(lat2 - lat1);
-        const dLon = toRadians(lon2 - lon1);
-        const a = Math.sin(dLat / 2) ** 2
-            + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) ** 2;
-        return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
-
-    function toRadians(value) {
-        return value * Math.PI / 180;
     }
 
     function navigatePlaceToMap(place) {
@@ -192,6 +181,12 @@
 
     function getPrimaryPlaceImage(place) {
         return getPlaceImages(place?.name)[0] ?? null;
+    }
+
+    function getSelectedBeachDistanceLabel(beach, origin) {
+        if (!Number.isFinite(beach?.lat) || !Number.isFinite(beach?.lon)) return '';
+        if (!Number.isFinite(origin?.lat) || !Number.isFinite(origin?.lon)) return '';
+        return formatDistanceLabel(getDistanceKm(origin.lat, origin.lon, beach.lat, beach.lon));
     }
 
     function scrollBeachDetailIntoView() {
@@ -384,6 +379,9 @@
                 <div class="detail-heading">
                     <p class="eyebrow">{getRecommendationWindowSummary(selectedRecommendation)}</p>
                     <h2>{selectedRecommendation.beach.name}</h2>
+                    {#if selectedBeachDistanceLabel}
+                        <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
+                    {/if}
                     <button
                         class="map-jump-button"
                         type="button"

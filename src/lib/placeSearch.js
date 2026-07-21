@@ -1,4 +1,4 @@
-import { formatDistanceLabel, getDistanceKm, getFacilityIcon, getFacilityTypeLabel } from './facilities.js';
+import { formatDistanceLabel, getDistanceKm, getFacilityIcon, getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
 
 const KIND_PRIORITY = {
     beach: 0,
@@ -49,7 +49,8 @@ function toSearchResult(place, kind) {
         aliases: Array.isArray(place.aliases) ? place.aliases : [],
         category: place.category,
         subtype: place.subtype,
-        type: place.type || kind
+        type: place.type || kind,
+        ratingLabel: getFacilityRatingLabel(place)
     };
 }
 

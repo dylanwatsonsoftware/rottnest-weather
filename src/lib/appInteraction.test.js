@@ -71,6 +71,10 @@ test('in-bounds user location flows into map search distance labels', () => {
     assert.match(app, /\{userLocation\}[\s\S]*onSelectBeach=\{selectSearchBeach\}/);
 });
 
+test('selected beach details receive user location for distance labels', () => {
+    assert.match(app, /<RecommendationPanel[\s\S]*\{userLocation\}/);
+});
+
 test('selected beach remains visible on the map even when filters exclude it', () => {
     assert.match(app, /const mapRecommendations = \$derived/);
     assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);

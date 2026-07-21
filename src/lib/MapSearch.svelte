@@ -53,12 +53,17 @@
                     ...target,
                     type: result.kind,
                     distanceKm: result.distanceKm,
-                    distanceLabel: result.distanceLabel
+                    distanceLabel: result.distanceLabel,
+                    ratingLabel: result.ratingLabel
                 });
             }
         }
 
         clearSearch();
+    }
+
+    function getResultMeta(result) {
+        return [result.label, result.distanceLabel, result.ratingLabel].filter(Boolean).join(' · ');
     }
 </script>
 
@@ -93,7 +98,7 @@
                     <span class="map-search-result-icon" aria-hidden="true">{result.icon}</span>
                     <span>
                         <strong>{result.name}</strong>
-                        <small>{result.distanceLabel ? `${result.label} · ${result.distanceLabel}` : result.label}</small>
+                        <small>{getResultMeta(result)}</small>
                     </span>
                 </button>
             {:else}

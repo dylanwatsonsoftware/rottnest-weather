@@ -163,9 +163,10 @@
 
         map.on('locationfound', (e) => {
             const location = { lat: e.latlng.lat, lon: e.latlng.lng };
+            onUserLocationChange(location);
+
             if (!isWithinRottnestBounds(location)) {
                 clearUserLocation();
-                onUserLocationChange(null);
                 return;
             }
 
@@ -188,7 +189,6 @@
                     weight: 1
                 }).addTo(map);
             }
-            onUserLocationChange(location);
             updateUserLocationVisibility();
         });
 
@@ -268,9 +268,15 @@
             `Type: ${escapeHtml(getFacilityTypeLabel(place))}`
         ].filter(Boolean);
 
-        const ratingLabel = getFacilityRatingLabel(place);
+        const ratingLabel = mapNavigationRequest?.name === place.name && mapNavigationRequest?.ratingLabel
+            ? mapNavigationRequest.ratingLabel
+            : getFacilityRatingLabel(place);
         if (ratingLabel) {
             parts.push(`Rating: ${escapeHtml(ratingLabel)}`);
+        }
+
+        if (place.name === selectedPlaceName && selectedPlaceDistanceLabel) {
+            parts.push(`Distance: ${escapeHtml(selectedPlaceDistanceLabel)}`);
         }
 
         return parts.join('<br>');

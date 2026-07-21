@@ -289,6 +289,7 @@
             selectedRecommendation={$state.snapshot(selectedRecommendation)}
             safetyNotices={$state.snapshot(safetyNotices)}
             forecastData={$state.snapshot(forecastData)}
+            {userLocation}
             bind:hourIndex
             bind:panelMode
             {filters}
