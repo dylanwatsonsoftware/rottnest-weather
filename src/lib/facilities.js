@@ -60,7 +60,7 @@ export function getNearbyFacilities(beach, facilities = [], limit = 5, maxDistan
             };
         })
         .filter((facility) => facility.distanceKm <= maxDistanceKm)
-        .sort((a, b) => a.distanceKm - b.distanceKm)
+        .sort(sortNearbyFacilities)
         .slice(0, limit);
 }
 
@@ -86,6 +86,21 @@ function toRadians(value) {
 
 function roundDistance(distanceKm) {
     return Math.round(distanceKm * 10) / 10;
+}
+
+function sortNearbyFacilities(a, b) {
+    return getNearbyFacilitySortScore(b) - getNearbyFacilitySortScore(a)
+        || a.distanceKm - b.distanceKm
+        || a.name.localeCompare(b.name);
+}
+
+function getNearbyFacilitySortScore(facility = {}) {
+    const category = facility.category || facility.subtype;
+    if (category === 'cafe' || category === 'restaurant') {
+        const ratingScore = Number.isFinite(facility.rating) ? facility.rating * 10 : 35;
+        return 100 + ratingScore - facility.distanceKm * 8;
+    }
+    return 50 - facility.distanceKm * 8;
 }
 
 function formatRatingCount(count) {

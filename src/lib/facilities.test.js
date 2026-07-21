@@ -31,6 +31,20 @@ test('getNearbyFacilities sorts facilities by distance and only keeps places wit
     ]);
 });
 
+test('getNearbyFacilities prioritizes rated food by rating and distance', () => {
+    const facilities = [
+        { id: 'water', name: 'Water', lat: 0.0001, lon: 0, category: 'drinking_water' },
+        { id: 'close-cafe', name: 'Close Cafe', lat: 0.001, lon: 0, category: 'cafe', rating: 3.5 },
+        { id: 'better-cafe', name: 'Better Cafe', lat: 0.004, lon: 0, category: 'restaurant', rating: 4.8 },
+        { id: 'distant-cafe', name: 'Too Far Cafe', lat: 0.02, lon: 0, category: 'cafe', rating: 5 }
+    ];
+
+    assert.deepEqual(
+        getNearbyFacilities({ name: 'Beach', lat: 0, lon: 0 }, facilities, 3).map((facility) => facility.id),
+        ['better-cafe', 'close-cafe', 'water']
+    );
+});
+
 test('mergeFacilityEnrichment keeps ratings optional and keyed by id', () => {
     const facilities = [
         { id: 'geordie-cafe', name: 'Geordie Cafe', category: 'cafe' },
