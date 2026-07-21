@@ -192,15 +192,21 @@ test('selected map place card derives distance from the current user location', 
     assert.match(app, /import \{ formatDistanceLabel,\s*getDistanceKm/);
     assert.match(app, /const selectedMapPlaceDistanceLabel = \$derived/);
     assert.match(app, /getDistanceKm\(userLocation\.lat,\s*userLocation\.lon,\s*selectedMapPlace\.lat,\s*selectedMapPlace\.lon\)/);
-    assert.match(app, /\[selectedMapPlaceDistanceLabel,\s*selectedMapPlace\.ratingLabel\]\.filter\(Boolean\)\.join\(' · '\)/);
+    assert.match(app, /class="selected-map-place-distance"/);
+    assert.match(app, /\{selectedMapPlaceDistanceLabel\}/);
 });
 
-test('selected map place card hides source chips and shows a bundled image when available', () => {
-    assert.match(app, /import \{ getPrimaryPlaceImage \} from '\.\/lib\/placeMedia\.js';/);
-    assert.match(app, /selectedMapPlaceImage/);
+test('selected map place card hides source chips and shows bundled image and rating details when available', () => {
+    assert.match(app, /import \{ getPlaceImages,\s*getPrimaryPlaceImage \} from '\.\/lib\/placeMedia\.js';/);
+    assert.match(app, /const selectedMapPlaceImages = \$derived\(getPlaceImages\(selectedMapPlace\?\.name\)\)/);
+    assert.match(app, /class:has-images=\{selectedMapPlaceImages\.length\}/);
+    assert.match(app, /class="selected-map-place-image-strip"/);
+    assert.match(app, /\{#each selectedMapPlaceImages as image \(image\.src\)\}/);
     assert.match(app, /class="selected-map-place-image"/);
-    assert.match(app, /src=\{selectedMapPlaceImage\.src\}/);
-    assert.match(app, /alt=\{selectedMapPlaceImage\.alt\}/);
+    assert.match(app, /src=\{image\.src\}/);
+    assert.match(app, /alt=\{image\.alt\}/);
+    assert.match(app, /class="selected-map-place-rating"/);
+    assert.match(app, /\{selectedMapPlace\.ratingLabel\}/);
     assert.doesNotMatch(app, /function getSelectedMapPlaceLinks/);
     assert.doesNotMatch(app, /class="selected-map-place-links"/);
 });

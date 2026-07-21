@@ -333,12 +333,27 @@ main {
     backdrop-filter: blur(12px);
 }
 
-.selected-map-place-card.has-image {
-    grid-template-columns: 38px 72px minmax(0, 1fr);
+.selected-map-place-card.has-images {
+    grid-template-columns: 38px minmax(0, 104px) minmax(0, 1fr);
+    align-items: start;
+}
+
+.selected-map-place-image-strip {
+    grid-column: 2;
+    min-width: 0;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+
+.selected-map-place-image-strip::-webkit-scrollbar {
+    display: none;
 }
 
 .selected-map-place-image {
-    grid-column: 2;
+    flex: 0 0 72px;
     width: 72px;
     aspect-ratio: 4 / 3;
     border-radius: 8px;
@@ -347,22 +362,26 @@ main {
     box-shadow: 0 6px 16px rgba(13, 34, 38, 0.14);
 }
 
-.selected-map-place-card div {
+.selected-map-place-content {
     grid-column: 2;
     min-width: 0;
     display: grid;
     gap: 2px;
 }
 
-.selected-map-place-card.has-image div {
+.selected-map-place-card.has-images .selected-map-place-content {
     grid-column: 3;
 }
 
 .selected-map-place-card small,
-.selected-map-place-card span {
+.selected-map-place-distance {
     color: #5d6d6f;
     font-size: 0.74rem;
     font-weight: 750;
+}
+
+.selected-map-place-card small,
+.selected-map-place-distance {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -372,6 +391,28 @@ main {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.selected-map-place-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    min-width: 0;
+}
+
+.selected-map-place-rating {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    border: 1px solid #cce2df;
+    border-radius: 999px;
+    background: #e6f3f1;
+    padding: 2px 7px;
+    color: #0b6476;
+    font-size: 0.72rem;
+    font-weight: 850;
+    line-height: 1.25;
 }
 
 .selected-map-place-links,

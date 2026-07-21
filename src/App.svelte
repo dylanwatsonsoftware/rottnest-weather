@@ -14,7 +14,7 @@
     import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import { getBeachImages } from './lib/beachMedia.js';
-    import { getPrimaryPlaceImage } from './lib/placeMedia.js';
+    import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
     import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
     import {
         buildShareUrl,
@@ -403,7 +403,8 @@
             ? formatDistanceLabel(getDistanceKm(userLocation.lat, userLocation.lon, selectedMapPlace.lat, selectedMapPlace.lon))
             : selectedMapPlace?.distanceLabel || ''
     );
-    const selectedMapPlaceImage = $derived(getPrimaryPlaceImage(selectedMapPlace));
+    const selectedMapPlaceImages = $derived(getPlaceImages(selectedMapPlace?.name));
+    const selectedMapPlaceImage = $derived(selectedMapPlaceImages[0] ?? null);
     const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
     const selectedSocialImage = $derived(
         selectedMapPlace
@@ -478,25 +479,36 @@
         onNavigateToMap={navigateToMapTarget}
     />
     {#if selectedMapPlace}
-        <aside class="selected-map-place-card" class:has-image={selectedMapPlaceImage} aria-label="Selected map place">
+        <aside class="selected-map-place-card" class:has-images={selectedMapPlaceImages.length} aria-label="Selected map place">
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
-            {#if selectedMapPlaceImage}
-                <img
-                    class="selected-map-place-image"
-                    src={selectedMapPlaceImage.src}
-                    alt={selectedMapPlaceImage.alt}
-                    loading="lazy"
-                />
+            {#if selectedMapPlaceImages.length}
+                <div class="selected-map-place-image-strip" aria-label="{selectedMapPlace.name} photos">
+                    {#each selectedMapPlaceImages as image (image.src)}
+                        <img
+                            class="selected-map-place-image"
+                            src={image.src}
+                            alt={image.alt}
+                            loading="lazy"
+                        />
+                    {/each}
+                </div>
             {/if}
-            <div>
+            <div class="selected-map-place-content">
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>
                     {selectedMapPlace.name}
                     <button class="selected-map-place-share" type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>🔗</button>
                 </strong>
-                <span>
-                    {[selectedMapPlaceDistanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
-                </span>
+                {#if selectedMapPlace.ratingLabel || selectedMapPlaceDistanceLabel}
+                    <span class="selected-map-place-meta">
+                        {#if selectedMapPlace.ratingLabel}
+                            <span class="selected-map-place-rating">{selectedMapPlace.ratingLabel}</span>
+                        {/if}
+                        {#if selectedMapPlaceDistanceLabel}
+                            <span class="selected-map-place-distance">{selectedMapPlaceDistanceLabel}</span>
+                        {/if}
+                    </span>
+                {/if}
             </div>
         </aside>
     {/if}
