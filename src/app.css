@@ -1434,6 +1434,10 @@ main {
         font-size: 1rem;
     }
 
+    .logo-container {
+        margin-top: 5px;
+    }
+
     .header-logo {
         width: 30px !important;
         height: 30px !important;

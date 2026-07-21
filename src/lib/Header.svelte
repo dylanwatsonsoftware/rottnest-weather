@@ -15,7 +15,7 @@
 <header>
     <div class="logo-container">
         <Logo size={40} class="header-logo" />
-        <h1>Rottnest</h1>
+        <h1>Rottnest Weather</h1>
     </div>
     <div id="weather-panel">
         {#if loading}
