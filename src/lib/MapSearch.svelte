@@ -17,14 +17,32 @@
     let query = $state('');
     let isOpen = $state(false);
     let searchInput = $state(null);
+    let localSearchLocation = $state(null);
     const searchIndex = $derived(buildPlaceSearchIndex({ beaches, landmarks, facilities }));
-    const results = $derived(searchPlaces(searchIndex, query, 8, userLocation));
+    const searchOrigin = $derived(userLocation || localSearchLocation);
+    const results = $derived(searchPlaces(searchIndex, query, 8, searchOrigin));
     const hasQuery = $derived(query.trim().length > 0);
 
     async function openSearch() {
         isOpen = true;
+        requestSearchLocation();
         await tick();
         searchInput?.focus();
+    }
+
+    function requestSearchLocation() {
+        if (userLocation || localSearchLocation || !navigator?.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            localSearchLocation = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude
+            };
+        }, () => {}, {
+            enableHighAccuracy: false,
+            maximumAge: 300000,
+            timeout: 5000
+        });
     }
 
     function clearSearch() {
