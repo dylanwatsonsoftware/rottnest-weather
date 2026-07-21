@@ -109,6 +109,7 @@
 
     function clearSelectedBeach() {
         selectedBeachName = '';
+        panelMode = 'closed';
     }
 
     function isMapPlaceTarget(target) {
