@@ -12,7 +12,12 @@ test('map beach selection navigates with the open panel offset it will open into
 });
 
 test('map knows when a beach was explicitly selected by the user', () => {
-    assert.match(app, /hasExplicitBeachSelection=\{Boolean\(selectedBeachName\)\}/);
+    assert.match(app, /selectedBeachName/);
+    assert.match(app, /hasExplicitBeachSelection=\{Boolean\(selectedBeachName \|\| selectedMapPlace\)\}/);
+});
+
+test('selected non-beach places also count as explicit map selections', () => {
+    assert.match(app, /hasExplicitBeachSelection=\{Boolean\(selectedBeachName \|\| selectedMapPlace\)\}/);
 });
 
 test('nearby facility and business navigation enables the places layer', () => {
@@ -99,6 +104,14 @@ test('map place markers use selected-place navigation for deep links', () => {
     assert.match(map, /\.on\('click',\s*\(\) => \{[\s\S]*getPlaceNavigationTarget\(place\)[\s\S]*onNavigateToMap\(target\)/);
     assert.match(map, /function getPlaceNavigationTarget\(place\)/);
     assert.match(map, /getPanelModeMapOffset\(panelMode,\s*mapLayout\)/);
+});
+
+test('selected map places request a close zoom level', () => {
+    const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
+    const search = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
+
+    assert.match(map, /getMapNavigationTarget\(\s*place,\s*16,/);
+    assert.match(search, /getMapNavigationTarget\(\s*result,\s*16,/);
 });
 
 test('map and search beach selections request the panel detail scroll', () => {

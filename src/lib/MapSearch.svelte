@@ -67,7 +67,7 @@
         } else {
             const target = getMapNavigationTarget(
                 result,
-                15,
+                16,
                 getPanelModeMapOffset(panelMode, mapLayout)
             );
             if (target) {

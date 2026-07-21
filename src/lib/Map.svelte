@@ -133,7 +133,7 @@
     function getPlaceNavigationTarget(place) {
         const target = getMapNavigationTarget(
             place,
-            15,
+            16,
             getPanelModeMapOffset(panelMode, mapLayout)
         );
         if (!target) return null;
