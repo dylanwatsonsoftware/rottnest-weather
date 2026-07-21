@@ -51,6 +51,9 @@ test('floating map search is a compact icon until opened', () => {
     assert.match(mapSearch, /\[result\.label,\s*result\.distanceLabel,\s*result\.ratingLabel\]\.filter\(Boolean\)\.join\(' · '\)/);
     assert.match(mapSearch, /aria-label="Open map search"/);
     assert.match(mapSearch, /class="map-search-toggle"/);
+    assert.match(mapSearch, /type="text"/);
+    assert.match(mapSearch, /inputmode="search"/);
+    assert.doesNotMatch(mapSearch, /type="search"/);
     assert.match(mapSearch, /placeholder="Search beaches or places"/);
     assert.match(css, /\.map-search\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/s);
     assert.match(css, /\.map-search\s*{[^}]*right:\s*14px/s);

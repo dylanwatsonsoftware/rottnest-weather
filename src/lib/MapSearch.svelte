@@ -96,7 +96,8 @@
             <span class="map-search-icon" aria-hidden="true">⌕</span>
             <input
                 bind:this={searchInput}
-                type="search"
+                type="text"
+                inputmode="search"
                 placeholder="Search beaches or places"
                 aria-label="Search beaches or places"
                 bind:value={query}
