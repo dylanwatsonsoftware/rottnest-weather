@@ -6,6 +6,7 @@ const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
 const mapSearch = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
+const controls = readFileSync(new URL('./Controls.svelte', import.meta.url), 'utf8');
 
 function getMobileHeaderRule() {
     const mediaStart = css.indexOf('@media (max-width: 620px)');
@@ -88,6 +89,11 @@ test('beach detail uses only the forecast slider for time selection', () => {
     assert.match(recommendationPanel, /id="detail-time-slider"/);
     assert.doesNotMatch(recommendationPanel, /class="timeline-chart"/);
     assert.doesNotMatch(recommendationPanel, /class="timeline-cell/);
+});
+
+test('forecast graph does not render a duplicate slider directly above it', () => {
+    assert.match(controls, /class="graph-container"/);
+    assert.doesNotMatch(controls, /class="slider-container"[\s\S]*class="graph-container"/);
 });
 
 test('recommendation row subtitles stay readable on colored cards', () => {

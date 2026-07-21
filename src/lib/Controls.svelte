@@ -3,8 +3,7 @@
     import { Chart, registerables } from 'chart.js';
     import ChartDataLabels from 'chartjs-plugin-datalabels';
     import annotationPlugin from 'chartjs-plugin-annotation';
-    import { getForecastChartDensity, getForecastChartLabels, getRangeModeLabel, RANGE_MODES } from './panelState.js';
-    import { formatCompactTime } from './timeFormat.js';
+    import { getForecastChartDensity, getForecastChartLabels } from './panelState.js';
 
     Chart.register(...registerables, ChartDataLabels, annotationPlugin);
 
@@ -12,10 +11,7 @@
         forecastData,
         forecastRange = { min: 0, max: 0 },
         rangeMode = 'today',
-        hourIndex = $bindable(0),
-        sliderHeatGradient = '#dbe5e5',
-        onSliderChange,
-        onRangeModeChange = () => {}
+        hourIndex = $bindable(0)
     } = $props();
 
     let chart;
@@ -225,34 +221,9 @@
         }
     });
 
-    const selectedTime = $derived(forecastData ? formatCompactTime(forecastData.time[hourIndex], { weekday: true }) : 'Now');
-
 </script>
 
 <div id="controls">
-    <div class="slider-container">
-        <div class="range-mode-toggle" aria-label="Forecast range">
-            {#each RANGE_MODES as mode}
-                <button
-                    type="button"
-                    class:active={rangeMode === mode}
-                    onclick={() => onRangeModeChange(mode)}
-                >
-                    {getRangeModeLabel(mode)}
-                </button>
-            {/each}
-        </div>
-        <label for="time-slider">Forecast Time: <span id="selected-time">{selectedTime}</span></label>
-        <input
-            type="range"
-            id="time-slider"
-            style:--slider-heat={sliderHeatGradient}
-            min={forecastRange.min}
-            max={forecastRange.max}
-            bind:value={hourIndex}
-            oninput={onSliderChange}
-        >
-    </div>
     <div class="graph-container">
         <canvas id="forecastChart" bind:this={canvasElement}></canvas>
     </div>
