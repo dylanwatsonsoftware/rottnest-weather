@@ -40,12 +40,18 @@ test('app icon uses a stylised Rottnest outline in the header and favicon', () =
     assert.match(logo, /aria-label="Stylised Rottnest Island outline"/);
     assert.match(logo, /class="rottnest-outline"/);
     assert.match(logo, /class="rottnest-reef"/);
+    assert.match(logo, /class="rottnest-lake"/);
     assert.match(logo, /class="rottnest-location"/);
+    assert.match(logo, /d="M4\.5 35/);
+    assert.match(logo, /C52\.5 30\.3 53\.7 30\.5 55\.5 29\.9C58\.6 29 61\.1 31\.7 61\.4 34\.1/);
     assert.doesNotMatch(logo, /Snorkel Mask/);
 
     assert.match(favicon, /id="rottnest-outline"/);
     assert.match(favicon, /id="rottnest-reef"/);
+    assert.match(favicon, /id="rottnest-lake"/);
     assert.match(favicon, /id="rottnest-location"/);
+    assert.match(favicon, /d="M4\.5 35/);
+    assert.match(favicon, /C52\.5 30\.3 53\.7 30\.5 55\.5 29\.9C58\.6 29 61\.1 31\.7 61\.4 34\.1/);
     assert.doesNotMatch(favicon, /Snorkel Mask/);
 });
 
