@@ -123,6 +123,8 @@ test('fully closed recommendation panel hides body content and stays compact', (
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*max-height:\s*48px/s);
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*min-height:\s*48px/s);
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*overflow:\s*hidden/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*background:\s*transparent/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*box-shadow:\s*none/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-body\s*{[^}]*display:\s*none/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*min-height:\s*46px/s);
 });

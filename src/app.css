@@ -309,6 +309,10 @@ main {
     min-height: 48px;
     max-height: 48px;
     overflow: hidden;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .recommendation-panel.closed .panel-collapse-toggle {
