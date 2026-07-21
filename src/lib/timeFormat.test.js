@@ -16,5 +16,5 @@ test('formatCompactTime includes a date for times outside the next six days', ()
     const now = new Date('2026-07-20T09:00');
 
     assert.equal(formatCompactTime('2026-07-26T08:00', { weekday: true, now }), 'Sun 8am');
-    assert.equal(formatCompactTime('2026-07-27T08:00', { weekday: true, now }), 'Mon 27 Jul 8am');
+    assert.equal(formatCompactTime('2026-07-27T08:00', { weekday: true, now }), '27 Jul Mon 8am');
 });

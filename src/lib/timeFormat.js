@@ -18,7 +18,7 @@ export function formatCompactTime(time, options = {}) {
         const day = date.getDate();
         const month = date.toLocaleDateString([], { month: 'short' });
         const dateText = `${day} ${month}`;
-        return `${weekday} ${dateText} ${timeText}`;
+        return `${dateText} ${weekday} ${timeText}`;
     }
 
     return `${weekday} ${timeText}`;

@@ -64,7 +64,7 @@ test('buildRecommendations finds the next better forecast window', () => {
 test('formatTime includes dates for forecast times beyond this week', () => {
     assert.equal(
         formatTime('2026-07-27T08:00', { now: new Date('2026-07-20T09:00') }),
-        'Mon 27 Jul 8am'
+        '27 Jul Mon 8am'
     );
 });
 

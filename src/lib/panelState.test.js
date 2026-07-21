@@ -128,7 +128,7 @@ test('getRecommendationHeading includes dates for selected times beyond this wee
     );
     assert.equal(
         getRecommendationHeading(hourlyForecast, 17, new Date('2026-07-20T12:20')),
-        'Best Mon 27 Jul 6am'
+        'Best 27 Jul Mon 6am'
     );
 });
 
