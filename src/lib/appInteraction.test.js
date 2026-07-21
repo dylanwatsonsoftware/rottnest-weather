@@ -22,9 +22,16 @@ test('nearby facility and business navigation enables the places layer', () => {
 test('non-beach map places use a dismissible selected-place mode', () => {
     assert.match(app, /let selectedMapPlace = \$state\(null\)/);
     assert.match(app, /function clearSelectedMapPlace\(\)/);
-    assert.match(app, /selectedMapPlace = isMapPlaceTarget\(target\) \? target : null/);
+    assert.match(app, /selectedMapPlace = isMapPlace \? target : null/);
     assert.match(app, /class="selected-map-place-card"/);
     assert.match(app, /aria-label="Close selected place"/);
+});
+
+test('non-beach map place selection shrinks only a fully open recommendation panel', () => {
+    assert.match(app, /const isMapPlace = isMapPlaceTarget\(target\)/);
+    assert.match(app, /selectedMapPlace = isMapPlace \? target : null/);
+    assert.match(app, /if \(isMapPlace && panelMode === 'open'\) \{/);
+    assert.match(app, /panelMode = 'semi'/);
 });
 
 test('food and facilities layer is visible by default', () => {

@@ -68,11 +68,16 @@
     function navigateToMapTarget(target) {
         if (!target) return;
         mapNavigationSequence += 1;
-        selectedMapPlace = isMapPlaceTarget(target) ? target : null;
+        const isMapPlace = isMapPlaceTarget(target);
+        selectedMapPlace = isMapPlace ? target : null;
         mapNavigationRequest = {
             ...target,
             requestId: mapNavigationSequence
         };
+
+        if (isMapPlace && panelMode === 'open') {
+            panelMode = 'semi';
+        }
 
         if (target.type === 'landmark') {
             filters = {
