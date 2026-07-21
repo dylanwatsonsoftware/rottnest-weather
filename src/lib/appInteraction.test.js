@@ -64,3 +64,9 @@ test('map and search beach selections request the panel detail scroll', () => {
     assert.match(app, /onSelectBeach=\{revealBeachInPanel\}/);
     assert.match(app, /\{panelScrollRequest\}/);
 });
+
+test('selected beach remains visible on the map even when filters exclude it', () => {
+    assert.match(app, /const mapRecommendations = \$derived/);
+    assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);
+    assert.match(app, /recommendations=\{\$state\.snapshot\(mapRecommendations\)\}/);
+});

@@ -25,3 +25,14 @@ test('map highlights selected nearby places with a visible label', () => {
     assert.match(mapSource, /className: `landmark-icon \$\{place\.type\} \$\{place\.category \|\| place\.subtype \|\| ''\} \$\{selected\}`/);
     assert.match(mapSource, /if \(selected\) marker\.setZIndexOffset\(1000\)/);
 });
+
+test('manual zoom does not recenter to the selected navigation request', () => {
+    const zoomHandlerStart = mapSource.indexOf("map.on('zoomend'");
+    assert.notEqual(zoomHandlerStart, -1);
+    const zoomHandlerEnd = mapSource.indexOf('});', zoomHandlerStart);
+    const zoomHandler = mapSource.slice(zoomHandlerStart, zoomHandlerEnd);
+
+    assert.match(zoomHandler, /currentZoom = nextZoom/);
+    assert.doesNotMatch(zoomHandler, /recenterSelectedNavigationOnZoom/);
+    assert.doesNotMatch(mapSource, /function recenterSelectedNavigationOnZoom/);
+});

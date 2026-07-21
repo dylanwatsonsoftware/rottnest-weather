@@ -128,17 +128,6 @@ export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     };
 }
 
-export function getMapZoomRecenterTarget(request, zoom) {
-    if (!request || !Number.isFinite(request.lat) || !Number.isFinite(request.lon) || !Number.isFinite(zoom)) {
-        return null;
-    }
-
-    return {
-        ...request,
-        zoom
-    };
-}
-
 export function getVisibleMapAnchorOffset({
     mapWidth = 0,
     mapHeight = 0,

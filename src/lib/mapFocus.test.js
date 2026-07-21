@@ -7,7 +7,6 @@ import {
     getMapLayoutChangeTarget,
     getMapLayout,
     getMapNavigationTarget,
-    getMapZoomRecenterTarget,
     getNavigationSettleDelay,
     getPanelModeMapOffset,
     getPanelModePanOffset,
@@ -52,17 +51,6 @@ test('getMapNavigationTarget creates a stable map destination', () => {
 
 test('getMapNavigationTarget ignores unmappable places', () => {
     assert.equal(getMapNavigationTarget({ name: 'Missing' }), null);
-});
-
-test('getMapZoomRecenterTarget preserves the selected target at the new zoom', () => {
-    const request = getMapNavigationTarget({ name: 'Little Salmon Bay', lat: -32.0242, lon: 115.5251 }, 15);
-
-    assert.deepEqual(getMapZoomRecenterTarget(request, 16), {
-        ...request,
-        zoom: 16
-    });
-    assert.equal(getMapZoomRecenterTarget(null, 16), null);
-    assert.equal(getMapZoomRecenterTarget(request, Number.NaN), null);
 });
 
 test('getBeachSelectionMapTarget centers selected beaches with panel offset', () => {

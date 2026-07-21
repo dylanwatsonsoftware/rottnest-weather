@@ -226,6 +226,11 @@
     const selectedRecommendation = $derived(
         recommendations.find((item) => item.beach.name === selectedBeachName) || recommendations[0] || null
     );
+    const mapRecommendations = $derived(
+        selectedRecommendation && !visibleRecommendations.some((item) => item.beach.name === selectedRecommendation?.beach.name)
+            ? [...visibleRecommendations, selectedRecommendation]
+            : visibleRecommendations
+    );
     const hasLoadedForecast = $derived(!loading && Boolean(forecastData?.time?.length));
     const safetyNotices = $derived([
         ...getSafetyNotices({
@@ -251,7 +256,7 @@
 
 <main>
     <Map
-        recommendations={$state.snapshot(visibleRecommendations)}
+        recommendations={$state.snapshot(mapRecommendations)}
         landmarks={$state.snapshot(landmarks)}
         facilities={$state.snapshot(facilities)}
         {filters}
