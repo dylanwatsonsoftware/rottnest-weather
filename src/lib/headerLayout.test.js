@@ -127,6 +127,9 @@ test('fully closed recommendation panel hides body content and stays compact', (
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*box-shadow:\s*none/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-body\s*{[^}]*display:\s*none/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*min-height:\s*46px/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*width:\s*fit-content/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.96\)/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*border-radius:\s*999px/s);
 });
 
 test('recommendation panel supports swipe gestures between panel states', () => {
