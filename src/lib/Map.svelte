@@ -293,6 +293,8 @@
 
     function getPlaceIcon(place) {
         if (place.subtype === 'lighthouse') return '🗼';
+        if (place.subtype === 'dive_site') return '🤿';
+        if (place.subtype === 'shipwreck') return '⚓';
         if (place.category === 'cafe' || place.category === 'restaurant') return '☕';
         if (place.category === 'toilets') return '🚻';
         if (place.category === 'drinking_water') return '💧';

@@ -12,11 +12,15 @@
         "access": "Bike, Island Explorer bus stop 3, or Ngank Yira Bidi",
         "exposure_note": "Southern beach and shipwreck snorkel spot near Porpoise Bay",
         "activity_tags": [
+            "snorkel",
             "shipwreck snorkel",
             "marine life",
             "shore entry"
         ],
         "guide_note": "Official wind guide highlights Henrietta Rocks when winds are coming from the north.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
         "caution_notes": [
             "Check signage and conditions around the Shark wreck before entering."
         ]
@@ -34,11 +38,19 @@
         "access": "Bike, Island Explorer bus stop 5, or Wardan Nara Bidi",
         "exposure_note": "South-east coast reef and bays",
         "activity_tags": [
+            "snorkel",
             "snorkel trail",
             "reef snorkel",
-            "swim"
+            "pink coral reef",
+            "marine sanctuary"
         ],
-        "guide_note": "Official wind guide highlights Parker Point when winds are coming from the north."
+        "guide_note": "Official wind guide highlights Parker Point when winds are coming from the north.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
+        "caution_notes": [
+            "Marine sanctuary zone; look but don't touch or take, and avoid standing on reef."
+        ]
     },
     {
         "name": "Little Salmon Bay",
@@ -250,11 +262,20 @@
         "access": "Bike, Island Explorer bus stop 13, or Karlinyah Bidi",
         "exposure_note": "North-facing beach near the isthmus with dunes that help shelter wind",
         "activity_tags": [
+            "snorkel",
+            "coral reef",
+            "clear lagoons",
             "sheltered swim",
             "west end access",
             "coastal walk"
         ],
-        "guide_note": "Official wind guide highlights Rocky Bay when winds are coming from the south."
+        "guide_note": "Official wind guide highlights Rocky Bay when winds are coming from the south.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
+        "caution_notes": [
+            "More remote snorkel option; check conditions and allow bike or bus return time."
+        ]
     },
     {
         "name": "Stark Bay",
@@ -353,10 +374,18 @@
         "exposure_note": "Small protected north-coast bay with rocky outcrops",
         "activity_tags": [
             "snorkel",
+            "beginner friendly",
+            "shallow water",
             "family swim",
             "sheltered bay"
         ],
-        "guide_note": "Official wind guide highlights Little Armstrong Bay when winds are coming from the south."
+        "guide_note": "Official wind guide highlights Little Armstrong Bay when winds are coming from the south.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
+        "caution_notes": [
+            "Shallows suit beginners in calm conditions, but keep within ability as conditions change."
+        ]
     },
     {
         "name": "Parakeet Bay",
@@ -391,10 +420,19 @@
         "exposure_note": "North-shore cove protected by dunes and rocky crags",
         "activity_tags": [
             "snorkel",
+            "beginner friendly",
+            "shallow water",
+            "starfish",
             "calm swim",
             "sheltered bay"
         ],
-        "guide_note": "Official wind guide highlights Little Parakeet Bay when winds are coming from the south."
+        "guide_note": "Official wind guide highlights Little Parakeet Bay when winds are coming from the south.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
+        "caution_notes": [
+            "Check reef and shallow-water footing, and enter only when conditions are calm."
+        ]
     },
     {
         "name": "Geordie Bay",
@@ -436,10 +474,20 @@
         "access": "Island Explorer bus stop 19 or Gabbi Karniny Bidi",
         "exposure_note": "Small northern cove with limestone protection",
         "activity_tags": [
+            "snorkel",
+            "seagrass",
+            "limestone reef",
+            "caves and channels",
             "protected swim",
             "quiet cove"
         ],
-        "guide_note": "Official wind guide highlights Fay's Bay when winds are coming from the south."
+        "guide_note": "Official wind guide highlights Fay's Bay when winds are coming from the south.",
+        "guide_sources": [
+            "https://www.rottnestisland.com/visit/guides-tips/where-to-snorkel-at-rottnest-island--six-of-the-best-spots"
+        ],
+        "caution_notes": [
+            "Limestone reef, caves, and channels require careful entry; avoid walking on reef."
+        ]
     },
     {
         "name": "Longreach Bay",

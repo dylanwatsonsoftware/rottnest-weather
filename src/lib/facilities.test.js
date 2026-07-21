@@ -85,6 +85,7 @@ test('facility type labels and icons cover food and practical beach facilities',
     assert.equal(FACILITY_TYPE_LABELS.cafe, 'Cafe');
     assert.equal(FACILITY_TYPE_LABELS.toilets, 'Toilets');
     assert.equal(getFacilityIcon('bus_stop'), '🚌');
+    assert.equal(getFacilityIcon('shipwreck'), '⚓');
     assert.equal(getFacilityIcon('unknown'), '📍');
 });
 
@@ -92,6 +93,8 @@ test('getFacilityTypeLabel turns raw facility categories into user-friendly copy
     assert.equal(getFacilityTypeLabel({ category: 'bicycle_parking' }), 'Bike parking');
     assert.equal(getFacilityTypeLabel({ category: 'drinking_water' }), 'Water');
     assert.equal(getFacilityTypeLabel({ subtype: 'lighthouse' }), 'Lighthouse');
+    assert.equal(getFacilityTypeLabel({ subtype: 'dive_site' }), 'Dive site');
+    assert.equal(getFacilityTypeLabel({ subtype: 'shipwreck' }), 'Shipwreck');
     assert.equal(getFacilityTypeLabel({ category: 'picnic_area' }), 'Picnic area');
 });
 
@@ -216,6 +219,25 @@ test("Geordie's Cafe uses a verified Geordie Bay coordinate instead of the rough
         coordinate_source: 'static_verified_geordie_bay_mall',
         ria_layer: undefined,
         ria_name: undefined
+    });
+});
+
+test('official snorkelling guides enrich key snorkel beach notes', () => {
+    const beachData = JSON.parse(readFileSync(new URL('../../public/beaches.json', import.meta.url), 'utf8'));
+    const byName = new Map(beachData.map((beach) => [beach.name, beach]));
+
+    [
+        'Henrietta Rocks',
+        'Parker Point',
+        'Rocky Bay',
+        'Little Armstrong Bay',
+        'Little Parakeet Bay',
+        'Fays Bay'
+    ].forEach((name) => {
+        const beach = byName.get(name);
+        assert.ok(beach?.guide_sources?.some((source) => source.includes('where-to-snorkel')), `${name} missing snorkel guide source`);
+        assert.ok(beach?.activity_tags?.includes('snorkel'), `${name} should be tagged for snorkel`);
+        assert.ok(beach?.caution_notes?.some((note) => /reef|condition|sanctuary|marine|wreck|channel|remote/i.test(note)), `${name} missing useful caution`);
     });
 });
 

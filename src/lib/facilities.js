@@ -7,7 +7,9 @@ export const FACILITY_TYPE_LABELS = {
     bus_stop: 'Bus stop',
     bicycle_parking: 'Bike parking',
     bbq: 'BBQ',
-    visitor_centre: 'Visitor centre'
+    visitor_centre: 'Visitor centre',
+    dive_site: 'Dive site',
+    shipwreck: 'Shipwreck'
 };
 
 const FACILITY_TYPE_ICONS = {
@@ -19,7 +21,9 @@ const FACILITY_TYPE_ICONS = {
     bus_stop: '🚌',
     bicycle_parking: '🚲',
     bbq: '♨',
-    visitor_centre: 'ⓘ'
+    visitor_centre: 'ⓘ',
+    dive_site: '🤿',
+    shipwreck: '⚓'
 };
 
 export function getFacilityIcon(category) {

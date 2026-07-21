@@ -18,5 +18,62 @@
         "lon": 115.5401,
         "type": "landmark",
         "subtype": "lighthouse"
+    },
+    {
+        "name": "Crystal Palace Dive Site",
+        "lat": -32.0267,
+        "lon": 115.544,
+        "type": "landmark",
+        "subtype": "dive_site",
+        "aliases": [
+            "Crystal Palace",
+            "Crystal Palace Rottnest"
+        ],
+        "source": "rottnest_official_snorkelling_diving",
+        "source_url": "https://www.rottnestisland.com/see-do/beaches-water-activities/snorkelling-diving",
+        "coordinate_source": "scuba_spot_advisor_static_cache",
+        "coordinate_source_url": "https://www.scubaspotadvisor.com/en/diving-spots/australia/kingstown-barracks/crystal-palace-rottnest-island-5175",
+        "coordinate_checked_at": "2026-07-21",
+        "notes": [
+            "Official snorkelling and diving guide describes Crystal Palace as a south-east side dive site with underwater caves and swim-throughs."
+        ]
+    },
+    {
+        "name": "Macedon Shipwreck",
+        "lat": -31.9867,
+        "lon": 115.55705,
+        "type": "landmark",
+        "subtype": "shipwreck",
+        "aliases": [
+            "Macedon",
+            "Macedon Wreck"
+        ],
+        "source": "rottnest_official_snorkelling_diving",
+        "source_url": "https://www.rottnestisland.com/see-do/beaches-water-activities/snorkelling-diving",
+        "coordinate_source": "diving_wa_wrecks_static_cache",
+        "coordinate_source_url": "https://www.divingwawrecks.com/rottnest-north",
+        "coordinate_checked_at": "2026-07-21",
+        "notes": [
+            "Official snorkelling and diving guide describes Macedon as an upright historic wreck near Denton Holme."
+        ]
+    },
+    {
+        "name": "Denton Holme Shipwreck",
+        "lat": -31.98588,
+        "lon": 115.55673,
+        "type": "landmark",
+        "subtype": "shipwreck",
+        "aliases": [
+            "Denton Holme",
+            "Denton Holme Wreck"
+        ],
+        "source": "rottnest_official_snorkelling_diving",
+        "source_url": "https://www.rottnestisland.com/see-do/beaches-water-activities/snorkelling-diving",
+        "coordinate_source": "wa_museum_maritime_archaeology_database",
+        "coordinate_source_url": "https://museum.wa.gov.au/maritime-archaeology-db/wrecks/denton-holme",
+        "coordinate_checked_at": "2026-07-21",
+        "notes": [
+            "Official snorkelling and diving guide describes Denton Holme as close enough to Macedon for one dive visit."
+        ]
     }
 ]

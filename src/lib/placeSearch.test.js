@@ -115,3 +115,29 @@ test('bundled place search has no stale duplicate facility landmarks', () => {
     });
     assert.equal(index.some((place) => place.name === 'Parker Point Stop'), false);
 });
+
+test('bundled place search includes guide-linked dive and wreck locations', () => {
+    const bundledBeaches = JSON.parse(readFileSync(new URL('../../public/beaches.json', import.meta.url), 'utf8'));
+    const bundledLandmarks = JSON.parse(readFileSync(new URL('../../public/landmarks.json', import.meta.url), 'utf8'));
+    const bundledFacilities = JSON.parse(readFileSync(new URL('../../public/facilities.json', import.meta.url), 'utf8'));
+    const index = buildPlaceSearchIndex({
+        beaches: bundledBeaches,
+        landmarks: bundledLandmarks,
+        facilities: bundledFacilities
+    });
+
+    [
+        ['Crystal Palace Dive Site', 'Dive site'],
+        ['Macedon Shipwreck', 'Shipwreck'],
+        ['Denton Holme Shipwreck', 'Shipwreck']
+    ].forEach(([name, label]) => {
+        const place = index.find((item) => item.name === name);
+        assert.ok(place, `${name} should be searchable`);
+        assert.equal(place.kind, 'landmark');
+        assert.equal(place.label, label);
+        assert.ok(Number.isFinite(place.lat));
+        assert.ok(Number.isFinite(place.lon));
+    });
+    assert.equal(searchPlaces(index, 'crystal')[0]?.name, 'Crystal Palace Dive Site');
+    assert.equal(searchPlaces(index, 'denton')[0]?.name, 'Denton Holme Shipwreck');
+});

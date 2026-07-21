@@ -51,6 +51,24 @@ const pinkyBeachImage = {
     licenseUrl: CC_BY_SA_40
 };
 
+const bathurstLighthouseImage = {
+    src: '/place-images/bathurst-lighthouse-01.jpg',
+    alt: 'Bathurst Lighthouse near the Thomson Bay and Transit Reef dive area on Rottnest Island',
+    sourceUrl: commonsFile('Bathurst_Lighthouse_on_Rottnest_Island.jpg'),
+    author: 'Christophe95',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: CC_BY_SA_40
+};
+
+const parkerPointRoadImage = {
+    src: '/place-images/parker-point-road-01.jpg',
+    alt: 'Parker Point Road with Wadjemup Lighthouse in the background',
+    sourceUrl: commonsFile('Parker_Point_Road_with_Wadjemup_Lighthouse_in_the_background,_April_2026.jpg'),
+    author: 'Calistemon',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: CC_BY_SA_40
+};
+
 export const PLACE_MEDIA = {
     'The Settlement': [thomsonBaySettlementImage],
     'Wadjemup Lighthouse': [
@@ -63,28 +81,13 @@ export const PLACE_MEDIA = {
             licenseUrl: CC_BY_SA_40
         }
     ],
-    'Bathurst Lighthouse': [
-        {
-            src: '/place-images/bathurst-lighthouse-01.jpg',
-            alt: 'Bathurst Lighthouse on Rottnest Island',
-            sourceUrl: commonsFile('Bathurst_Lighthouse_on_Rottnest_Island.jpg'),
-            author: 'Christophe95',
-            license: 'CC BY-SA 4.0',
-            licenseUrl: CC_BY_SA_40
-        }
-    ],
+    'Bathurst Lighthouse': [bathurstLighthouseImage],
+    'Crystal Palace Dive Site': [parkerPointRoadImage],
+    'Macedon Shipwreck': [bathurstLighthouseImage],
+    'Denton Holme Shipwreck': [bathurstLighthouseImage],
     'Geordie Bay Facilities': [geordieBayImage],
     'The Basin Facilities': [theBasinImage],
-    'Parker Point Bus Stop': [
-        {
-            src: '/place-images/parker-point-road-01.jpg',
-            alt: 'Parker Point Road with Wadjemup Lighthouse in the background',
-            sourceUrl: commonsFile('Parker_Point_Road_with_Wadjemup_Lighthouse_in_the_background,_April_2026.jpg'),
-            author: 'Calistemon',
-            license: 'CC BY-SA 4.0',
-            licenseUrl: CC_BY_SA_40
-        }
-    ],
+    'Parker Point Bus Stop': [parkerPointRoadImage],
     'The Lane Cafe': [thomsonBaySettlementImage],
     'Rottnest Bakery': [thomsonBaySettlementImage],
     Subway: [thomsonBaySettlementImage],
