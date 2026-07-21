@@ -19,6 +19,10 @@ test('nearby facility and business navigation enables the places layer', () => {
     assert.match(app, /target\.type === 'facility' \|\| target\.type === 'business'/);
 });
 
+test('non-beach map place selection clears stale beach selection', () => {
+    assert.match(app, /if \(isMapPlace\) \{[\s\S]*selectedBeachName = '';[\s\S]*\}/);
+});
+
 test('non-beach map places use a dismissible selected-place mode', () => {
     assert.match(app, /let selectedMapPlace = \$state\(null\)/);
     assert.match(app, /function clearSelectedMapPlace\(\)/);

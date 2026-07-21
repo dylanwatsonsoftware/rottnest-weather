@@ -532,6 +532,12 @@
     });
 
     $effect(() => {
+        if (!hasExplicitBeachSelection) {
+            panelSelectionRecenterSequence += 1;
+        }
+    });
+
+    $effect(() => {
         const currentFilters = filters;
         if (map) {
             updateLandmarks();

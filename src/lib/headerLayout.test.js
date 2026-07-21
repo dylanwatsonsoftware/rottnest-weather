@@ -66,6 +66,12 @@ test('selected nearby map places have an obvious marker and label', () => {
     assert.match(css, /\.place-label\.selected\s*{[^}]*border-color:\s*#0b7583/s);
 });
 
+test('selected map place card keeps content visible beside the close button', () => {
+    assert.match(css, /\.selected-map-place-card\s*{[^}]*grid-template-columns:\s*38px minmax\(0,\s*1fr\)/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*grid-column:\s*1/s);
+    assert.match(css, /\.selected-map-place-card div\s*{[^}]*grid-column:\s*2/s);
+});
+
 test('ranked beach marker size classes are visually distinct', () => {
     const markerStart = css.indexOf('.beach-marker {');
     assert.notEqual(markerStart, -1);

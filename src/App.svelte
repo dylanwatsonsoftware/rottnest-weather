@@ -80,6 +80,9 @@
         if (!target) return;
         mapNavigationSequence += 1;
         const isMapPlace = isMapPlaceTarget(target);
+        if (isMapPlace) {
+            selectedBeachName = '';
+        }
         selectedMapPlace = isMapPlace ? target : null;
         mapNavigationRequest = {
             ...target,

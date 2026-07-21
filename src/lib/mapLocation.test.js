@@ -70,3 +70,8 @@ test('beach marker rebuilding does not consume panel-mode recenter transitions',
     assert.match(mapSource, /const currentPanelMode = panelMode;[\s\S]*fitVisibleBeaches\(\)/);
     assert.match(mapSource, /getPanelModeSelectionMapTarget/);
 });
+
+test('map cancels delayed selected-beach recenters after beach selection is cleared', () => {
+    assert.match(mapSource, /if \(!hasExplicitBeachSelection\) \{[\s\S]*panelSelectionRecenterSequence \+= 1;[\s\S]*\}/);
+    assert.match(mapSource, /if \(!map \|\| sequence !== panelSelectionRecenterSequence\) return/);
+});
