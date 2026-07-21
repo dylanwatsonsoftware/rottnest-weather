@@ -110,6 +110,14 @@ test('collapsed recommendation toggle shows a compact count badge', () => {
     assert.match(css, /\.recommendation-count-badge\s*{[^}]*min-width:\s*28px/s);
 });
 
+test('recommendation panel supports swipe gestures between panel states', () => {
+    assert.match(recommendationPanel, /getPanelModeFromSwipe/);
+    assert.match(recommendationPanel, /function handlePanelTouchStart\(event\)/);
+    assert.match(recommendationPanel, /function handlePanelTouchEnd\(event\)/);
+    assert.match(recommendationPanel, /ontouchstart=\{handlePanelTouchStart\}/);
+    assert.match(recommendationPanel, /ontouchend=\{handlePanelTouchEnd\}/);
+});
+
 test('expanded recommendation toggle uses a clear hide label', () => {
     assert.match(recommendationPanel, /Hide recommendations/);
     assert.doesNotMatch(recommendationPanel, /Map view/);

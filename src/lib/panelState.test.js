@@ -8,6 +8,7 @@ import {
     getLaterTabHourIndex,
     getNextPanelMode,
     getPanelModeAfterOpenRequest,
+    getPanelModeFromSwipe,
     getRecommendationHeading,
     getBetterTimeSelection,
     getRangeModeLabel,
@@ -63,6 +64,16 @@ test('getNextPanelMode cycles closed to semi to open', () => {
 
 test('getNextPanelMode recovers unknown state to semi-open', () => {
     assert.equal(getNextPanelMode('mystery'), 'semi');
+});
+
+test('getPanelModeFromSwipe steps or jumps based on swipe distance', () => {
+    assert.equal(getPanelModeFromSwipe('closed', -52), 'semi');
+    assert.equal(getPanelModeFromSwipe('semi', -52), 'open');
+    assert.equal(getPanelModeFromSwipe('closed', -148), 'open');
+    assert.equal(getPanelModeFromSwipe('open', 52), 'semi');
+    assert.equal(getPanelModeFromSwipe('semi', 52), 'closed');
+    assert.equal(getPanelModeFromSwipe('open', 148), 'closed');
+    assert.equal(getPanelModeFromSwipe('semi', 18), 'semi');
 });
 
 test('getForecastSliderMax uses the last forecast index', () => {

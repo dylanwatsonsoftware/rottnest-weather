@@ -7,6 +7,7 @@
         getForecastRange,
         getNextPanelMode,
         getPanelModeAfterOpenRequest,
+        getPanelModeFromSwipe,
         getRecommendationHeading,
         getRangeModeLabel,
         getRangeProgressPercent,
@@ -67,6 +68,7 @@
     let settingsOpen = $state(false);
     let betterTimeStatus = $state('');
     let beachDetailElement = $state(null);
+    let panelTouchStartY = $state(null);
     const isOpen = $derived(panelMode === 'open');
     const isSemi = $derived(panelMode === 'semi');
     const isClosed = $derived(panelMode === 'closed');
@@ -169,6 +171,19 @@
         });
     }
 
+    function handlePanelTouchStart(event) {
+        panelTouchStartY = event.changedTouches?.[0]?.clientY ?? null;
+    }
+
+    function handlePanelTouchEnd(event) {
+        const endY = event.changedTouches?.[0]?.clientY;
+        if (!Number.isFinite(panelTouchStartY) || !Number.isFinite(endY)) return;
+
+        const nextMode = getPanelModeFromSwipe(panelMode, endY - panelTouchStartY);
+        panelTouchStartY = null;
+        if (nextMode !== panelMode) panelMode = nextMode;
+    }
+
     async function selectRecommendationRow(beachName) {
         onSelectBeach(beachName);
         await tick();
@@ -219,6 +234,8 @@
         aria-expanded={isOpen}
         aria-controls="recommendation-panel-content"
         onclick={() => panelMode = getNextPanelMode(panelMode)}
+        ontouchstart={handlePanelTouchStart}
+        ontouchend={handlePanelTouchEnd}
     >
         <span class="sheet-handle" aria-hidden="true"></span>
         <span class="panel-toggle-title">

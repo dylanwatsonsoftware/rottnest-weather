@@ -27,6 +27,15 @@ export function getNextPanelMode(mode) {
     return PANEL_MODES.semi;
 }
 
+export function getPanelModeFromSwipe(mode, deltaY, { smallThreshold = 40, largeThreshold = 120 } = {}) {
+    if (!Number.isFinite(deltaY) || Math.abs(deltaY) < smallThreshold) return mode;
+
+    if (deltaY <= -largeThreshold) return PANEL_MODES.open;
+    if (deltaY >= largeThreshold) return PANEL_MODES.closed;
+    if (deltaY < 0) return mode === PANEL_MODES.closed ? PANEL_MODES.semi : PANEL_MODES.open;
+    return mode === PANEL_MODES.open ? PANEL_MODES.semi : PANEL_MODES.closed;
+}
+
 export function getForecastSliderMax(forecastData) {
     return Math.max((forecastData?.time?.length || 1) - 1, 0);
 }
