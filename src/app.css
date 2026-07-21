@@ -1279,8 +1279,9 @@ main {
 }
 
 .beach-marker {
-    width: 34px !important;
-    height: 34px !important;
+    --beach-marker-size: 34px;
+    width: var(--beach-marker-size) !important;
+    height: var(--beach-marker-size) !important;
     border-radius: 50% !important;
     border: 2px solid white !important;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.32);
@@ -1290,14 +1291,35 @@ main {
     line-height: 1;
 }
 
+.beach-marker.prominent {
+    --beach-marker-size: 38px;
+    border-width: 3px !important;
+}
+
+.beach-marker.small {
+    --beach-marker-size: 28px;
+}
+
+.beach-marker.compact {
+    --beach-marker-size: 24px;
+}
+
 .beach-marker.selected {
+    --beach-marker-size: 40px;
     outline: 3px solid rgba(255, 255, 255, 0.8);
-    transform: scale(1.12);
 }
 
 .beach-marker span {
     font-size: 16px;
     font-weight: 900;
+}
+
+.beach-marker.small span {
+    font-size: 14px;
+}
+
+.beach-marker.compact span {
+    font-size: 12px;
 }
 
 .beach-marker small {
@@ -1314,6 +1336,16 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.14);
     font-size: 9px;
     font-weight: 900;
+}
+
+.beach-marker.small small {
+    transform: scale(0.9);
+    transform-origin: center;
+}
+
+.beach-marker.compact small {
+    transform: scale(0.82);
+    transform-origin: center;
 }
 
 .beach-label {

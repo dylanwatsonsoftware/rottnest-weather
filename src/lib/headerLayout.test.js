@@ -59,6 +59,22 @@ test('selected nearby map places have an obvious marker and label', () => {
     assert.match(css, /\.place-label\.selected\s*{[^}]*border-color:\s*#0b7583/s);
 });
 
+test('ranked beach marker size classes are visually distinct', () => {
+    const markerStart = css.indexOf('.beach-marker {');
+    assert.notEqual(markerStart, -1);
+    const markerEnd = css.indexOf('}', markerStart);
+    const markerRule = css.slice(markerStart, markerEnd);
+
+    assert.doesNotMatch(markerRule, /width:\s*34px\s*!important/);
+    assert.doesNotMatch(markerRule, /height:\s*34px\s*!important/);
+    assert.match(markerRule, /width:\s*var\(--beach-marker-size\)\s*!important/);
+    assert.match(css, /\.beach-marker\.prominent\s*{[^}]*--beach-marker-size:\s*38px/s);
+    assert.match(css, /\.beach-marker\.small\s*{[^}]*--beach-marker-size:\s*28px/s);
+    assert.match(css, /\.beach-marker\.compact\s*{[^}]*--beach-marker-size:\s*24px/s);
+    assert.match(css, /\.beach-marker\.selected\s*{[^}]*--beach-marker-size:\s*40px/s);
+    assert.match(css, /\.beach-marker\.compact small\s*{[^}]*transform:\s*scale\(0\.82\)/s);
+});
+
 test('beach detail timeline has its own time slider styling', () => {
     assert.match(css, /\.detail-time-control\s*{/);
     assert.match(css, /\.detail-time-control input\[type="range"\]/);
