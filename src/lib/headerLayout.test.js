@@ -119,6 +119,14 @@ test('collapsed recommendation toggle shows a compact count badge', () => {
     assert.match(css, /\.recommendation-count-badge\s*{[^}]*min-width:\s*28px/s);
 });
 
+test('fully closed recommendation panel hides body content and stays compact', () => {
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*max-height:\s*48px/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*min-height:\s*48px/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*overflow:\s*hidden/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-body\s*{[^}]*display:\s*none/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*min-height:\s*46px/s);
+});
+
 test('recommendation panel supports swipe gestures between panel states', () => {
     assert.match(recommendationPanel, /getPanelModeFromSwipe/);
     assert.match(recommendationPanel, /function handlePanelTouchStart\(event\)/);

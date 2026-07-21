@@ -306,7 +306,18 @@ main {
 }
 
 .recommendation-panel.closed {
-    max-height: 58px;
+    min-height: 48px;
+    max-height: 48px;
+    overflow: hidden;
+}
+
+.recommendation-panel.closed .panel-collapse-toggle {
+    min-height: 46px;
+    padding: 5px 12px 6px;
+}
+
+.recommendation-panel.closed .panel-body {
+    display: none;
 }
 
 .selected-map-place-card {
@@ -1646,7 +1657,8 @@ main {
     }
 
     .recommendation-panel.closed {
-        max-height: 58px;
+        min-height: 48px;
+        max-height: 48px;
     }
 
     .selected-map-place-card {
@@ -1707,7 +1719,8 @@ main {
     }
 
     .recommendation-panel.closed {
-        max-height: 58px;
+        min-height: 48px;
+        max-height: 48px;
     }
 
     .selected-map-place-card {
