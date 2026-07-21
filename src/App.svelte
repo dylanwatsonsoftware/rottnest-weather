@@ -174,8 +174,9 @@
 
             selectedMapPlace = null;
             selectedBeachName = beach.name;
-            panelMode = 'closed';
-            const target = getBeachSelectionMapTarget(beach, 'closed', mapLayout);
+            panelMode = 'open';
+            panelOpenRequest += 1;
+            const target = getBeachSelectionMapTarget(beach, 'open', mapLayout);
             if (target) navigateToMapTarget(target);
             return;
         }

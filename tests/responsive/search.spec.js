@@ -52,9 +52,9 @@ test('shared beach URLs restore the selected beach and time', async ({ page }) =
     await mockForecastApis(page);
     await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
 
-    await expect(page.locator('.recommendation-panel.beach-mode')).toBeVisible();
+    await expect(page.locator('.recommendation-panel.beach-mode.open')).toBeVisible();
     await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
-    await expect(page.locator('.beach-panel-title')).toContainText(/8am/i);
+    await expect(page.locator('.detail-time-control')).toContainText(/8am/i);
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
 });
 

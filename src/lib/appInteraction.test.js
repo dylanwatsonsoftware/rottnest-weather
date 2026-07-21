@@ -163,6 +163,13 @@ test('incoming shared beach and place links are restored after app data loads', 
     assert.match(app, /selectedMapPlace = getSharedMapPlaceTarget\(place\)/);
 });
 
+test('incoming shared beach links restore the beach panel fully open', () => {
+    assert.match(app, /selectedBeachName = beach\.name/);
+    assert.match(app, /panelMode = 'open'/);
+    assert.match(app, /getBeachSelectionMapTarget\(beach,\s*'open',\s*mapLayout\)/);
+    assert.match(app, /panelOpenRequest \+= 1/);
+});
+
 test('selected map place card derives distance from the current user location', () => {
     assert.match(app, /import \{ formatDistanceLabel,\s*getDistanceKm/);
     assert.match(app, /const selectedMapPlaceDistanceLabel = \$derived/);
