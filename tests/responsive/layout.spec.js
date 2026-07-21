@@ -42,6 +42,7 @@ for (const viewport of viewports) {
         expect(metrics.mapWidth).toBeGreaterThan(0);
         expect(metrics.mapHeight).toBeGreaterThan(viewport.height * 0.65);
         expect(metrics.panelTop).toBeLessThan(viewport.height);
-        expect(metrics.panelBottom).toBeGreaterThan(viewport.height - 24);
+        expect(metrics.panelBottom).toBeGreaterThan(viewport.height - 40);
+        expect(metrics.panelBottom).toBeLessThanOrEqual(viewport.height);
     });
 }
