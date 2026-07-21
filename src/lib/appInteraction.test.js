@@ -65,6 +65,14 @@ test('app skips cached data that cannot satisfy an incoming shared forecast time
     assert.match(app, /if \(hasPendingSharedTime\(\)\) return/);
 });
 
+test('app preserves the selected forecast time when fresh data replaces cached data', () => {
+    assert.match(app, /function getAppDataHourIndex\(nextForecastData,\s*currentSelectedTime\)/);
+    assert.match(app, /const preservedHourIndex = findNearestSharedHourIndex\(nextForecastData,\s*currentSelectedTime\)/);
+    assert.match(app, /const currentSelectedTime = forecastData\?\.time\?\.\[hourIndex\]/);
+    assert.match(app, /hourIndex = getAppDataHourIndex\(nextAppData\.forecastData,\s*currentSelectedTime\)/);
+    assert.doesNotMatch(app, /hourIndex = getNearestForecastHourIndex\(nextAppData\.forecastData\);/);
+});
+
 test('recommendation panel waits until forecast data is ready', () => {
     assert.match(app, /const hasLoadedForecast = \$derived\(!loading && Boolean\(forecastData\?\.time\?\.length\)\);/);
     assert.match(app, /\{#if hasLoadedForecast\}[\s\S]*<RecommendationPanel/);

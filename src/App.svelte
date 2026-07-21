@@ -253,12 +253,22 @@
         return nearestHourIndex;
     }
 
+    function getAppDataHourIndex(nextForecastData, currentSelectedTime) {
+        const preservedHourIndex = findNearestSharedHourIndex(nextForecastData, currentSelectedTime);
+        if (Number.isInteger(preservedHourIndex)) {
+            return preservedHourIndex;
+        }
+
+        return getNearestForecastHourIndex(nextForecastData);
+    }
+
     function applyAppData(nextAppData) {
+        const currentSelectedTime = forecastData?.time?.[hourIndex];
         beaches = nextAppData.beaches;
         landmarks = nextAppData.landmarks;
         facilities = nextAppData.facilities;
         forecastData = nextAppData.forecastData;
-        hourIndex = getNearestForecastHourIndex(nextAppData.forecastData);
+        hourIndex = getAppDataHourIndex(nextAppData.forecastData, currentSelectedTime);
         applySharedLocationState(nextAppData);
     }
 
