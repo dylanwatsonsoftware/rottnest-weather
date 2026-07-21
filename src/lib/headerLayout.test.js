@@ -276,6 +276,7 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /aria-label="Share \{selectedRecommendation\.beach\.name\}"/);
     assert.match(recommendationPanel, /onclick=\{onShareLocation\}/);
     assert.match(beachPanelSource, /class="panel-content"[\s\S]*class="detail-metrics"[\s\S]*\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
+    assert.match(beachPanelSource, /<Controls[\s\S]*\{forecastData\}[\s\S]*\{forecastRange\}[\s\S]*\{rangeMode\}[\s\S]*bind:hourIndex/);
     assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);
     assert.match(css, /\.beach-panel-header\s*{[^}]*padding:\s*7px 10px 4px 12px/s);
     assert.match(css, /\.beach-panel-handle\s*{[^}]*grid-column:\s*1 \/ -1/s);

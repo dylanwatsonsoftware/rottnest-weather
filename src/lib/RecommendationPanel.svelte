@@ -436,6 +436,16 @@
                         </div>
                     {/if}
                 </article>
+                {#if forecastData}
+                    <Controls
+                        {forecastData}
+                        {forecastRange}
+                        {rangeMode}
+                        {sliderHeatGradient}
+                        onRangeModeChange={(mode) => rangeMode = mode}
+                        bind:hourIndex
+                    />
+                {/if}
             </div>
         </div>
     {:else}
