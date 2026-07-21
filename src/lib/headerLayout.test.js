@@ -248,6 +248,7 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /\{#if isBeachView && selectedRecommendation\}/);
     assert.match(recommendationPanel, /class="beach-panel-header"/);
     assert.match(recommendationPanel, /class="beach-panel-handle"/);
+    assert.match(recommendationPanel, /\{#if isClosed\}[\s\S]*<small>\{selectedTime\}<\/small>/);
     assert.match(recommendationPanel, /class="beach-panel-close"/);
     assert.match(recommendationPanel, /aria-label="Close beach view"/);
     assert.match(recommendationPanel, /onclick=\{onCloseBeach\}/);

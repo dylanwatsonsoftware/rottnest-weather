@@ -261,6 +261,9 @@
             >
                 <span>
                     <strong>{selectedRecommendation.beach.name}</strong>
+                    {#if isClosed}
+                        <small>{selectedTime}</small>
+                    {/if}
                 </span>
             </button>
             <button class="beach-panel-close" type="button" aria-label="Close beach view" onclick={onCloseBeach}>×</button>
