@@ -142,6 +142,19 @@
         betterTimeStatus = 'Showing next good window';
     }
 
+    function jumpToNextGoodWindow(nextGood) {
+        if (!Number.isFinite(nextGood?.hourIndex)) return;
+
+        rangeMode = getRangeModeForHourIndex(forecastData, nextGood.hourIndex);
+        hourIndex = nextGood.hourIndex;
+        betterTimeStatus = 'Showing next good window';
+    }
+
+    function formatNextGoodDuration(nextGood) {
+        const hours = Number.isFinite(nextGood?.durationHours) ? nextGood.durationHours : 1;
+        return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+    }
+
     function selectRangeMode(mode) {
         const nextSelection = getRangeModeSelection(forecastData, mode, hourIndex);
         rangeMode = nextSelection.rangeMode;
@@ -350,6 +363,17 @@
                             </div>
                         </div>
                     {/if}
+                    {#if selectedRecommendation.nextGood}
+                        <button
+                            class="next-good-window"
+                            type="button"
+                            onclick={() => jumpToNextGoodWindow(selectedRecommendation.nextGood)}
+                        >
+                            <span>Next good window</span>
+                            <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
+                            <small>{formatNextGoodDuration(selectedRecommendation.nextGood)}</small>
+                        </button>
+                    {/if}
                     <div class="detail-metrics">
                         <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                         <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
@@ -410,12 +434,6 @@
                                 <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
                             {/each}
                         </div>
-                    {/if}
-                    {#if selectedRecommendation.nextGood}
-                        <p class="next-good-window">
-                            <span>Next good window</span>
-                            <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
-                        </p>
                     {/if}
                     {#if nearbyPlaces.length}
                         <div class="nearby-list">
@@ -635,6 +653,17 @@
                         </div>
                     </div>
                 {/if}
+                {#if selectedRecommendation.nextGood}
+                    <button
+                        class="next-good-window"
+                        type="button"
+                        onclick={() => jumpToNextGoodWindow(selectedRecommendation.nextGood)}
+                    >
+                        <span>Next good window</span>
+                        <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
+                        <small>{formatNextGoodDuration(selectedRecommendation.nextGood)}</small>
+                    </button>
+                {/if}
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                     <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
@@ -688,12 +717,6 @@
                             <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
                         {/each}
                     </div>
-                {/if}
-                {#if selectedRecommendation.nextGood}
-                    <p class="next-good-window">
-                        <span>Next good window</span>
-                        <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
-                    </p>
                 {/if}
                 {#if nearbyPlaces.length}
                     <div class="nearby-list">

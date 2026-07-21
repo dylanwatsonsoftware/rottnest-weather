@@ -334,9 +334,13 @@ test('recommendation rows show a status heatbar instead of window summary text',
 test('next good window hints are visually highlighted in beach details', () => {
     assert.match(recommendationPanel, /class="next-good-window"/);
     assert.doesNotMatch(recommendationPanel, /<p class="detail-note">Next good window:/);
+    assert.match(recommendationPanel, /<button[\s\S]*class="next-good-window"[\s\S]*onclick=\{\(\) => jumpToNextGoodWindow\(selectedRecommendation\.nextGood\)\}/);
+    assert.match(recommendationPanel, /\{formatNextGoodDuration\(selectedRecommendation\.nextGood\)\}/);
+    assert.match(recommendationPanel, /class="next-good-window"[\s\S]*class="detail-metrics"/);
     assert.match(css, /\.next-good-window\s*{[^}]*background:\s*#eef7f6/s);
     assert.match(css, /\.next-good-window\s*{[^}]*border:\s*1px solid #cfe0e0/s);
     assert.match(css, /\.next-good-window span\s*{[^}]*font-weight:\s*800/s);
+    assert.match(css, /\.next-good-window\s*{[^}]*cursor:\s*pointer/s);
     assert.doesNotMatch(css, /\.next-good-window span\s*{[^}]*text-transform:\s*uppercase/s);
 });
 
