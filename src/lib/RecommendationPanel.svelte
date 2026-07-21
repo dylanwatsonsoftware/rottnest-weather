@@ -283,14 +283,6 @@
         {/if}
 
         <div id="beach-panel-content" class="panel-body" hidden={!isOpen}>
-            {#if isOpen && safetyNotices.length}
-                <div class="safety-strip">
-                    {#each safetyNotices as notice}
-                        <p>{notice}</p>
-                    {/each}
-                </div>
-            {/if}
-
             <div class="panel-content">
                 <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
                     <div class="detail-heading">
@@ -336,6 +328,13 @@
                         <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
                         {#if shouldShowConfidenceLabel(selectedRecommendation.confidence)}
                             <span>{selectedRecommendation.confidence} confidence</span>
+                        {/if}
+                        {#if isOpen && safetyNotices.length}
+                            <div class="safety-strip">
+                                {#each safetyNotices as notice}
+                                    <p>{notice}</p>
+                                {/each}
+                            </div>
                         {/if}
                     </div>
                     {#key selectedRecommendation.beach.name}
