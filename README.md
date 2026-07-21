@@ -1,4 +1,4 @@
-# Rottnest Snorkelling
+# Rottnest Snorkelling Weather
 
 A mobile-first Svelte/Vite app for choosing Rottnest Island snorkeling spots from current forecast conditions. It combines a Leaflet satellite map with Open-Meteo weather and marine data, then ranks beaches using a simple heuristic model.
 
