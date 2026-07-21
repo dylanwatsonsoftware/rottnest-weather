@@ -49,6 +49,7 @@
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
+    let isProgrammaticMapMove = false;
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'closed';
     let lastVisibleBeachMapLayout = 'default';
@@ -84,6 +85,7 @@
             const nextZoom = map.getZoom();
             currentZoom = nextZoom;
             onZoomChange(currentZoom);
+            recenterSelectedNavigationOnZoom(nextZoom);
             updateBeachLabels();
             updateLandmarks();
         });
@@ -173,7 +175,8 @@
             ...target,
             type: place.type || 'landmark',
             label: getFacilityTypeLabel(place),
-            ratingLabel: getFacilityRatingLabel(place)
+            ratingLabel: getFacilityRatingLabel(place),
+            visibleAnchor: getSelectedPlaceVisibleAnchor()
         };
     }
 
@@ -419,7 +422,7 @@
 
             const zoom = target.zoom || map.getZoom();
             const center = getOffsetCenter(target, zoom);
-            map.flyTo(center, zoom, {
+            flyToProgrammatically(center, zoom, {
                 animate: true,
                 duration: 0.35
             });
@@ -441,7 +444,7 @@
                 if (!map || request.requestId !== lastNavigationRequestId) return;
                 const zoom = request.zoom || 15;
                 const center = getOffsetCenter(request, zoom);
-                map.flyTo(center, zoom, {
+                flyToProgrammatically(center, zoom, {
                     animate: true,
                     duration: 0.45
                 });
@@ -449,6 +452,51 @@
                 onZoomChange(currentZoom);
             });
         }, getNavigationSettleDelay(request));
+    }
+
+    function getSelectedPlaceVisibleAnchor() {
+        return {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
+        };
+    }
+
+    function recenterSelectedNavigationOnZoom(zoom) {
+        if (!mapNavigationRequest || isProgrammaticMapMove) return;
+        if (!Number.isFinite(mapNavigationRequest.lat) || !Number.isFinite(mapNavigationRequest.lon)) return;
+
+        requestAnimationFrame(() => {
+            if (!map || !mapNavigationRequest || isProgrammaticMapMove) return;
+            const center = getOffsetCenter(mapNavigationRequest, zoom);
+            setViewProgrammatically(center, zoom, { animate: false });
+        });
+    }
+
+    function flyToProgrammatically(center, zoom, options) {
+        markProgrammaticMapMove();
+        map.flyTo(center, zoom, options);
+    }
+
+    function setViewProgrammatically(center, zoom, options) {
+        markProgrammaticMapMove();
+        map.setView(center, zoom, options);
+    }
+
+    function markProgrammaticMapMove() {
+        isProgrammaticMapMove = true;
+        const clearProgrammaticMove = () => {
+            if (!map) return;
+
+            isProgrammaticMapMove = false;
+            map.off('moveend', clearProgrammaticMove);
+            map.off('zoomend', clearProgrammaticMove);
+        };
+
+        map.once('moveend', clearProgrammaticMove);
+        map.once('zoomend', clearProgrammaticMove);
+        window.setTimeout(clearProgrammaticMove, 700);
     }
 
     function getOffsetCenter(request, zoom) {
@@ -475,7 +523,10 @@
         const mapRect = mapElement.getBoundingClientRect();
         const headerRect = document.querySelector('header')?.getBoundingClientRect();
         const panelRect = document.querySelector('.recommendation-panel')?.getBoundingClientRect();
+        const selectedPlaceRect = document.querySelector('.selected-map-place-card')?.getBoundingClientRect();
         const isSidePanel = mapLayout === 'shortLandscape' || mapLayout === 'desktopSidePanel';
+        const panelTop = panelRect ? panelRect.top - mapRect.top : mapRect.height;
+        const selectedPlaceTop = selectedPlaceRect ? selectedPlaceRect.top - mapRect.top : mapRect.height;
 
         return {
             mapWidth: mapRect.width,
@@ -483,7 +534,7 @@
             visibleLeft: 0,
             visibleRight: isSidePanel && panelRect ? Math.max(panelRect.left - mapRect.left, 0) : mapRect.width,
             visibleTop: headerRect ? Math.max(headerRect.bottom - mapRect.top, 0) : 0,
-            visibleBottom: constrainVerticalByPanel && !isSidePanel && panelRect ? Math.max(panelRect.top - mapRect.top, 0) : mapRect.height
+            visibleBottom: constrainVerticalByPanel && !isSidePanel ? Math.max(Math.min(panelTop, selectedPlaceTop), 0) : mapRect.height
         };
     }
 

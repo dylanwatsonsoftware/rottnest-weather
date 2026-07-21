@@ -81,12 +81,18 @@
         if (!target) return;
         mapNavigationSequence += 1;
         const isMapPlace = isMapPlaceTarget(target);
+        const navigationTarget = isMapPlace
+            ? {
+                ...target,
+                visibleAnchor: getSelectedMapPlaceVisibleAnchor()
+            }
+            : target;
         if (isMapPlace) {
             selectedBeachName = '';
         }
-        selectedMapPlace = isMapPlace ? target : null;
+        selectedMapPlace = isMapPlace ? navigationTarget : null;
         mapNavigationRequest = {
-            ...target,
+            ...navigationTarget,
             requestId: mapNavigationSequence
         };
 
@@ -107,6 +113,15 @@
                 showFacilities: true
             };
         }
+    }
+
+    function getSelectedMapPlaceVisibleAnchor() {
+        return {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
+        };
     }
 
     function selectBeach(name, targetPanelMode = panelMode) {

@@ -36,6 +36,24 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
     await expect(page.locator('.recommendation-panel.closed')).toBeVisible();
 });
 
+test('zooming out keeps the selected map place anchored on screen', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/');
+
+    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+    await expect(page.locator('.selected-map-place-card')).toBeVisible();
+    await page.waitForTimeout(700);
+    const before = await getSelectedMarkerCenter(page);
+
+    await page.locator('.leaflet-control-zoom-out').click();
+    await page.waitForTimeout(500);
+    const after = await getSelectedMarkerCenter(page);
+
+    expect(Math.abs(after.x - before.x)).toBeLessThan(8);
+    expect(Math.abs(after.y - before.y)).toBeLessThan(8);
+});
+
 test('selected locations and forecast time are encoded in the URL for sharing', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
@@ -58,6 +76,16 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await expect.poll(() => page.url()).toContain('location=facility%3Aparker-point-bus-stop');
     await expect.poll(() => page.url()).toContain('time=');
 });
+
+async function getSelectedMarkerCenter(page) {
+    return page.locator('.landmark-icon.selected').first().evaluate((marker) => {
+        const rect = marker.getBoundingClientRect();
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
+    });
+}
 
 test('shared beach URLs restore the selected beach and time', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

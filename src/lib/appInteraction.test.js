@@ -31,14 +31,15 @@ test('non-beach map place selection clears stale beach selection', () => {
 test('non-beach map places use a dismissible selected-place mode', () => {
     assert.match(app, /let selectedMapPlace = \$state\(null\)/);
     assert.match(app, /function clearSelectedMapPlace\(\)/);
-    assert.match(app, /selectedMapPlace = isMapPlace \? target : null/);
+    assert.match(app, /const navigationTarget = isMapPlace[\s\S]*getSelectedMapPlaceVisibleAnchor\(\)/);
+    assert.match(app, /selectedMapPlace = isMapPlace \? navigationTarget : null/);
     assert.match(app, /class="selected-map-place-card"/);
     assert.match(app, /aria-label="Close selected place"/);
 });
 
 test('non-beach map place selection closes the recommendation panel enough to reveal the place card', () => {
     assert.match(app, /const isMapPlace = isMapPlaceTarget\(target\)/);
-    assert.match(app, /selectedMapPlace = isMapPlace \? target : null/);
+    assert.match(app, /selectedMapPlace = isMapPlace \? navigationTarget : null/);
     assert.match(app, /if \(isMapPlace\) \{[\s\S]*panelMode = 'closed'/);
 });
 

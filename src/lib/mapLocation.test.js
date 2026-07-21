@@ -43,15 +43,21 @@ test('map place markers have a direct DOM click path for custom div icons', () =
     assert.match(mapSource, /markerElement\.dataset\.placeKey = placeKey/);
 });
 
-test('manual zoom does not recenter to the selected navigation request', () => {
+test('manual zoom recenters the selected navigation request at the new zoom level', () => {
     const zoomHandlerStart = mapSource.indexOf("map.on('zoomend'");
     assert.notEqual(zoomHandlerStart, -1);
     const zoomHandlerEnd = mapSource.indexOf('});', zoomHandlerStart);
     const zoomHandler = mapSource.slice(zoomHandlerStart, zoomHandlerEnd);
 
     assert.match(zoomHandler, /currentZoom = nextZoom/);
-    assert.doesNotMatch(zoomHandler, /recenterSelectedNavigationOnZoom/);
-    assert.doesNotMatch(mapSource, /function recenterSelectedNavigationOnZoom/);
+    assert.match(zoomHandler, /recenterSelectedNavigationOnZoom\(nextZoom\)/);
+    assert.match(mapSource, /let isProgrammaticMapMove = false/);
+    assert.match(mapSource, /function recenterSelectedNavigationOnZoom\(zoom\)/);
+    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove\) return/);
+    assert.match(mapSource, /const center = getOffsetCenter\(mapNavigationRequest,\s*zoom\)/);
+    assert.match(mapSource, /setViewProgrammatically\(center,\s*zoom,\s*\{\s*animate:\s*false\s*\}\)/);
+    assert.match(mapSource, /function setViewProgrammatically\(center,\s*zoom,\s*options\)/);
+    assert.match(mapSource, /map\.setView\(center,\s*zoom,\s*options\)/);
 });
 
 test('beach marker icons use rank-aware sizes', () => {
