@@ -1,21 +1,33 @@
 <svg
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
+    width="64"
+    height="64"
+    viewBox="0 0 64 64"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    stroke="#007bff"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    role="img"
+    aria-label="Stylised Rottnest Island outline"
 >
-    <!-- Snorkel Mask -->
-    <path d="M17 10H7C5.89543 10 5 10.8954 5 12V15C5 16.1046 5.89543 17 7 17H17C18.1046 17 19 16.1046 19 15V12C19 10.8954 18.1046 10 17 10Z" />
-    <!-- Nose piece -->
-    <path d="M10 17V19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19V17" />
-    <!-- Snorkel tube -->
-    <path d="M19 10V6C19 4.89543 19.8954 4 21 4" />
-    <!-- Glass reflections/eyes -->
-    <circle cx="8.5" cy="13.5" r="1" fill="#007bff" stroke="none"/>
-    <circle cx="15.5" cy="13.5" r="1" fill="#007bff" stroke="none"/>
+    <rect width="64" height="64" rx="16" fill="#0b7583"/>
+    <path
+        id="rottnest-reef"
+        d="M9 38C16 43 25 45 35 43C44 41.2 50.5 37.5 56 32"
+        stroke="#f3c766"
+        stroke-width="4"
+        stroke-linecap="round"
+        opacity="0.85"
+    />
+    <path
+        id="rottnest-outline"
+        d="M7.5 34.5C10.8 29 16.2 25.8 22.5 23.7C27.2 22.1 31.9 18.3 37.8 19.6C42.2 20.6 43.9 23.7 48.1 23.9C52.5 24.1 57.1 25.6 58.5 30C59.7 33.8 56.2 37.8 51.2 38.3C46.2 38.8 43.9 42.5 38.9 41.9C34.1 41.3 29.5 43.5 24.8 42.4C18.3 40.8 11.9 41.4 7.5 34.5Z"
+        fill="#f8fbfb"
+    />
+    <circle
+        id="rottnest-location"
+        cx="42.5"
+        cy="30.5"
+        r="4.2"
+        fill="#0b7583"
+        stroke="#f8fbfb"
+        stroke-width="2"
+    />
 </svg>

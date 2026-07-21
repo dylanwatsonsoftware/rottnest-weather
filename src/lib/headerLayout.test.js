@@ -4,9 +4,11 @@ import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
+const logo = readFileSync(new URL('./Logo.svelte', import.meta.url), 'utf8');
 const mapSearch = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
 const controls = readFileSync(new URL('./Controls.svelte', import.meta.url), 'utf8');
+const favicon = readFileSync(new URL('../../public/favicon.svg', import.meta.url), 'utf8');
 
 function getMobileHeaderRule() {
     const mediaStart = css.indexOf('@media (max-width: 620px)');
@@ -31,6 +33,20 @@ test('mobile header uses content height instead of fixed extra vertical space', 
 test('navbar uses compact Rottnest title', () => {
     assert.match(header, /<h1>Rottnest(?: Weather)?<\/h1>/);
     assert.doesNotMatch(header, /<h1>Rottnest Snorkelling<\/h1>/);
+});
+
+test('app icon uses a stylised Rottnest outline in the header and favicon', () => {
+    assert.match(header, /<Logo size=\{40\} class="header-logo" \/>/);
+    assert.match(logo, /aria-label="Stylised Rottnest Island outline"/);
+    assert.match(logo, /class="rottnest-outline"/);
+    assert.match(logo, /class="rottnest-reef"/);
+    assert.match(logo, /class="rottnest-location"/);
+    assert.doesNotMatch(logo, /Snorkel Mask/);
+
+    assert.match(favicon, /id="rottnest-outline"/);
+    assert.match(favicon, /id="rottnest-reef"/);
+    assert.match(favicon, /id="rottnest-location"/);
+    assert.doesNotMatch(favicon, /Snorkel Mask/);
 });
 
 test('leaflet map controls sit below the fixed top pane', () => {
