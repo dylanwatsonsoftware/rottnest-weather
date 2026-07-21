@@ -53,6 +53,16 @@ export function shouldShowBeachLabel(recommendation = {}, zoom = 12, selectedBea
     return rank < 1;
 }
 
+export function getBeachMarkerSize(recommendation = {}, zoom = 12, selectedBeachName = '', rank = 0) {
+    const beachName = recommendation.beach?.name || '';
+    if (beachName && beachName === selectedBeachName) return toMarkerSize(40);
+    if (recommendation.state === 'best') return toMarkerSize(38);
+    if (zoom >= 15) return toMarkerSize(34);
+    if (rank < 4) return toMarkerSize(34);
+    if (zoom >= 12) return toMarkerSize(28);
+    return toMarkerSize(24);
+}
+
 export function shouldShowPlaceLabel(place = {}, zoom = 12, selectedPlaceName = '') {
     return Boolean(place.name && place.name === selectedPlaceName);
 }
@@ -181,4 +191,11 @@ function clampPixel(value, min, max) {
 function clampRatio(value) {
     if (!Number.isFinite(value)) return 0.5;
     return Math.max(0, Math.min(value, 1));
+}
+
+function toMarkerSize(size) {
+    return {
+        size,
+        anchor: size / 2
+    };
 }

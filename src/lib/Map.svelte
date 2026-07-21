@@ -7,6 +7,7 @@
         getLandmarkFitPoints,
         getNavigationSettleDelay,
         getPanelModePanOffset,
+        getBeachMarkerSize,
         shouldShowBeachLabel,
         shouldShowPlaceMarker,
         shouldShowPlaceLabel,
@@ -125,7 +126,7 @@
             const beach = recommendation.beach;
             if (beach.lat && beach.lon) {
                 const marker = L.marker([beach.lat, beach.lon], {
-                    icon: getBeachIcon(recommendation)
+                    icon: getBeachIcon(recommendation, index)
                 })
                 .on('click', () => onSelectBeach(beach.name))
                 .bindTooltip(beach.name, {
@@ -145,8 +146,8 @@
     function updateBeaches() {
         if (!map || !beachMarkers.length) return;
         beachMarkers.forEach(mObj => {
-            const { marker, recommendation } = mObj;
-            marker.setIcon(getBeachIcon(recommendation));
+            const { marker, recommendation, rank } = mObj;
+            marker.setIcon(getBeachIcon(recommendation, rank));
             marker.setZIndexOffset(recommendation.beach.name === selectedBeachName ? 900 : recommendation.score);
         });
         updateBeachLabels();
@@ -205,13 +206,15 @@
         }
     }
 
-    function getBeachIcon(recommendation) {
+    function getBeachIcon(recommendation, rank = 0) {
         const selected = recommendation.beach.name === selectedBeachName ? 'selected' : '';
+        const markerSize = getBeachMarkerSize(recommendation, currentZoom, selectedBeachName, rank);
+        const sizeClass = markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
         return L.divIcon({
-            className: `beach-marker ${recommendation.state} ${selected}`,
+            className: `beach-marker ${recommendation.state} ${selected} ${sizeClass}`,
             html: `<span>${stateIcons[recommendation.state]}</span><small>${recommendation.score}</small>`,
-            iconSize: [34, 34],
-            iconAnchor: [17, 17]
+            iconSize: [markerSize.size, markerSize.size],
+            iconAnchor: [markerSize.anchor, markerSize.anchor]
         });
     }
 

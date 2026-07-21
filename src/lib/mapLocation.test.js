@@ -39,3 +39,11 @@ test('manual zoom does not recenter to the selected navigation request', () => {
     assert.doesNotMatch(zoomHandler, /recenterSelectedNavigationOnZoom/);
     assert.doesNotMatch(mapSource, /function recenterSelectedNavigationOnZoom/);
 });
+
+test('beach marker icons use rank-aware sizes', () => {
+    assert.match(mapSource, /import \{[\s\S]*getBeachMarkerSize/);
+    assert.match(mapSource, /icon:\s*getBeachIcon\(recommendation,\s*index\)/);
+    assert.match(mapSource, /marker\.setIcon\(getBeachIcon\(recommendation,\s*rank\)\)/);
+    assert.match(mapSource, /getBeachMarkerSize\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*rank\)/);
+    assert.match(mapSource, /iconSize:\s*\[markerSize\.size,\s*markerSize\.size\]/);
+});

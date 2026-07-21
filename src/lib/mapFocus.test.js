@@ -10,6 +10,7 @@ import {
     getNavigationSettleDelay,
     getPanelModeMapOffset,
     getPanelModePanOffset,
+    getBeachMarkerSize,
     shouldShowBeachLabel,
     shouldShowPlaceMarker,
     shouldShowPlaceLabel,
@@ -221,6 +222,50 @@ test('selected and best beaches keep labels even when lower ranked', () => {
         '',
         12
     ), true);
+});
+
+test('beach marker sizes shrink lower ranked beaches at cluttered zooms', () => {
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Selected Bay' }, state: 'avoid' },
+        12,
+        'Selected Bay',
+        12
+    ), { size: 40, anchor: 20 });
+
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Best Bay' }, state: 'best' },
+        12,
+        '',
+        18
+    ), { size: 38, anchor: 19 });
+
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Okay Bay' }, state: 'good' },
+        12,
+        '',
+        2
+    ), { size: 34, anchor: 17 });
+
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Lower Bay' }, state: 'watch' },
+        12,
+        '',
+        8
+    ), { size: 28, anchor: 14 });
+
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Tiny Bay' }, state: 'avoid' },
+        11,
+        '',
+        14
+    ), { size: 24, anchor: 12 });
+
+    assert.deepEqual(getBeachMarkerSize(
+        { beach: { name: 'Zoomed Bay' }, state: 'avoid' },
+        15,
+        '',
+        14
+    ), { size: 34, anchor: 17 });
 });
 
 test('place labels stay hidden unless the place was selected', () => {
