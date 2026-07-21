@@ -81,3 +81,12 @@ test('searchPlaces respects the result limit', () => {
         ['Parker Point', 'Parker Point Stop']
     );
 });
+
+test('searchPlaces can include distance labels from the user location', () => {
+    const index = buildPlaceSearchIndex({ beaches, landmarks, facilities });
+    const results = searchPlaces(index, 'lane', 8, { lat: -31.995, lon: 115.539 });
+
+    assert.equal(results[0].name, 'The Lane Cafe');
+    assert.equal(results[0].distanceLabel, '94 m');
+    assert.equal(results[0].distanceKm, 0.1);
+});

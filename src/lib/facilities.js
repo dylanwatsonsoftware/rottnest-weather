@@ -64,6 +64,10 @@ export function getNearbyFacilities(beach, facilities = [], limit = 5, maxDistan
         .slice(0, limit);
 }
 
+export function sortNearbyPlaces(places = []) {
+    return [...places].sort(sortNearbyFacilities);
+}
+
 export function mergeFacilityEnrichment(facilities = [], enrichment = {}) {
     return facilities.map((facility) => ({
         ...facility,
@@ -71,7 +75,7 @@ export function mergeFacilityEnrichment(facilities = [], enrichment = {}) {
     }));
 }
 
-function getDistanceKm(lat1, lon1, lat2, lon2) {
+export function getDistanceKm(lat1, lon1, lat2, lon2) {
     const radius = 6371;
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
@@ -86,6 +90,12 @@ function toRadians(value) {
 
 function roundDistance(distanceKm) {
     return Math.round(distanceKm * 10) / 10;
+}
+
+export function formatDistanceLabel(distanceKm) {
+    if (!Number.isFinite(distanceKm)) return '';
+    if (distanceKm < 1) return `${Math.round(distanceKm * 1000)} m`;
+    return `${distanceKm.toFixed(1)} km`;
 }
 
 function sortNearbyFacilities(a, b) {

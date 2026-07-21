@@ -15,7 +15,7 @@
         getVisibleBeachFitPoints,
         getVisibleBeachFitSettings
     } from './mapFocus.js';
-    import { getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
+    import { formatDistanceLabel, getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
     import { getPrimaryPlaceImage } from './placeMedia.js';
     import { isWithinRottnestBounds } from './recommendations.js';
 
@@ -50,6 +50,11 @@
         mapNavigationRequest?.type === 'landmark' || mapNavigationRequest?.type === 'facility' || mapNavigationRequest?.type === 'business'
             ? mapNavigationRequest.name
             : ''
+    );
+    const selectedPlaceDistanceLabel = $derived(
+        mapNavigationRequest?.distanceLabel || (
+            Number.isFinite(mapNavigationRequest?.distanceKm) ? formatDistanceLabel(mapNavigationRequest.distanceKm) : ''
+        )
     );
 
     const stateIcons = {
@@ -99,7 +104,7 @@
                 iconAnchor: [14, 14]
             });
             const marker = L.marker([place.lat, place.lon], { icon })
-                .bindTooltip(place.name, {
+                .bindTooltip(getPlaceTooltipLabel(place), {
                     permanent: shouldShowPlaceLabel(place, currentZoom, selectedPlaceName),
                     direction: 'top',
                     className: `place-label ${place.type} ${selected}`,
@@ -231,6 +236,13 @@
         }
         if (filters.showLandmarks === false && !selected) return false;
         return shouldShowPlaceMarker(place, currentZoom, selectedPlaceName);
+    }
+
+    function getPlaceTooltipLabel(place) {
+        if (place.name === selectedPlaceName && selectedPlaceDistanceLabel) {
+            return `${place.name} · ${selectedPlaceDistanceLabel}`;
+        }
+        return place.name;
     }
 
     function getPlaceIcon(place) {

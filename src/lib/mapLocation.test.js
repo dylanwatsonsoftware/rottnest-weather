@@ -18,6 +18,9 @@ test('map only exposes user location markers inside Rottnest bounds', () => {
 
 test('map highlights selected nearby places with a visible label', () => {
     assert.match(mapSource, /const selectedPlaceName = \$derived/);
+    assert.match(mapSource, /const selectedPlaceDistanceLabel = \$derived/);
+    assert.match(mapSource, /getPlaceTooltipLabel\(place\)/);
+    assert.match(mapSource, /`\$\{place\.name\} · \$\{selectedPlaceDistanceLabel\}`/);
     assert.match(mapSource, /mapNavigationRequest\?\.type === 'landmark'/);
     assert.match(mapSource, /mapNavigationRequest\?\.type === 'facility'/);
     assert.match(mapSource, /mapNavigationRequest\?\.type === 'business'/);

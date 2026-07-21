@@ -28,6 +28,7 @@
     let panelOpenRequest = $state(0);
     let panelScrollRequest = $state(0);
     let mapNavigationRequest = $state(null);
+    let userLocation = $state(null);
     let mapNavigationSequence = 0;
     let mapLayout = $state('default');
     let filters = $state({
@@ -267,6 +268,7 @@
         {mapNavigationRequest}
         onSelectBeach={revealBeachInPanel}
         onZoomChange={(zoom) => mapZoom = zoom}
+        onUserLocationChange={(location) => userLocation = location}
     />
     <MapSearch
         beaches={$state.snapshot(beaches)}
@@ -274,6 +276,7 @@
         facilities={$state.snapshot(facilities)}
         {panelMode}
         {mapLayout}
+        {userLocation}
         onSelectBeach={selectSearchBeach}
         onNavigateToMap={navigateToMapTarget}
     />

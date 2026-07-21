@@ -16,7 +16,7 @@
         RANGE_MODES,
         shouldShowConfidenceLabel
     } from './panelState.js';
-    import { getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities } from './facilities.js';
+    import { formatDistanceLabel, getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities, sortNearbyPlaces } from './facilities.js';
     import { getBeachImages } from './beachMedia.js';
     import { getPlaceImages } from './placeMedia.js';
     import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
@@ -105,12 +105,10 @@
     }
 
     function getNearbyPlaces(beach, allLandmarks, allFacilities) {
-        return [
+        return sortNearbyPlaces([
             ...getNearbyFacilities(beach, allFacilities, 5, NEARBY_RADIUS_KM),
             ...getNearbyLandmarks(beach, allLandmarks)
-        ]
-            .sort((a, b) => a.distanceKm - b.distanceKm)
-            .slice(0, 6);
+        ]).slice(0, 6);
     }
 
     function getDistanceKm(lat1, lon1, lat2, lon2) {
@@ -131,7 +129,9 @@
         if (!target) return;
         onNavigateToMap({
             ...target,
-            type: place.type
+            type: place.type,
+            distanceKm: place.distanceKm,
+            distanceLabel: Number.isFinite(place.distanceKm) ? formatDistanceLabel(place.distanceKm) : ''
         });
     }
 

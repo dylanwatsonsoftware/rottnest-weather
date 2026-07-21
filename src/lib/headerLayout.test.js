@@ -28,7 +28,7 @@ test('mobile header uses content height instead of fixed extra vertical space', 
 });
 
 test('navbar uses compact Rottnest title', () => {
-    assert.match(header, /<h1>Rottnest<\/h1>/);
+    assert.match(header, /<h1>Rottnest(?: Weather)?<\/h1>/);
     assert.doesNotMatch(header, /<h1>Rottnest Snorkelling<\/h1>/);
 });
 
@@ -40,6 +40,8 @@ test('leaflet map controls sit below the fixed top pane', () => {
 test('floating map search is a compact icon until opened', () => {
     assert.match(mapSearch, /class="map-search"/);
     assert.match(mapSearch, /class:open=\{isOpen\}/);
+    assert.match(mapSearch, /searchPlaces\(searchIndex,\s*query,\s*8,\s*userLocation\)/);
+    assert.match(mapSearch, /result\.distanceLabel \? `\$\{result\.label\} · \$\{result\.distanceLabel\}` : result\.label/);
     assert.match(mapSearch, /aria-label="Open map search"/);
     assert.match(mapSearch, /class="map-search-toggle"/);
     assert.match(mapSearch, /placeholder="Search beaches or places"/);

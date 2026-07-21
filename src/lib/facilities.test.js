@@ -7,7 +7,8 @@ import {
     getFacilityRatingLabel,
     getFacilityTypeLabel,
     getNearbyFacilities,
-    mergeFacilityEnrichment
+    mergeFacilityEnrichment,
+    sortNearbyPlaces
 } from './facilities.js';
 
 const beach = { name: 'The Basin', lat: -31.9892, lon: 115.5351 };
@@ -43,6 +44,17 @@ test('getNearbyFacilities prioritizes rated food by rating and distance', () => 
         getNearbyFacilities({ name: 'Beach', lat: 0, lon: 0 }, facilities, 3).map((facility) => facility.id),
         ['better-cafe', 'close-cafe', 'water']
     );
+});
+
+test('sortNearbyPlaces keeps rated food ahead of practical places before distance tie-breaks', () => {
+    const places = [
+        { id: 'water', name: 'Water', category: 'drinking_water', distanceKm: 0 },
+        { id: 'landmark', name: 'Lighthouse', type: 'landmark', distanceKm: 0.2 },
+        { id: 'cafe', name: 'Cafe', category: 'cafe', rating: 4.6, distanceKm: 0.5 }
+    ];
+
+    assert.deepEqual(sortNearbyPlaces(places).map((place) => place.id), ['cafe', 'water', 'landmark']);
+    assert.deepEqual(places.map((place) => place.id), ['water', 'landmark', 'cafe']);
 });
 
 test('mergeFacilityEnrichment keeps ratings optional and keyed by id', () => {

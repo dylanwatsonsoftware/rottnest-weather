@@ -9,6 +9,7 @@
         facilities = [],
         panelMode = 'collapsed',
         mapLayout = 'default',
+        userLocation = null,
         onSelectBeach = () => {},
         onNavigateToMap = () => {}
     } = $props();
@@ -17,7 +18,7 @@
     let isOpen = $state(false);
     let searchInput = $state(null);
     const searchIndex = $derived(buildPlaceSearchIndex({ beaches, landmarks, facilities }));
-    const results = $derived(searchPlaces(searchIndex, query, 8));
+    const results = $derived(searchPlaces(searchIndex, query, 8, userLocation));
     const hasQuery = $derived(query.trim().length > 0);
 
     async function openSearch() {
@@ -50,7 +51,9 @@
             if (target) {
                 onNavigateToMap({
                     ...target,
-                    type: result.kind
+                    type: result.kind,
+                    distanceKm: result.distanceKm,
+                    distanceLabel: result.distanceLabel
                 });
             }
         }
@@ -90,7 +93,7 @@
                     <span class="map-search-result-icon" aria-hidden="true">{result.icon}</span>
                     <span>
                         <strong>{result.name}</strong>
-                        <small>{result.label}</small>
+                        <small>{result.distanceLabel ? `${result.label} · ${result.distanceLabel}` : result.label}</small>
                     </span>
                 </button>
             {:else}

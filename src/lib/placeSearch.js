@@ -1,4 +1,4 @@
-import { getFacilityIcon, getFacilityTypeLabel } from './facilities.js';
+import { formatDistanceLabel, getDistanceKm, getFacilityIcon, getFacilityTypeLabel } from './facilities.js';
 
 const KIND_PRIORITY = {
     beach: 0,
@@ -15,11 +15,11 @@ export function buildPlaceSearchIndex({ beaches = [], landmarks = [], facilities
     ].filter((result) => Number.isFinite(result.lat) && Number.isFinite(result.lon));
 }
 
-export function searchPlaces(index = [], query = '', limit = 8) {
+export function searchPlaces(index = [], query = '', limit = 8, origin = null) {
     const normalizedQuery = normalize(query);
     if (!normalizedQuery) return [];
 
-    return index
+    const results = index
         .map((item) => ({
             ...item,
             matchScore: getMatchScore(item, normalizedQuery)
@@ -30,6 +30,8 @@ export function searchPlaces(index = [], query = '', limit = 8) {
             || (KIND_PRIORITY[a.kind] ?? 9) - (KIND_PRIORITY[b.kind] ?? 9))
         .slice(0, limit)
         .map(({ matchScore, ...item }) => item);
+
+    return addDistanceLabels(results, origin);
 }
 
 function toSearchResult(place, kind) {
@@ -67,4 +69,17 @@ function getMatchScore(item, query) {
 
 function normalize(value) {
     return String(value || '').trim().toLowerCase();
+}
+
+function addDistanceLabels(results, origin) {
+    if (!Number.isFinite(origin?.lat) || !Number.isFinite(origin?.lon)) return results;
+
+    return results.map((result) => {
+        const distance = getDistanceKm(origin.lat, origin.lon, result.lat, result.lon);
+        return {
+            ...result,
+            distanceKm: Math.round(distance * 10) / 10,
+            distanceLabel: formatDistanceLabel(distance)
+        };
+    });
 }
