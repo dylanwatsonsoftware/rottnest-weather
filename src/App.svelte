@@ -13,6 +13,7 @@
     import { formatDistanceLabel, getDistanceKm, getFacilityRatingLabel, getFacilityTypeLabel, mergeFacilityEnrichment } from './lib/facilities.js';
     import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
+    import { getPrimaryPlaceImage } from './lib/placeMedia.js';
     import {
         buildShareUrl,
         getSharedLocationFromUrl,
@@ -233,18 +234,6 @@
         return url;
     }
 
-    function getSelectedMapPlaceLinks(place = selectedMapPlace) {
-        const links = [];
-        const addLink = (url, label) => {
-            if (!url || links.some((link) => link.url === url)) return;
-            links.push({ url, label });
-        };
-
-        addLink(place?.source_url, 'Source');
-        addLink(place?.coordinate_source_url, 'Coordinate source');
-        return links;
-    }
-
     function selectSearchBeach(name) {
         revealBeachInPanel(name);
     }
@@ -412,6 +401,7 @@
             ? formatDistanceLabel(getDistanceKm(userLocation.lat, userLocation.lon, selectedMapPlace.lat, selectedMapPlace.lon))
             : selectedMapPlace?.distanceLabel || ''
     );
+    const selectedMapPlaceImage = $derived(getPrimaryPlaceImage(selectedMapPlace));
 
     $effect(() => {
         if (!selectedMapPlace || !mapNavigationRequest || mapNavigationRequest.name !== selectedMapPlace.name) return;
@@ -468,9 +458,16 @@
         onNavigateToMap={navigateToMapTarget}
     />
     {#if selectedMapPlace}
-        {@const selectedMapPlaceLinks = getSelectedMapPlaceLinks(selectedMapPlace)}
-        <aside class="selected-map-place-card" aria-label="Selected map place">
+        <aside class="selected-map-place-card" class:has-image={selectedMapPlaceImage} aria-label="Selected map place">
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
+            {#if selectedMapPlaceImage}
+                <img
+                    class="selected-map-place-image"
+                    src={selectedMapPlaceImage.src}
+                    alt={selectedMapPlaceImage.alt}
+                    loading="lazy"
+                />
+            {/if}
             <div>
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>
@@ -480,13 +477,6 @@
                 <span>
                     {[selectedMapPlaceDistanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
                 </span>
-                {#if selectedMapPlaceLinks.length}
-                    <nav class="selected-map-place-links" aria-label="{selectedMapPlace.name} source links">
-                        {#each selectedMapPlaceLinks as link}
-                            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-                        {/each}
-                    </nav>
-                {/if}
             </div>
         </aside>
     {/if}

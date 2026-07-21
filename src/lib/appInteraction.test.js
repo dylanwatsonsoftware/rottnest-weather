@@ -185,12 +185,14 @@ test('selected map place card derives distance from the current user location', 
     assert.match(app, /\[selectedMapPlaceDistanceLabel,\s*selectedMapPlace\.ratingLabel\]\.filter\(Boolean\)\.join\(' · '\)/);
 });
 
-test('selected map place card exposes source links when available', () => {
-    assert.match(app, /function getSelectedMapPlaceLinks\(place = selectedMapPlace\)/);
-    assert.match(app, /place\?\.source_url/);
-    assert.match(app, /place\?\.coordinate_source_url/);
-    assert.match(app, /class="selected-map-place-links"/);
-    assert.match(app, /href=\{link\.url\}/);
+test('selected map place card hides source chips and shows a bundled image when available', () => {
+    assert.match(app, /import \{ getPrimaryPlaceImage \} from '\.\/lib\/placeMedia\.js';/);
+    assert.match(app, /selectedMapPlaceImage/);
+    assert.match(app, /class="selected-map-place-image"/);
+    assert.match(app, /src=\{selectedMapPlaceImage\.src\}/);
+    assert.match(app, /alt=\{selectedMapPlaceImage\.alt\}/);
+    assert.doesNotMatch(app, /function getSelectedMapPlaceLinks/);
+    assert.doesNotMatch(app, /class="selected-map-place-links"/);
 });
 
 test('selected map place card has a share link button', () => {

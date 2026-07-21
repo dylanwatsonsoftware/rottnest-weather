@@ -333,11 +333,29 @@ main {
     backdrop-filter: blur(12px);
 }
 
+.selected-map-place-card.has-image {
+    grid-template-columns: 38px 72px minmax(0, 1fr);
+}
+
+.selected-map-place-image {
+    grid-column: 2;
+    width: 72px;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(34, 60, 63, 0.12);
+    box-shadow: 0 6px 16px rgba(13, 34, 38, 0.14);
+}
+
 .selected-map-place-card div {
     grid-column: 2;
     min-width: 0;
     display: grid;
     gap: 2px;
+}
+
+.selected-map-place-card.has-image div {
+    grid-column: 3;
 }
 
 .selected-map-place-card small,

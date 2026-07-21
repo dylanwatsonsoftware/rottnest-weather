@@ -32,6 +32,8 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
     await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
 
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
+    await expect(page.locator('.selected-map-place-card img')).toBeVisible();
+    await expect(page.locator('.selected-map-place-card')).not.toContainText('Source');
     await expect(page.getByRole('button', { name: /Share / })).toBeVisible();
     await expect(page.locator('.recommendation-panel.closed')).toBeVisible();
 });
