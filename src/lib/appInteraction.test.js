@@ -90,6 +90,25 @@ test('selected beach details receive user location for distance labels', () => {
     assert.match(app, /<RecommendationPanel[\s\S]*\{userLocation\}/);
 });
 
+test('selected beach and place state is encoded in the address bar for sharing', () => {
+    assert.match(app, /import \{[\s\S]*buildShareUrl[\s\S]*getSharedLocationFromUrl[\s\S]*getLocationKey[\s\S]*findNearestSharedHourIndex[\s\S]*parseSharedLocationKey[\s\S]*slugifyLocationName[\s\S]*\} from '\.\/lib\/urlState\.js';/);
+    assert.match(app, /let sharedLocationState = \$state/);
+    assert.match(app, /let currentShareUrl = \$state\(''\)/);
+    assert.match(app, /function updateShareUrl\(\)/);
+    assert.match(app, /history\.replaceState\(history\.state,\s*'',\s*nextUrl\)/);
+    assert.match(app, /\$effect\(\(\) => \{[\s\S]*updateShareUrl\(\)/);
+    assert.match(app, /shareUrl=\{currentShareUrl\}/);
+});
+
+test('incoming shared beach and place links are restored after app data loads', () => {
+    assert.match(app, /sharedLocationState = getSharedLocationFromUrl\(window\.location\.href\)/);
+    assert.match(app, /function applySharedLocationState\(appData\)/);
+    assert.match(app, /findNearestSharedHourIndex\(appData\.forecastData,\s*sharedLocationState\.time\)/);
+    assert.match(app, /parseSharedLocationKey\(sharedLocationState\.locationKey\)/);
+    assert.match(app, /selectedBeachName = beach\.name/);
+    assert.match(app, /selectedMapPlace = getSharedMapPlaceTarget\(place\)/);
+});
+
 test('selected map place card derives distance from the current user location', () => {
     assert.match(app, /import \{ formatDistanceLabel,\s*getDistanceKm/);
     assert.match(app, /const selectedMapPlaceDistanceLabel = \$derived/);
@@ -103,6 +122,12 @@ test('selected map place card exposes source links when available', () => {
     assert.match(app, /place\?\.coordinate_source_url/);
     assert.match(app, /class="selected-map-place-links"/);
     assert.match(app, /href=\{link\.url\}/);
+});
+
+test('selected map place card has a share link button', () => {
+    assert.match(app, /class="selected-map-place-share"/);
+    assert.match(app, /aria-label="Share \{selectedMapPlace\.name\}"/);
+    assert.match(app, /onclick=\{\(\) => shareCurrentLocation\(\)\}/);
 });
 
 test('selected beach remains visible on the map even when filters exclude it', () => {

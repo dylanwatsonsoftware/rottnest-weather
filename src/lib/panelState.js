@@ -233,6 +233,7 @@ export function shouldShowConfidenceLabel(confidence) {
 }
 
 export function getPanelModeAfterOpenRequest(mode, openRequest, lastHandledRequest) {
+    if (!openRequest) return mode;
     return openRequest !== lastHandledRequest ? PANEL_MODES.open : mode;
 }
 

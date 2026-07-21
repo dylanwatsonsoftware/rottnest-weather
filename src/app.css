@@ -1032,6 +1032,10 @@ main {
 
 .detail-heading h2 {
     grid-column: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
 }
 
 .map-jump-button {
@@ -1047,6 +1051,27 @@ main {
     place-items: center;
     font-size: 1rem;
     font-weight: 900;
+}
+
+.beach-share-button,
+.selected-map-place-share {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #cfe0e0;
+    border-radius: 50%;
+    background: #eef5f5;
+    color: #0b6476;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    padding: 0;
+    font-size: 0.86rem;
+    font-weight: 900;
+}
+
+.beach-share-button:active,
+.selected-map-place-share:active {
+    transform: translateY(1px);
 }
 
 .map-jump-button:active,

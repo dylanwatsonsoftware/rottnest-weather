@@ -257,3 +257,7 @@ test('getPanelModeAfterOpenRequest opens when a new request arrives', () => {
 test('getPanelModeAfterOpenRequest keeps current mode for an already handled request', () => {
     assert.equal(getPanelModeAfterOpenRequest('semi', 2, 2), 'semi');
 });
+
+test('getPanelModeAfterOpenRequest ignores the initial empty request', () => {
+    assert.equal(getPanelModeAfterOpenRequest('closed', 0, undefined), 'closed');
+});

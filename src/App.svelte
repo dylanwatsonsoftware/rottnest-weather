@@ -10,9 +10,17 @@
         getConditions,
         getSafetyNotices
     } from './lib/recommendations.js';
-    import { formatDistanceLabel, getDistanceKm, mergeFacilityEnrichment } from './lib/facilities.js';
+    import { formatDistanceLabel, getDistanceKm, getFacilityRatingLabel, getFacilityTypeLabel, mergeFacilityEnrichment } from './lib/facilities.js';
     import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
+    import {
+        buildShareUrl,
+        getSharedLocationFromUrl,
+        getLocationKey,
+        findNearestSharedHourIndex,
+        parseSharedLocationKey,
+        slugifyLocationName
+    } from './lib/urlState.js';
     import './app.css';
 
     let beaches = $state([]);
@@ -30,7 +38,10 @@
     let mapNavigationRequest = $state(null);
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
+    let sharedLocationState = $state({ locationKey: '', time: '' });
+    let currentShareUrl = $state('');
     let mapNavigationSequence = 0;
+    let didApplySharedLocationState = false;
     let mapLayout = $state('default');
     let filters = $state({
         states: {
@@ -116,6 +127,78 @@
         return target?.type === 'landmark' || target?.type === 'facility' || target?.type === 'business';
     }
 
+    function getSharedMapPlaceTarget(place) {
+        if (!place) return null;
+        return {
+            ...place,
+            type: place.type || 'landmark',
+            label: place.label || getFacilityTypeLabel(place),
+            distanceLabel: '',
+            ratingLabel: getFacilityRatingLabel(place)
+        };
+    }
+
+    function findSharedPlace(collection = [], parsedLocation) {
+        if (!parsedLocation) return null;
+        return collection.find((place) => slugifyLocationName(place.id || place.name) === parsedLocation.slug) || null;
+    }
+
+    function applySharedLocationState(appData) {
+        if (didApplySharedLocationState) return;
+        didApplySharedLocationState = true;
+
+        const sharedHourIndex = findNearestSharedHourIndex(appData.forecastData, sharedLocationState.time);
+        if (Number.isInteger(sharedHourIndex)) {
+            hourIndex = sharedHourIndex;
+        }
+
+        const parsedLocation = parseSharedLocationKey(sharedLocationState.locationKey);
+        if (!parsedLocation) return;
+
+        if (parsedLocation.kind === 'beach') {
+            const beach = findSharedPlace(appData.beaches, parsedLocation);
+            if (!beach) return;
+
+            selectedMapPlace = null;
+            selectedBeachName = beach.name;
+            panelMode = 'closed';
+            const target = getBeachSelectionMapTarget(beach, 'closed', mapLayout);
+            if (target) navigateToMapTarget(target);
+            return;
+        }
+
+        const place = findSharedPlace([...appData.landmarks, ...appData.facilities], parsedLocation);
+        if (!place) return;
+
+        selectedBeachName = '';
+        selectedMapPlace = getSharedMapPlaceTarget(place);
+        navigateToMapTarget(selectedMapPlace);
+    }
+
+    function updateShareUrl() {
+        if (typeof window === 'undefined' || !forecastData?.time?.length) return;
+
+        const locationKey = selectedMapPlace
+            ? getLocationKey(selectedMapPlace)
+            : getLocationKey({ type: 'beach', name: selectedBeachName });
+        const nextUrl = buildShareUrl(window.location.href, {
+            locationKey,
+            time: locationKey ? forecastData.time[hourIndex] : ''
+        });
+
+        currentShareUrl = nextUrl;
+        if (window.location.href !== nextUrl) {
+            history.replaceState(history.state, '', nextUrl);
+        }
+    }
+
+    async function shareCurrentLocation() {
+        if (!currentShareUrl) updateShareUrl();
+        const url = currentShareUrl || window.location.href;
+        await navigator.clipboard?.writeText(url);
+        return url;
+    }
+
     function getSelectedMapPlaceLinks(place = selectedMapPlace) {
         const links = [];
         const addLink = (url, label) => {
@@ -163,6 +246,7 @@
         facilities = nextAppData.facilities;
         forecastData = nextAppData.forecastData;
         hourIndex = getNearestForecastHourIndex(nextAppData.forecastData);
+        applySharedLocationState(nextAppData);
     }
 
     function applyCachedAppData(cachedAppData) {
@@ -174,6 +258,8 @@
     }
 
     onMount(() => {
+        sharedLocationState = getSharedLocationFromUrl(window.location.href);
+
         function updateMapLayout() {
             const nextMapLayout = getMapLayout({
                 width: window.innerWidth,
@@ -295,6 +381,12 @@
         };
     });
 
+    $effect(() => {
+        const selectedName = selectedBeachName || selectedMapPlace?.name || '';
+        const selectedHour = hourIndex;
+        updateShareUrl();
+    });
+
 </script>
 
 <Header
@@ -339,7 +431,10 @@
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
             <div>
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
-                <strong>{selectedMapPlace.name}</strong>
+                <strong>
+                    {selectedMapPlace.name}
+                    <button class="selected-map-place-share" type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>🔗</button>
+                </strong>
                 <span>
                     {[selectedMapPlaceDistanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
                 </span>
@@ -372,6 +467,8 @@
             onSelectBeach={selectBeach}
             isBeachView={isBeachView}
             onCloseBeach={clearSelectedBeach}
+            shareUrl={currentShareUrl}
+            onShareLocation={shareCurrentLocation}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}
             onNavigateToMap={navigateToMapTarget}

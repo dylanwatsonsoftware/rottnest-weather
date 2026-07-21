@@ -243,6 +243,8 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.notEqual(beachPanelStart, -1);
     assert.notEqual(beachPanelEnd, -1);
     assert.match(recommendationPanel, /isBeachView = false/);
+    assert.match(recommendationPanel, /shareUrl = ''/);
+    assert.match(recommendationPanel, /onShareLocation = \(\) => \{\}/);
     assert.match(recommendationPanel, /onCloseBeach = \(\) => \{\}/);
     assert.match(recommendationPanel, /class:beach-mode=\{isBeachView\}/);
     assert.match(recommendationPanel, /\{#if isBeachView && selectedRecommendation\}/);
@@ -254,6 +256,9 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /onclick=\{onCloseBeach\}/);
     assert.match(recommendationPanel, /id="beach-mode-time-slider"/);
     assert.match(recommendationPanel, /id="beach-mode-semi-time-slider"/);
+    assert.match(recommendationPanel, /class="beach-share-button"/);
+    assert.match(recommendationPanel, /aria-label="Share \{selectedRecommendation\.beach\.name\}"/);
+    assert.match(recommendationPanel, /onclick=\{onShareLocation\}/);
     assert.match(beachPanelSource, /class="panel-content"[\s\S]*class="detail-metrics"[\s\S]*\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
     assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);
     assert.match(css, /\.beach-panel-header\s*{[^}]*padding:\s*7px 10px 4px 12px/s);

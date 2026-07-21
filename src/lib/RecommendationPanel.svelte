@@ -42,6 +42,8 @@
         isBeachView = false,
         onSelectBeach = () => {},
         onCloseBeach = () => {},
+        shareUrl = '',
+        onShareLocation = () => {},
         onStateFilterChange = () => {},
         onToggleFilter = () => {},
         onNavigateToMap = () => {}
@@ -291,7 +293,18 @@
                 <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
                     <div class="detail-heading">
                         <p class="eyebrow">{getRecommendationWindowSummary(selectedRecommendation)}</p>
-                        <h2>{selectedRecommendation.beach.name}</h2>
+                        <h2>
+                            {selectedRecommendation.beach.name}
+                            <button
+                                class="beach-share-button"
+                                type="button"
+                                aria-label="Share {selectedRecommendation.beach.name}"
+                                title="Copy share link"
+                                onclick={onShareLocation}
+                            >
+                                🔗
+                            </button>
+                        </h2>
                         {#if selectedBeachDistanceLabel}
                             <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
                         {/if}
@@ -555,7 +568,18 @@
             <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
                 <div class="detail-heading">
                     <p class="eyebrow">{getRecommendationWindowSummary(selectedRecommendation)}</p>
-                    <h2>{selectedRecommendation.beach.name}</h2>
+                    <h2>
+                        {selectedRecommendation.beach.name}
+                        <button
+                            class="beach-share-button"
+                            type="button"
+                            aria-label="Share {selectedRecommendation.beach.name}"
+                            title="Copy share link"
+                            onclick={onShareLocation}
+                        >
+                            🔗
+                        </button>
+                    </h2>
                     {#if selectedBeachDistanceLabel}
                         <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
                     {/if}

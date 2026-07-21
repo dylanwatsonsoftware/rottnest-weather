@@ -24,6 +24,40 @@ test('map search jumps to places and opens beach recommendations', async ({ page
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
 });
 
+test('selected locations and forecast time are encoded in the URL for sharing', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/');
+
+    await page.getByRole('button', { name: 'Open map search' }).click();
+    const search = page.locator('.map-search input');
+    await search.fill('Little Salmon');
+    await page.locator('.map-search-results').getByRole('button', { name: /Little Salmon Bay/i }).click();
+
+    await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toBeVisible();
+    await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
+    await expect.poll(() => page.url()).toContain('time=');
+
+    await page.getByRole('button', { name: 'Open map search' }).click();
+    await search.fill('Parker Point Bus Stop');
+    await page.locator('.map-search-results').getByRole('button', { name: /Parker Point Bus Stop/i }).click();
+
+    await expect(page.getByRole('button', { name: 'Share Parker Point Bus Stop' })).toBeVisible();
+    await expect.poll(() => page.url()).toContain('location=facility%3Aparker-point-bus-stop');
+    await expect.poll(() => page.url()).toContain('time=');
+});
+
+test('shared beach URLs restore the selected beach and time', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
+
+    await expect(page.locator('.recommendation-panel.beach-mode')).toBeVisible();
+    await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
+    await expect(page.locator('.beach-panel-title')).toContainText(/8am/i);
+    await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
+});
+
 test('map search autocomplete shows distance when browser location is available', async ({ browser }) => {
     const context = await browser.newContext({
         geolocation: { latitude: -31.9523, longitude: 115.8613 },

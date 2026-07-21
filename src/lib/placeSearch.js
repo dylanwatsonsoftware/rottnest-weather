@@ -41,6 +41,7 @@ function toSearchResult(place, kind) {
 
     return {
         kind,
+        id: place.id,
         name: place.name,
         label,
         icon,

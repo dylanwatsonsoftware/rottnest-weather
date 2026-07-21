@@ -141,3 +141,18 @@ test('bundled place search includes guide-linked dive and wreck locations', () =
     assert.equal(searchPlaces(index, 'crystal')[0]?.name, 'Crystal Palace Dive Site');
     assert.equal(searchPlaces(index, 'denton')[0]?.name, 'Denton Holme Shipwreck');
 });
+
+test('buildPlaceSearchIndex preserves ids for stable shared facility links', () => {
+    const index = buildPlaceSearchIndex({
+        facilities: [{
+            id: 'rottnest-bakery',
+            name: 'Rottnest Bakery',
+            lat: -31.9957,
+            lon: 115.5402,
+            type: 'facility',
+            category: 'cafe'
+        }]
+    });
+
+    assert.equal(index[0].id, 'rottnest-bakery');
+});
