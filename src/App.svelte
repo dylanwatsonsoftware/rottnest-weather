@@ -10,7 +10,7 @@
         getConditions,
         getSafetyNotices
     } from './lib/recommendations.js';
-    import { mergeFacilityEnrichment } from './lib/facilities.js';
+    import { formatDistanceLabel, getDistanceKm, mergeFacilityEnrichment } from './lib/facilities.js';
     import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import './app.css';
@@ -253,6 +253,24 @@
         }),
         ...(loadError ? [loadError] : [])
     ]);
+    const selectedMapPlaceDistanceLabel = $derived(
+        Number.isFinite(userLocation?.lat)
+            && Number.isFinite(userLocation?.lon)
+            && Number.isFinite(selectedMapPlace?.lat)
+            && Number.isFinite(selectedMapPlace?.lon)
+            ? formatDistanceLabel(getDistanceKm(userLocation.lat, userLocation.lon, selectedMapPlace.lat, selectedMapPlace.lon))
+            : selectedMapPlace?.distanceLabel || ''
+    );
+
+    $effect(() => {
+        if (!selectedMapPlace || !mapNavigationRequest || mapNavigationRequest.name !== selectedMapPlace.name) return;
+        if (!selectedMapPlaceDistanceLabel || mapNavigationRequest.distanceLabel === selectedMapPlaceDistanceLabel) return;
+
+        mapNavigationRequest = {
+            ...mapNavigationRequest,
+            distanceLabel: selectedMapPlaceDistanceLabel
+        };
+    });
 
 </script>
 
@@ -299,7 +317,7 @@
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>{selectedMapPlace.name}</strong>
                 <span>
-                    {[selectedMapPlace.distanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
+                    {[selectedMapPlaceDistanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
                 </span>
             </div>
         </aside>

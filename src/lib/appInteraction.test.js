@@ -83,6 +83,13 @@ test('selected beach details receive user location for distance labels', () => {
     assert.match(app, /<RecommendationPanel[\s\S]*\{userLocation\}/);
 });
 
+test('selected map place card derives distance from the current user location', () => {
+    assert.match(app, /import \{ formatDistanceLabel,\s*getDistanceKm/);
+    assert.match(app, /const selectedMapPlaceDistanceLabel = \$derived/);
+    assert.match(app, /getDistanceKm\(userLocation\.lat,\s*userLocation\.lon,\s*selectedMapPlace\.lat,\s*selectedMapPlace\.lon\)/);
+    assert.match(app, /\[selectedMapPlaceDistanceLabel,\s*selectedMapPlace\.ratingLabel\]\.filter\(Boolean\)\.join\(' · '\)/);
+});
+
 test('selected beach remains visible on the map even when filters exclude it', () => {
     assert.match(app, /const mapRecommendations = \$derived/);
     assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);
