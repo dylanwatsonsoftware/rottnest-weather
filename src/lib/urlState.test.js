@@ -18,25 +18,41 @@ test('getLocationKey creates readable stable keys for beaches and places', () =>
 test('buildShareUrl encodes selected location and forecast time in the address', () => {
     const url = buildShareUrl('https://example.test/?old=value', {
         locationKey: 'beach:little-salmon-bay',
-        time: '2026-07-21T08:00'
+        time: '2026-07-21T08:00',
+        panelMode: 'open'
     });
 
-    assert.equal(url, 'https://example.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
+    assert.equal(url, 'https://example.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&panel=open');
 });
 
 test('buildShareUrl can encode a selected forecast time without a location', () => {
     const url = buildShareUrl('https://example.test/?location=beach%3Aold&time=2026-07-21T08%3A00', {
-        time: '2026-07-30T06:00'
+        time: '2026-07-30T06:00',
+        panelMode: 'semi'
     });
 
-    assert.equal(url, 'https://example.test/?time=2026-07-30T06%3A00');
+    assert.equal(url, 'https://example.test/?time=2026-07-30T06%3A00&panel=semi');
 });
 
 test('getSharedLocationFromUrl reads location and selected time from the address', () => {
-    assert.deepEqual(getSharedLocationFromUrl('https://example.test/?location=facility%3Arottnest-bakery&time=2026-07-21T09%3A00'), {
+    assert.deepEqual(getSharedLocationFromUrl('https://example.test/?location=facility%3Arottnest-bakery&time=2026-07-21T09%3A00&panel=closed'), {
         locationKey: 'facility:rottnest-bakery',
-        time: '2026-07-21T09:00'
+        time: '2026-07-21T09:00',
+        panelMode: 'closed'
     });
+});
+
+test('panel mode URL state only accepts known panel states', () => {
+    assert.deepEqual(getSharedLocationFromUrl('https://example.test/?panel=max'), {
+        locationKey: '',
+        time: '',
+        panelMode: ''
+    });
+
+    assert.equal(buildShareUrl('https://example.test/', {
+        time: '2026-07-21T09:00',
+        panelMode: 'max'
+    }), 'https://example.test/?time=2026-07-21T09%3A00');
 });
 
 test('parseSharedLocationKey separates kind and slug', () => {

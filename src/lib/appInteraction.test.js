@@ -148,6 +148,7 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /let currentShareUrl = \$state\(''\)/);
     assert.match(app, /function updateShareUrl\(\)/);
     assert.match(app, /time:\s*forecastData\.time\[hourIndex\]/);
+    assert.match(app, /panelMode/);
     assert.doesNotMatch(app, /time:\s*locationKey \? forecastData\.time\[hourIndex\] : ''/);
     assert.match(app, /history\.replaceState\(history\.state,\s*'',\s*nextUrl\)/);
     assert.match(app, /\$effect\(\(\) => \{[\s\S]*updateShareUrl\(\)/);
@@ -165,9 +166,14 @@ test('incoming shared beach and place links are restored after app data loads', 
 
 test('incoming shared beach links restore the beach panel fully open', () => {
     assert.match(app, /selectedBeachName = beach\.name/);
-    assert.match(app, /panelMode = 'open'/);
-    assert.match(app, /getBeachSelectionMapTarget\(beach,\s*'open',\s*mapLayout\)/);
-    assert.match(app, /panelOpenRequest \+= 1/);
+    assert.match(app, /const sharedPanelMode = sharedLocationState\.panelMode \|\| 'open'/);
+    assert.match(app, /panelMode = sharedPanelMode/);
+    assert.match(app, /getBeachSelectionMapTarget\(beach,\s*sharedPanelMode,\s*mapLayout\)/);
+    assert.match(app, /if \(sharedPanelMode === 'open'\) panelOpenRequest \+= 1/);
+});
+
+test('incoming time-only links can restore recommendation panel state', () => {
+    assert.match(app, /if \(!parsedLocation\) \{[\s\S]*if \(sharedLocationState\.panelMode\) panelMode = sharedLocationState\.panelMode/);
 });
 
 test('selected map place card derives distance from the current user location', () => {

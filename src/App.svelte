@@ -40,7 +40,7 @@
     let mapNavigationRequest = $state(null);
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
-    let sharedLocationState = $state({ locationKey: '', time: '' });
+    let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
     let currentShareUrl = $state('');
     let mapNavigationSequence = 0;
     let didApplySharedLocationState = false;
@@ -166,17 +166,21 @@
         }
 
         const parsedLocation = parseSharedLocationKey(sharedLocationState.locationKey);
-        if (!parsedLocation) return;
+        if (!parsedLocation) {
+            if (sharedLocationState.panelMode) panelMode = sharedLocationState.panelMode;
+            return;
+        }
 
         if (parsedLocation.kind === 'beach') {
             const beach = findSharedPlace(appData.beaches, parsedLocation);
             if (!beach) return;
 
+            const sharedPanelMode = sharedLocationState.panelMode || 'open';
             selectedMapPlace = null;
             selectedBeachName = beach.name;
-            panelMode = 'open';
-            panelOpenRequest += 1;
-            const target = getBeachSelectionMapTarget(beach, 'open', mapLayout);
+            panelMode = sharedPanelMode;
+            if (sharedPanelMode === 'open') panelOpenRequest += 1;
+            const target = getBeachSelectionMapTarget(beach, sharedPanelMode, mapLayout);
             if (target) navigateToMapTarget(target);
             return;
         }
@@ -198,7 +202,8 @@
             : getLocationKey({ type: 'beach', name: selectedBeachName });
         const nextUrl = buildShareUrl(window.location.href, {
             locationKey,
-            time: forecastData.time[hourIndex]
+            time: forecastData.time[hourIndex],
+            panelMode
         });
 
         currentShareUrl = nextUrl;

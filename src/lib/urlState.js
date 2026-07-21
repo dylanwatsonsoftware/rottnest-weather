@@ -1,6 +1,8 @@
 const LOCATION_PARAM = 'location';
 const TIME_PARAM = 'time';
+const PANEL_PARAM = 'panel';
 const VALID_LOCATION_KINDS = new Set(['beach', 'facility', 'business', 'landmark']);
+const VALID_PANEL_MODES = new Set(['open', 'semi', 'closed']);
 
 export function slugifyLocationName(value = '') {
     return String(value)
@@ -25,7 +27,7 @@ export function parseSharedLocationKey(locationKey = '') {
     return { kind, slug };
 }
 
-export function buildShareUrl(baseUrl, { locationKey = '', time = '' } = {}) {
+export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode = '' } = {}) {
     const url = new URL(baseUrl);
     url.search = '';
     if (locationKey) {
@@ -36,6 +38,10 @@ export function buildShareUrl(baseUrl, { locationKey = '', time = '' } = {}) {
         url.searchParams.set(TIME_PARAM, time);
     }
 
+    if (VALID_PANEL_MODES.has(panelMode)) {
+        url.searchParams.set(PANEL_PARAM, panelMode);
+    }
+
     return url.toString();
 }
 
@@ -43,7 +49,12 @@ export function getSharedLocationFromUrl(urlValue) {
     const url = new URL(urlValue);
     const locationKey = url.searchParams.get(LOCATION_PARAM) || '';
     const time = url.searchParams.get(TIME_PARAM) || '';
-    return { locationKey, time };
+    const panelMode = getSharedPanelMode(url.searchParams.get(PANEL_PARAM));
+    return { locationKey, time, panelMode };
+}
+
+function getSharedPanelMode(panelMode) {
+    return VALID_PANEL_MODES.has(panelMode) ? panelMode : '';
 }
 
 export function findNearestSharedHourIndex(forecastData, sharedTime) {

@@ -50,12 +50,24 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
 test('shared beach URLs restore the selected beach and time', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
-    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
+    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&panel=open');
 
     await expect(page.locator('.recommendation-panel.beach-mode.open')).toBeVisible();
     await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
     await expect(page.locator('.detail-time-control')).toContainText(/8am/i);
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
+});
+
+test('shared URLs preserve selected beach panel state', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&panel=semi');
+
+    await expect(page.locator('.recommendation-panel.beach-mode.semi')).toBeVisible();
+    await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
+    await expect(page.locator('.beach-mode-time-control')).toContainText(/8am/i);
+    await expect.poll(() => page.url()).toContain('panel=semi');
 });
 
 test('shared cafe and dive spot URLs restore selected map places', async ({ page }) => {
