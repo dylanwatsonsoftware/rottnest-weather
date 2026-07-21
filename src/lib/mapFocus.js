@@ -16,7 +16,9 @@ export function getLandmarkFitPoints(landmarks = []) {
 }
 
 export function getMapLayout({ width = 0, height = 0 } = {}) {
-    return width > height && height <= 430 ? 'shortLandscape' : 'default';
+    if (width > height && height <= 430) return 'shortLandscape';
+    if (width >= 900 && height > 430) return 'desktopSidePanel';
+    return 'default';
 }
 
 export function getVisibleBeachFitSettings(panelMode = 'collapsed', mapLayout = 'default') {
@@ -28,6 +30,17 @@ export function getVisibleBeachFitSettings(panelMode = 'collapsed', mapLayout = 
             fitBoundsOptions: {
                 paddingTopLeft: [42, 70],
                 paddingBottomRight: [expandedPanel ? 390 : 170, 42],
+                maxZoom: 14
+            }
+        };
+    }
+
+    if (mapLayout === 'desktopSidePanel') {
+        return {
+            singleBeachZoom: 14,
+            fitBoundsOptions: {
+                paddingTopLeft: [42, 120],
+                paddingBottomRight: [expandedPanel ? 480 : 320, 170],
                 maxZoom: 14
             }
         };
@@ -116,13 +129,16 @@ export function getPanelModeMapOffset(panelMode = 'collapsed', mapLayout = 'defa
     if (mapLayout === 'shortLandscape') {
         return isPanelOpen(panelMode) ? [360, 0] : [170, 90];
     }
+    if (mapLayout === 'desktopSidePanel') {
+        return isPanelOpen(panelMode) ? [220, 0] : [0, 0];
+    }
     return isPanelOpen(panelMode) ? [0, 320] : [0, 180];
 }
 
 export const PANEL_TRANSITION_SETTLE_MS = 220;
 
 export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLayout = 'default') {
-    const target = getMapNavigationTarget(beach, 15, getPanelModeMapOffset(panelMode, mapLayout));
+    const target = getMapNavigationTarget(beach, 16, getPanelModeMapOffset(panelMode, mapLayout));
     if (!target) return null;
 
     return {

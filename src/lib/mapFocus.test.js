@@ -60,7 +60,7 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
         name: 'Parker Point',
         lat: -32.023,
         lon: 115.528,
-        zoom: 15,
+        zoom: 16,
         offset: [0, 320],
         visibleAnchor: {
             targetXRatio: 0.5,
@@ -74,7 +74,7 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
 test('getMapLayout detects short landscape phones', () => {
     assert.equal(getMapLayout({ width: 780, height: 390 }), 'shortLandscape');
     assert.equal(getMapLayout({ width: 390, height: 780 }), 'default');
-    assert.equal(getMapLayout({ width: 900, height: 700 }), 'default');
+    assert.equal(getMapLayout({ width: 900, height: 700 }), 'desktopSidePanel');
 });
 
 test('getMapLayoutChangeTarget recenters selected beach when orientation layout changes', () => {
@@ -84,7 +84,7 @@ test('getMapLayoutChangeTarget recenters selected beach when orientation layout 
         name: 'Little Salmon Bay',
         lat: -32.0242,
         lon: 115.5251,
-        zoom: 15,
+        zoom: 16,
         offset: [360, 0],
         visibleAnchor: {
             targetXRatio: 0.5,
@@ -135,6 +135,14 @@ test('short landscape visible beach fit leaves room for the side panel', () => {
     assert.ok(expanded.fitBoundsOptions.paddingBottomRight[1] < 100);
 });
 
+test('desktop visible beach fit leaves room for the side panel without bottom-sheet padding', () => {
+    const semi = getVisibleBeachFitSettings('semi', 'desktopSidePanel');
+    const open = getVisibleBeachFitSettings('open', 'desktopSidePanel');
+
+    assert.ok(open.fitBoundsOptions.paddingBottomRight[0] > semi.fitBoundsOptions.paddingBottomRight[0]);
+    assert.ok(open.fitBoundsOptions.paddingBottomRight[1] < 220);
+});
+
 test('visible beach fit preserves zoom when only panel mode changes', () => {
     assert.equal(getVisibleBeachFitReason('a|b', 'a|b', 'semi', 'open'), 'panel');
     assert.equal(getVisibleBeachFitReason('a|b', 'a|c', 'semi', 'semi'), 'points');
@@ -162,6 +170,8 @@ test('panel mode map offsets leave extra room for open sheet', () => {
     assert.deepEqual(getPanelModeMapOffset('open'), [0, 320]);
     assert.deepEqual(getPanelModeMapOffset('semi', 'shortLandscape'), [170, 90]);
     assert.deepEqual(getPanelModeMapOffset('open', 'shortLandscape'), [360, 0]);
+    assert.deepEqual(getPanelModeMapOffset('semi', 'desktopSidePanel'), [0, 0]);
+    assert.deepEqual(getPanelModeMapOffset('open', 'desktopSidePanel'), [220, 0]);
 });
 
 test('visible map anchor offset centers selected items inside the unobscured map area', () => {

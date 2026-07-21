@@ -407,7 +407,7 @@
         const mapRect = mapElement.getBoundingClientRect();
         const headerRect = document.querySelector('header')?.getBoundingClientRect();
         const panelRect = document.querySelector('.recommendation-panel')?.getBoundingClientRect();
-        const isSidePanel = mapLayout === 'shortLandscape';
+        const isSidePanel = mapLayout === 'shortLandscape' || mapLayout === 'desktopSidePanel';
 
         return {
             mapWidth: mapRect.width,
