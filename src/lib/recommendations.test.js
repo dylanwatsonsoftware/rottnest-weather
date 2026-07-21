@@ -10,6 +10,7 @@ import {
     getInitialFocusRecommendations,
     getSafetyNotices,
     formatTime,
+    shouldShowRecommendationScore,
     shouldUseUserLocationForFocus
 } from './recommendations.js';
 
@@ -80,6 +81,14 @@ test('buildRecommendations includes the length of the next good forecast window'
 
     assert.equal(sheltered.nextGood.hourIndex, 3);
     assert.equal(sheltered.nextGood.durationHours, 3);
+});
+
+test('shouldShowRecommendationScore only shows scores for green beach states', () => {
+    assert.equal(shouldShowRecommendationScore({ state: 'best', score: 92 }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'good', score: 76 }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'watch', score: 52 }), false);
+    assert.equal(shouldShowRecommendationScore({ state: 'avoid', score: 30 }), false);
+    assert.equal(shouldShowRecommendationScore({ state: 'good', score: Number.NaN }), false);
 });
 
 test('formatTime includes dates for forecast times beyond this week', () => {

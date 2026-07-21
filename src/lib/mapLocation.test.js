@@ -9,7 +9,7 @@ test('map watches location without moving the map view', () => {
 });
 
 test('map only exposes user location markers inside Rottnest bounds while keeping distance origin available', () => {
-    assert.match(mapSource, /import \{ isWithinRottnestBounds \} from '\.\/recommendations\.js';/);
+    assert.match(mapSource, /import \{[^}]*isWithinRottnestBounds[^}]*\} from '\.\/recommendations\.js';/);
     assert.match(mapSource, /if \(!isWithinRottnestBounds\(location\)\)\s*\{/);
     assert.match(mapSource, /clearUserLocation\(\);/);
     assert.match(mapSource, /onUserLocationChange\(location\);[\s\S]*if \(!isWithinRottnestBounds\(location\)\)\s*\{/);
@@ -80,9 +80,11 @@ test('clearing the map navigation request cancels pending selected-location rece
 
 test('beach marker icons use rank-aware sizes', () => {
     assert.match(mapSource, /import \{[\s\S]*getBeachMarkerSize/);
+    assert.match(mapSource, /shouldShowRecommendationScore/);
     assert.match(mapSource, /icon:\s*getBeachIcon\(recommendation,\s*index\)/);
     assert.match(mapSource, /marker\.setIcon\(getBeachIcon\(recommendation,\s*rank\)\)/);
     assert.match(mapSource, /getBeachMarkerSize\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*rank\)/);
+    assert.match(mapSource, /const scoreBadge = shouldShowRecommendationScore\(recommendation\)/);
     assert.match(mapSource, /iconSize:\s*\[markerSize\.size,\s*markerSize\.size\]/);
 });
 

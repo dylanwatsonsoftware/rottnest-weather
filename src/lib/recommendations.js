@@ -348,6 +348,11 @@ export function formatTime(time, options = {}) {
     return formatCompactTime(time, { weekday: true, ...options });
 }
 
+export function shouldShowRecommendationScore(recommendation = {}) {
+    return Number.isFinite(recommendation.score)
+        && (recommendation.state === 'best' || recommendation.state === 'good');
+}
+
 function getState(score, directionMatches, flexibility) {
     if (!directionMatches || score < 42) return 'avoid';
     if (score >= 86 && flexibility >= 6) return 'best';
