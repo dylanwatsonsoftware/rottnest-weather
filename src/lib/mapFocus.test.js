@@ -284,22 +284,22 @@ test('beach marker sizes shrink lower ranked beaches at cluttered zooms', () => 
         { beach: { name: 'Lower Bay' }, state: 'watch' },
         12,
         '',
-        8
-    ), { size: 28, anchor: 14 });
+        1
+    ), { size: 26, anchor: 13 });
 
     assert.deepEqual(getBeachMarkerSize(
         { beach: { name: 'Tiny Bay' }, state: 'avoid' },
-        11,
+        12,
         '',
-        14
-    ), { size: 24, anchor: 12 });
+        1
+    ), { size: 22, anchor: 11 });
 
     assert.deepEqual(getBeachMarkerSize(
         { beach: { name: 'Zoomed Bay' }, state: 'avoid' },
         15,
         '',
         14
-    ), { size: 34, anchor: 17 });
+    ), { size: 22, anchor: 11 });
 });
 
 test('low zoom keeps all beach markers visible without area overlay filtering', () => {

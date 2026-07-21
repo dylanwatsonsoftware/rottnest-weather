@@ -270,7 +270,7 @@
     function getBeachIcon(recommendation, rank = 0) {
         const selected = recommendation.beach.name === selectedBeachName ? 'selected' : '';
         const markerSize = getBeachMarkerSize(recommendation, currentZoom, selectedBeachName, rank);
-        const sizeClass = markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
+        const sizeClass = markerSize.size < 24 ? 'tiny' : markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
         return L.divIcon({
             className: `beach-marker ${recommendation.state} ${selected} ${sizeClass}`,
             html: `<span>${stateIcons[recommendation.state]}</span><small>${recommendation.score}</small>`,

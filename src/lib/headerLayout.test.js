@@ -107,8 +107,10 @@ test('ranked beach marker size classes are visually distinct', () => {
     assert.match(css, /\.beach-marker\.prominent\s*{[^}]*--beach-marker-size:\s*38px/s);
     assert.match(css, /\.beach-marker\.small\s*{[^}]*--beach-marker-size:\s*28px/s);
     assert.match(css, /\.beach-marker\.compact\s*{[^}]*--beach-marker-size:\s*24px/s);
+    assert.match(css, /\.beach-marker\.tiny\s*{[^}]*--beach-marker-size:\s*22px/s);
     assert.match(css, /\.beach-marker\.selected\s*{[^}]*--beach-marker-size:\s*40px/s);
     assert.match(css, /\.beach-marker\.compact small\s*{[^}]*transform:\s*scale\(0\.82\)/s);
+    assert.match(css, /\.beach-marker\.tiny small\s*{[^}]*transform:\s*scale\(0\.72\)/s);
 });
 
 test('beach detail timeline has its own time slider styling', () => {

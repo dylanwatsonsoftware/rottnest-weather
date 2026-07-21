@@ -381,11 +381,7 @@
         recommendations.find((item) => item.beach.name === selectedBeachName) || null
     );
     const isBeachView = $derived(Boolean(selectedBeachName && selectedRecommendation));
-    const mapRecommendations = $derived(
-        selectedRecommendation && !visibleRecommendations.some((item) => item.beach.name === selectedRecommendation?.beach.name)
-            ? [...visibleRecommendations, selectedRecommendation]
-            : visibleRecommendations
-    );
+    const mapRecommendations = $derived(filters.showBeaches === false ? [] : recommendations);
     const hasLoadedForecast = $derived(!loading && Boolean(forecastData?.time?.length));
     const safetyNotices = $derived([
         ...getSafetyNotices({

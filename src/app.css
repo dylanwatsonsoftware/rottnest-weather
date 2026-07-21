@@ -1575,6 +1575,10 @@ main {
     --beach-marker-size: 24px;
 }
 
+.beach-marker.tiny {
+    --beach-marker-size: 22px;
+}
+
 .beach-marker.selected {
     --beach-marker-size: 40px;
     outline: 3px solid rgba(255, 255, 255, 0.8);
@@ -1591,6 +1595,10 @@ main {
 
 .beach-marker.compact span {
     font-size: 12px;
+}
+
+.beach-marker.tiny span {
+    font-size: 11px;
 }
 
 .beach-marker small {
@@ -1616,6 +1624,11 @@ main {
 
 .beach-marker.compact small {
     transform: scale(0.82);
+    transform-origin: center;
+}
+
+.beach-marker.tiny small {
+    transform: scale(0.72);
     transform-origin: center;
 }
 

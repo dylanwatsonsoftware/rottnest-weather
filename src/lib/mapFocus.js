@@ -74,6 +74,8 @@ export function getBeachMarkerSize(recommendation = {}, zoom = 12, selectedBeach
     const beachName = recommendation.beach?.name || '';
     if (beachName && beachName === selectedBeachName) return toMarkerSize(40);
     if (recommendation.state === 'best') return toMarkerSize(38);
+    if (recommendation.state === 'watch') return toMarkerSize(26);
+    if (recommendation.state === 'avoid') return toMarkerSize(22);
     if (zoom >= 15) return toMarkerSize(34);
     if (rank < 4) return toMarkerSize(34);
     if (zoom >= 12) return toMarkerSize(28);

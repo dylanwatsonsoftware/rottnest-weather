@@ -217,10 +217,11 @@ test('selected map place card has a share link button', () => {
     assert.match(app, /onclick=\{\(\) => shareCurrentLocation\(\)\}/);
 });
 
-test('selected beach remains visible on the map even when filters exclude it', () => {
+test('map receives all scored beaches so filtered states can shrink instead of disappear', () => {
     assert.match(app, /const mapRecommendations = \$derived/);
-    assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);
+    assert.match(app, /filters\.showBeaches === false \? \[\] : recommendations/);
     assert.match(app, /recommendations=\{\$state\.snapshot\(mapRecommendations\)\}/);
+    assert.doesNotMatch(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);
 });
 
 test('explicit beach selection switches recommendation panel into beach view mode', () => {
