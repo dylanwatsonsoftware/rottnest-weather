@@ -100,6 +100,7 @@ test('forecast graph does not render a duplicate slider directly above it', () =
 });
 
 test('recommendation row subtitles stay readable on colored cards', () => {
+    assert.match(css, /\.recommendation-row\.best \.row-main strong,[\s\S]*\.recommendation-row\.avoid \.row-main strong\s*{[^}]*color:\s*white/s);
     assert.match(css, /\.recommendation-row\.(best|good|watch|avoid) \.row-main small\s*{[^}]*color:\s*rgba\(255,\s*255,\s*255,\s*0\.78\)/s);
 });
 

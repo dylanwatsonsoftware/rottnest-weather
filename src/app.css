@@ -788,6 +788,14 @@ main {
     transform: translate(-50%, -50%);
 }
 
+.recommendation-row.best .row-main strong,
+.recommendation-row.good .row-main strong,
+.recommendation-row.watch .row-main strong,
+.recommendation-row.avoid .row-main strong {
+    color: white;
+    text-shadow: 0 1px 2px rgba(13, 34, 38, 0.28);
+}
+
 .recommendation-row.best .row-main small,
 .recommendation-row.good .row-main small,
 .recommendation-row.watch .row-main small,
