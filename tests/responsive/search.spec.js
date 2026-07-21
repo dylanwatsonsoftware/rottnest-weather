@@ -58,6 +58,21 @@ test('shared beach URLs restore the selected beach and time', async ({ page }) =
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
 });
 
+test('shared cafe and dive spot URLs restore selected map places', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    await page.goto('/?location=facility%3Apinkys-rottnest-island&time=2026-07-21T08%3A00');
+    await expect(page.locator('.selected-map-place-card', { hasText: "Pinky's Beach Club" })).toBeVisible();
+    await expect(page.getByRole('button', { name: "Share Pinky's Beach Club" })).toBeVisible();
+    await expect.poll(() => page.url()).toContain('location=facility%3Apinkys-rottnest-island');
+
+    await page.goto('/?location=landmark%3Acrystal-palace-dive-site&time=2026-07-21T08%3A00');
+    await expect(page.locator('.selected-map-place-card', { hasText: 'Crystal Palace Dive Site' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Share Crystal Palace Dive Site' })).toBeVisible();
+    await expect.poll(() => page.url()).toContain('location=landmark%3Acrystal-palace-dive-site');
+});
+
 test('time-only shared URLs preserve future forecast dates', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);

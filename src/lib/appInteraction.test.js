@@ -91,6 +91,16 @@ test('app wires floating map search to all map data and navigation callbacks', (
     assert.match(app, /panelOpenRequest \+= 1/);
 });
 
+test('map place markers use selected-place navigation for deep links', () => {
+    const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
+
+    assert.match(app, /<Map[\s\S]*onNavigateToMap=\{navigateToMapTarget\}/);
+    assert.match(map, /onNavigateToMap = \(\) => \{\}/);
+    assert.match(map, /\.on\('click',\s*\(\) => \{[\s\S]*getPlaceNavigationTarget\(place\)[\s\S]*onNavigateToMap\(target\)/);
+    assert.match(map, /function getPlaceNavigationTarget\(place\)/);
+    assert.match(map, /getPanelModeMapOffset\(panelMode,\s*mapLayout\)/);
+});
+
 test('map and search beach selections request the panel detail scroll', () => {
     assert.match(app, /let panelScrollRequest = \$state\(0\)/);
     assert.match(app, /function revealBeachInPanel\(name\)/);

@@ -6,6 +6,7 @@
         getInitialFitSettings,
         getLandmarkFitPoints,
         getNavigationSettleDelay,
+        getPanelModeMapOffset,
         getPanelModePanOffset,
         getPanelModeSelectionMapTarget,
         getBeachMarkerSize,
@@ -34,6 +35,7 @@
         mapLayout = 'default',
         mapNavigationRequest = null,
         onSelectBeach = () => {},
+        onNavigateToMap = () => {},
         onZoomChange = () => {},
         onUserLocationChange = () => {}
     } = $props();
@@ -111,6 +113,10 @@
                 iconAnchor: [14, 14]
             });
             const marker = L.marker([place.lat, place.lon], { icon })
+                .on('click', () => {
+                    const target = getPlaceNavigationTarget(place);
+                    if (target) onNavigateToMap(target);
+                })
                 .bindTooltip(getPlaceTooltipLabel(place), {
                     permanent: shouldShowPlaceLabel(place, currentZoom, selectedPlaceName),
                     direction: 'top',
@@ -122,6 +128,23 @@
             if (selected) marker.setZIndexOffset(1000);
             placeMarkers.push({ marker, place });
         });
+    }
+
+    function getPlaceNavigationTarget(place) {
+        const target = getMapNavigationTarget(
+            place,
+            15,
+            getPanelModeMapOffset(panelMode, mapLayout)
+        );
+        if (!target) return null;
+
+        return {
+            ...place,
+            ...target,
+            type: place.type || 'landmark',
+            label: getFacilityTypeLabel(place),
+            ratingLabel: getFacilityRatingLabel(place)
+        };
     }
 
     function initBeaches() {

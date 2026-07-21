@@ -433,6 +433,7 @@
         {mapLayout}
         {mapNavigationRequest}
         onSelectBeach={revealBeachInPanel}
+        onNavigateToMap={navigateToMapTarget}
         onZoomChange={(zoom) => mapZoom = zoom}
         onUserLocationChange={(location) => userLocation = location}
     />
