@@ -77,6 +77,7 @@
     const bestBeachTimeline = $derived(buildBestBeachTimeline(beaches, forecastData, forecastRange));
     const sliderHeatGradient = $derived(getSliderHeatGradient(bestBeachTimeline, forecastRange));
     const beachTimeline = $derived(buildBeachStatusTimeline(selectedRecommendation?.beach, forecastData, forecastRange));
+    const beachDetailHeatGradient = $derived(getSliderHeatGradient(beachTimeline, forecastRange));
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
     const selectedBeachImages = $derived(getBeachImages(selectedRecommendation?.beach.name));
     const selectedBeachDistanceLabel = $derived(getSelectedBeachDistanceLabel(selectedRecommendation?.beach, userLocation));
@@ -392,6 +393,43 @@
                         ⌖
                     </button>
                 </div>
+                {#if beachTimeline.length}
+                    <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
+                        <div class="detail-time-control">
+                            <label for="detail-time-slider">
+                                Forecast time
+                                <strong>{selectedTime}</strong>
+                            </label>
+                            <input
+                                type="range"
+                                id="detail-time-slider"
+                                style:--slider-heat={beachDetailHeatGradient}
+                                min={forecastRange.min}
+                                max={forecastRange.max}
+                                bind:value={hourIndex}
+                            />
+                        </div>
+                        <div class="timeline-chart" bind:this={timelineChartElement}>
+                            {#each beachTimeline as item}
+                                <button
+                                    type="button"
+                                    use:bindTimelineCell={item.hourIndex}
+                                    class="timeline-cell {item.state}"
+                                    class:active={item.hourIndex === hourIndex}
+                                    title="{item.label}: {item.summary}"
+                                    aria-label="{item.label}: {item.summary}"
+                                    onclick={() => hourIndex = item.hourIndex}
+                                >
+                                    <span>{item.score}</span>
+                                </button>
+                            {/each}
+                        </div>
+                        <div class="timeline-labels">
+                            <span>{beachTimeline[0].label}</span>
+                            <span>{beachTimeline[beachTimeline.length - 1].label}</span>
+                        </div>
+                    </div>
+                {/if}
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                     <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
@@ -421,47 +459,6 @@
                         </div>
                     {/if}
                 {/key}
-                {#if beachTimeline.length}
-                    <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
-                        <div class="detail-time-control">
-                            <label for="detail-time-slider">
-                                Forecast time
-                                <strong>{selectedTime}</strong>
-                            </label>
-                            <input
-                                type="range"
-                                id="detail-time-slider"
-                                style:--slider-heat={sliderHeatGradient}
-                                min={forecastRange.min}
-                                max={forecastRange.max}
-                                bind:value={hourIndex}
-                            />
-                        </div>
-                        <div class="timeline-heading">
-                            <strong>Score by time</strong>
-                            <span>{getRangeModeLabel(rangeMode)}</span>
-                        </div>
-                        <div class="timeline-chart" bind:this={timelineChartElement}>
-                            {#each beachTimeline as item}
-                                <button
-                                    type="button"
-                                    use:bindTimelineCell={item.hourIndex}
-                                    class="timeline-cell {item.state}"
-                                    class:active={item.hourIndex === hourIndex}
-                                    title="{item.label}: {item.summary}"
-                                    aria-label="{item.label}: {item.summary}"
-                                    onclick={() => hourIndex = item.hourIndex}
-                                >
-                                    <span>{item.score}</span>
-                                </button>
-                            {/each}
-                        </div>
-                        <div class="timeline-labels">
-                            <span>{beachTimeline[0].label}</span>
-                            <span>{beachTimeline[beachTimeline.length - 1].label}</span>
-                        </div>
-                    </div>
-                {/if}
                 <ul>
                     {#each selectedRecommendation.reasons.slice(0, 3) as reason}
                         <li>{reason}</li>

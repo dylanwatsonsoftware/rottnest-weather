@@ -79,6 +79,9 @@ test('ranked beach marker size classes are visually distinct', () => {
 test('beach detail timeline has its own time slider styling', () => {
     assert.match(css, /\.detail-time-control\s*{/);
     assert.match(css, /\.detail-time-control input\[type="range"\]/);
+    assert.match(recommendationPanel, /const beachDetailHeatGradient = \$derived\(getSliderHeatGradient\(beachTimeline,\s*forecastRange\)\)/);
+    assert.match(recommendationPanel, /id="detail-time-slider"[\s\S]*style:--slider-heat=\{beachDetailHeatGradient\}/);
+    assert.doesNotMatch(recommendationPanel, />Score by time</);
 });
 
 test('active status timeline cell has a clear selected border', () => {
