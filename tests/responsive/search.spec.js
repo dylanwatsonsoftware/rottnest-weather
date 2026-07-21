@@ -13,9 +13,9 @@ test('map search jumps to places and opens beach recommendations', async ({ page
     await searchToggle.click();
     const search = page.locator('.map-search input');
     await expect(search).toBeVisible();
-    await search.fill('Parker Point Stop');
-    await page.locator('.map-search-results').getByRole('button', { name: /Parker Point Stop/i }).click();
-    await expect(page.locator('.place-label.selected', { hasText: 'Parker Point Stop' }).first()).toBeVisible();
+    await search.fill('Parker Point Bus Stop');
+    await page.locator('.map-search-results').getByRole('button', { name: /Parker Point Bus Stop/i }).click();
+    await expect(page.locator('.place-label.selected', { hasText: 'Parker Point Bus Stop' }).first()).toBeVisible();
 
     await searchToggle.click();
     await search.fill('Little Salmon');

@@ -234,17 +234,17 @@
     {
         "id": "geordie-bay-cafe",
         "name": "Geordie's Cafe & Art Gallery",
-        "lat": -31.9913,
-        "lon": 115.5209,
+        "lat": -31.99045,
+        "lon": 115.52616,
         "type": "facility",
         "category": "cafe",
         "address": "Katemeraire Rd",
         "source": "rottnest_official_eat_drink",
         "source_url": "https://www.rottnestisland.com/see-do/eat-drink/geordies-cafe-art-gallery",
         "checked_at": "2026-07-20",
-        "coordinate_source": "official_location_description",
-        "coordinate_checked_at": "2026-07-20",
-        "coordinate_note": "Official page places Geordie's in Geordie Bay; reused existing Geordie Bay cafe-area seed pending an OSM/Google exact match."
+        "coordinate_source": "static_verified_geordie_bay_mall",
+        "coordinate_checked_at": "2026-07-21",
+        "coordinate_note": "Static checked coordinate for Geordie's Cafe & Art Gallery at Geordie Bay / Katemeraire Rd, replacing the rough bay seed."
     },
     {
         "id": "geordie-bay-facilities",

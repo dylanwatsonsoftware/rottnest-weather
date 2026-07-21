@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import { buildPlaceSearchIndex, searchPlaces } from './placeSearch.js';
@@ -89,4 +90,20 @@ test('searchPlaces can include distance labels from the user location', () => {
     assert.equal(results[0].name, 'The Lane Cafe');
     assert.equal(results[0].distanceLabel, '94 m');
     assert.equal(results[0].distanceKm, 0.1);
+});
+
+test('bundled place search has no stale duplicate facility landmarks', () => {
+    const bundledBeaches = JSON.parse(readFileSync(new URL('../../public/beaches.json', import.meta.url), 'utf8'));
+    const bundledLandmarks = JSON.parse(readFileSync(new URL('../../public/landmarks.json', import.meta.url), 'utf8'));
+    const bundledFacilities = JSON.parse(readFileSync(new URL('../../public/facilities.json', import.meta.url), 'utf8'));
+    const index = buildPlaceSearchIndex({
+        beaches: bundledBeaches,
+        landmarks: bundledLandmarks,
+        facilities: bundledFacilities
+    });
+
+    ['Geordie Bay Facilities', 'The Basin Facilities', 'Parker Point Bus Stop'].forEach((name) => {
+        assert.equal(index.filter((place) => place.name === name).length, 1, `${name} should appear once`);
+    });
+    assert.equal(index.some((place) => place.name === 'Parker Point Stop'), false);
 });

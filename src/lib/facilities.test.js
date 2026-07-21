@@ -209,6 +209,16 @@ test('beach toilet and Parker Point stop coordinates use the RIA visitor facilit
     });
 });
 
+test("Geordie's Cafe uses a verified Geordie Bay coordinate instead of the rough bay seed", () => {
+    assert.deepEqual(getFacilityCoordinateAudit('geordie-bay-cafe'), {
+        lat: -31.99045,
+        lon: 115.52616,
+        coordinate_source: 'static_verified_geordie_bay_mall',
+        ria_layer: undefined,
+        ria_name: undefined
+    });
+});
+
 function getFacilityCoordinateAudit(id) {
     const facility = facilityData.find((item) => item.id === id);
     return {

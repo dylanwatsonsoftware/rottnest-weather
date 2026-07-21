@@ -75,7 +75,7 @@ export const PLACE_MEDIA = {
     ],
     'Geordie Bay Facilities': [geordieBayImage],
     'The Basin Facilities': [theBasinImage],
-    'Parker Point Stop': [
+    'Parker Point Bus Stop': [
         {
             src: '/place-images/parker-point-road-01.jpg',
             alt: 'Parker Point Road with Wadjemup Lighthouse in the background',
