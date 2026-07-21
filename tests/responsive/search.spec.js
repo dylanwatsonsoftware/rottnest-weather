@@ -58,6 +58,22 @@ test('shared beach URLs restore the selected beach and time', async ({ page }) =
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
 });
 
+test('time-only shared URLs preserve future forecast dates', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    const sharedTime = new Date();
+    sharedTime.setMinutes(0, 0, 0);
+    sharedTime.setHours(sharedTime.getHours() + 216);
+    const sharedTimeValue = sharedTime.toISOString().slice(0, 16);
+
+    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}`);
+
+    await expect(page.locator('.recommendation-panel')).toBeVisible();
+    await expect.poll(() => page.url()).toContain(`time=${encodeURIComponent(sharedTimeValue)}`);
+    await expect.poll(() => page.url()).not.toContain('location=');
+});
+
 test('map search autocomplete shows distance when browser location is available', async ({ browser }) => {
     const context = await browser.newContext({
         geolocation: { latitude: -31.9523, longitude: 115.8613 },

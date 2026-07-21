@@ -10,6 +10,7 @@
         getPanelModeFromSwipe,
         getRecommendationHeading,
         getRangeModeLabel,
+        getRangeModeForHourIndex,
         getRangeProgressPercent,
         getSliderHeatGradient,
         getStatusWindowSummary,
@@ -229,6 +230,11 @@
 
     $effect(() => {
         const range = forecastRange;
+        const nextRangeMode = getRangeModeForHourIndex(forecastData, hourIndex);
+        if ((hourIndex < range.min || hourIndex > range.max) && nextRangeMode !== rangeMode) {
+            rangeMode = nextRangeMode;
+            return;
+        }
         if (hourIndex < range.min) hourIndex = range.min;
         if (hourIndex > range.max) hourIndex = range.max;
     });

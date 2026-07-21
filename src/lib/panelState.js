@@ -180,7 +180,8 @@ export function getLaterTabHourIndex(recommendations = [], currentHourIndex = 0,
 }
 
 export function getRangeModeForHourIndex(forecastData, hourIndex) {
-    if (hourIndex <= getForecastRange(forecastData, 'today').max) return 'today';
+    const todayRange = getForecastRange(forecastData, 'today');
+    if (hourIndex >= todayRange.min && hourIndex <= todayRange.max) return 'today';
     if (hourIndex <= getForecastRange(forecastData, 'twoDay').max) return 'twoDay';
     if (hourIndex <= getForecastRange(forecastData, 'threeDay').max) return 'threeDay';
     return 'tenDay';

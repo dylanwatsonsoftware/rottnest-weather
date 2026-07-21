@@ -99,6 +99,8 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /let sharedLocationState = \$state/);
     assert.match(app, /let currentShareUrl = \$state\(''\)/);
     assert.match(app, /function updateShareUrl\(\)/);
+    assert.match(app, /time:\s*forecastData\.time\[hourIndex\]/);
+    assert.doesNotMatch(app, /time:\s*locationKey \? forecastData\.time\[hourIndex\] : ''/);
     assert.match(app, /history\.replaceState\(history\.state,\s*'',\s*nextUrl\)/);
     assert.match(app, /\$effect\(\(\) => \{[\s\S]*updateShareUrl\(\)/);
     assert.match(app, /shareUrl=\{currentShareUrl\}/);

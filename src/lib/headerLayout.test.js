@@ -116,6 +116,13 @@ test('forecast range toggle supports four compact options', () => {
     assert.match(css, /\.range-mode-toggle\s*{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/s);
 });
 
+test('forecast range expands before clamping deep-linked selected times', () => {
+    assert.match(recommendationPanel, /getRangeModeForHourIndex/);
+    assert.match(recommendationPanel, /const nextRangeMode = getRangeModeForHourIndex\(forecastData,\s*hourIndex\)/);
+    assert.match(recommendationPanel, /hourIndex < range\.min \|\| hourIndex > range\.max/);
+    assert.match(recommendationPanel, /rangeMode = nextRangeMode/);
+});
+
 test('collapsed tray leaves clearance below the forecast slider thumb', () => {
     assert.match(css, /\.collapsed-time-control\s*{[^}]*padding:\s*0 16px 24px/s);
 });

@@ -23,6 +23,14 @@ test('buildShareUrl encodes selected location and forecast time in the address',
     assert.equal(url, 'https://example.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
 });
 
+test('buildShareUrl can encode a selected forecast time without a location', () => {
+    const url = buildShareUrl('https://example.test/?location=beach%3Aold&time=2026-07-21T08%3A00', {
+        time: '2026-07-30T06:00'
+    });
+
+    assert.equal(url, 'https://example.test/?time=2026-07-30T06%3A00');
+});
+
 test('getSharedLocationFromUrl reads location and selected time from the address', () => {
     assert.deepEqual(getSharedLocationFromUrl('https://example.test/?location=facility%3Arottnest-bakery&time=2026-07-21T09%3A00'), {
         locationKey: 'facility:rottnest-bakery',

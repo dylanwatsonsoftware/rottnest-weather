@@ -186,7 +186,7 @@
             : getLocationKey({ type: 'beach', name: selectedBeachName });
         const nextUrl = buildShareUrl(window.location.href, {
             locationKey,
-            time: locationKey ? forecastData.time[hourIndex] : ''
+            time: forecastData.time[hourIndex]
         });
 
         currentShareUrl = nextUrl;

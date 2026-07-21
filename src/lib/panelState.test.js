@@ -236,10 +236,12 @@ test('getBetterTimeSelection jumps to a better hour and expands the forecast ran
 });
 
 test('getRangeModeForHourIndex expands range to include the selected hour', () => {
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 0), 'twoDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 2), 'today');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 5), 'twoDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 8), 'threeDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 13), 'tenDay');
+    assert.equal(getRangeModeForHourIndex(hourlyForecast, 22), 'tenDay');
 });
 
 test('shouldShowConfidenceLabel hides normal confidence', () => {
