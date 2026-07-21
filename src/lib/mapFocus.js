@@ -197,6 +197,18 @@ export function getBeachSelectionMapTarget(beach, panelMode = 'collapsed', mapLa
     const target = getMapNavigationTarget(beach, 16, getPanelModeMapOffset(panelMode, mapLayout));
     if (!target) return null;
 
+    return withVisiblePanelAnchor(target);
+}
+
+export function getPanelModeSelectionMapTarget(beach, panelMode = 'collapsed', mapLayout = 'default', currentZoom = 16) {
+    const zoom = Number.isFinite(currentZoom) ? currentZoom : 16;
+    const target = getMapNavigationTarget(beach, zoom, getPanelModeMapOffset(panelMode, mapLayout));
+    if (!target) return null;
+
+    return withVisiblePanelAnchor(target);
+}
+
+function withVisiblePanelAnchor(target) {
     return {
         ...target,
         visibleAnchor: {

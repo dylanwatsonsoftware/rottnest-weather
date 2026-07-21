@@ -4,6 +4,7 @@ import {
     getInitialFitSettings,
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
+    getPanelModeSelectionMapTarget,
     getMapLayoutChangeTarget,
     getMapLayout,
     getMapNavigationTarget,
@@ -71,6 +72,28 @@ test('getBeachSelectionMapTarget centers selected beaches with panel offset', ()
             waitForPanelTransition: true
         }
     });
+});
+
+test('getPanelModeSelectionMapTarget recenters selected beaches at current zoom after panel swipes', () => {
+    assert.deepEqual(getPanelModeSelectionMapTarget(
+        { name: 'Parker Point', lat: -32.023, lon: 115.528 },
+        'open',
+        'default',
+        13
+    ), {
+        name: 'Parker Point',
+        lat: -32.023,
+        lon: 115.528,
+        zoom: 13,
+        offset: [0, 320],
+        visibleAnchor: {
+            targetXRatio: 0.5,
+            targetYRatio: 0.5,
+            constrainVerticalByPanel: true,
+            waitForPanelTransition: true
+        }
+    });
+    assert.equal(getPanelModeSelectionMapTarget({ name: 'Missing' }, 'open', 'default', 13), null);
 });
 
 test('getMapLayout detects short landscape phones', () => {

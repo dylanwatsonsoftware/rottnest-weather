@@ -7,6 +7,7 @@
         getLandmarkFitPoints,
         getNavigationSettleDelay,
         getPanelModePanOffset,
+        getPanelModeSelectionMapTarget,
         getBeachMarkerSize,
         getGoodBeachOverlayAreas,
         shouldShowBeachLabel,
@@ -50,6 +51,7 @@
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'closed';
     let lastVisibleBeachMapLayout = 'default';
+    let panelSelectionRecenterSequence = 0;
     const selectedPlaceName = $derived(
         mapNavigationRequest?.type === 'landmark' || mapNavigationRequest?.type === 'facility' || mapNavigationRequest?.type === 'business'
             ? mapNavigationRequest.name
@@ -381,6 +383,14 @@
         lastVisibleBeachMapLayout = mapLayout;
         const fitSettings = getVisibleBeachFitSettings(panelMode, mapLayout);
 
+        if (fitReason === 'panel' && hasExplicitBeachSelection) {
+            const target = getPanelModeSelectionTarget();
+            if (target) {
+                recenterSelectedBeachForPanel(target);
+                return;
+            }
+        }
+
         if (fitPoints.length === 1) {
             const zoom = fitReason === 'panel' ? map.getZoom() : fitSettings.singleBeachZoom;
             map.flyTo(fitPoints[0], zoom, {
@@ -403,6 +413,28 @@
 
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
+    }
+
+    function getPanelModeSelectionTarget() {
+        const selectedRecommendation = recommendations.find((item) => item.beach?.name === selectedBeachName);
+        return getPanelModeSelectionMapTarget(selectedRecommendation?.beach, panelMode, mapLayout, map.getZoom());
+    }
+
+    function recenterSelectedBeachForPanel(target) {
+        panelSelectionRecenterSequence += 1;
+        const sequence = panelSelectionRecenterSequence;
+        window.setTimeout(() => {
+            if (!map || sequence !== panelSelectionRecenterSequence) return;
+
+            const zoom = target.zoom || map.getZoom();
+            const center = getOffsetCenter(target, zoom);
+            map.flyTo(center, zoom, {
+                animate: true,
+                duration: 0.35
+            });
+            currentZoom = map.getZoom();
+            onZoomChange(currentZoom);
+        }, getNavigationSettleDelay(target));
     }
 
     function navigateToMapRequest(request) {
