@@ -48,3 +48,10 @@ test('beach marker icons use rank-aware sizes', () => {
     assert.match(mapSource, /getBeachMarkerSize\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*rank\)/);
     assert.match(mapSource, /iconSize:\s*\[markerSize\.size,\s*markerSize\.size\]/);
 });
+
+test('map shows a good beach overlay when zoomed out', () => {
+    assert.match(mapSource, /let beachQualityOverlays = \[\]/);
+    assert.match(mapSource, /function updateBeachQualityOverlay\(\)/);
+    assert.match(mapSource, /shouldShowGoodBeachOverlay\(currentZoom\)/);
+    assert.match(mapSource, /L\.circleMarker/);
+});

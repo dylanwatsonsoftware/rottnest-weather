@@ -38,6 +38,7 @@
     let map;
     let mapElement;
     let beachMarkers = [];
+    let beachQualityOverlays = [];
     let placeMarkers = [];
     let userLocationMarker = null;
     let userLocationCircle = null;
@@ -78,6 +79,7 @@
             currentZoom = nextZoom;
             onZoomChange(currentZoom);
             updateBeachLabels();
+            updateBeachQualityOverlay();
             updateLandmarks();
         });
         currentZoom = map.getZoom();
@@ -140,6 +142,7 @@
             }
         });
         updateBeaches();
+        updateBeachQualityOverlay();
         fitVisibleBeaches();
     }
 
@@ -151,6 +154,36 @@
             marker.setZIndexOffset(recommendation.beach.name === selectedBeachName ? 900 : recommendation.score);
         });
         updateBeachLabels();
+        updateBeachQualityOverlay();
+    }
+
+    function updateBeachQualityOverlay() {
+        beachQualityOverlays.forEach((overlay) => overlay.remove());
+        beachQualityOverlays = [];
+        if (!map || !shouldShowGoodBeachOverlay(currentZoom)) return;
+
+        recommendations
+            .filter((recommendation) => recommendation.state === 'best' || recommendation.state === 'good')
+            .filter((recommendation) => Number.isFinite(recommendation.beach?.lat) && Number.isFinite(recommendation.beach?.lon))
+            .slice(0, 8)
+            .forEach((recommendation) => {
+                const color = recommendation.state === 'best' ? '#167a52' : '#2e8b86';
+                const overlay = L.circleMarker([recommendation.beach.lat, recommendation.beach.lon], {
+                    radius: recommendation.state === 'best' ? 28 : 22,
+                    color,
+                    fillColor: color,
+                    fillOpacity: 0.22,
+                    opacity: 0.82,
+                    weight: 2,
+                    interactive: false,
+                    className: `good-beach-overlay ${recommendation.state}`
+                }).addTo(map);
+                beachQualityOverlays.push(overlay);
+            });
+    }
+
+    function shouldShowGoodBeachOverlay(zoom) {
+        return zoom <= 12;
     }
 
     function initUserLocation() {
