@@ -251,6 +251,7 @@
             ontouchstart={handlePanelTouchStart}
             ontouchend={handlePanelTouchEnd}
         >
+            <span class="beach-panel-handle" aria-hidden="true"></span>
             <button
                 class="beach-panel-title"
                 type="button"
@@ -389,7 +390,6 @@
                             <strong>Nearby</strong>
                             {#each nearbyPlaces as place}
                                 {@const placeImage = getPrimaryPlaceImage(place)}
-                                {@const sourceLinks = getSourceLinks(place)}
                                 <div class="nearby-place-row">
                                     <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
                                         {#if placeImage}
@@ -406,13 +406,6 @@
                                             {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
                                         </small>
                                     </button>
-                                    {#if sourceLinks.length}
-                                        <div class="source-links compact" aria-label="{place.name} source links">
-                                            {#each sourceLinks as link}
-                                                <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-                                            {/each}
-                                        </div>
-                                    {/if}
                                 </div>
                             {/each}
                         </div>
@@ -651,7 +644,6 @@
                         <strong>Nearby</strong>
                         {#each nearbyPlaces as place}
                             {@const placeImage = getPrimaryPlaceImage(place)}
-                            {@const sourceLinks = getSourceLinks(place)}
                             <div class="nearby-place-row">
                                 <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
                                     {#if placeImage}
@@ -668,13 +660,6 @@
                                         {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
                                     </small>
                                 </button>
-                                {#if sourceLinks.length}
-                                    <div class="source-links compact" aria-label="{place.name} source links">
-                                        {#each sourceLinks as link}
-                                            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
-                                        {/each}
-                                    </div>
-                                {/if}
                             </div>
                         {/each}
                     </div>

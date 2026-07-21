@@ -43,6 +43,8 @@ test('floating map search is a compact icon until opened', () => {
     assert.match(mapSearch, /class:open=\{isOpen\}/);
     assert.match(mapSearch, /const searchOrigin = \$derived\(userLocation \|\| localSearchLocation\)/);
     assert.match(mapSearch, /searchPlaces\(searchIndex,\s*query,\s*8,\s*searchOrigin\)/);
+    assert.match(mapSearch, /import \{ onMount,\s*tick \} from 'svelte'/);
+    assert.match(mapSearch, /onMount\(\(\) => \{[\s\S]*requestSearchLocation\(\)/);
     assert.match(mapSearch, /function requestSearchLocation\(\)/);
     assert.match(mapSearch, /navigator\.geolocation\.getCurrentPosition/);
     assert.match(mapSearch, /function getResultMeta\(result\)/);
@@ -245,6 +247,7 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /class:beach-mode=\{isBeachView\}/);
     assert.match(recommendationPanel, /\{#if isBeachView && selectedRecommendation\}/);
     assert.match(recommendationPanel, /class="beach-panel-header"/);
+    assert.match(recommendationPanel, /class="beach-panel-handle"/);
     assert.match(recommendationPanel, /class="beach-panel-close"/);
     assert.match(recommendationPanel, /aria-label="Close beach view"/);
     assert.match(recommendationPanel, /onclick=\{onCloseBeach\}/);
@@ -252,6 +255,14 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /id="beach-mode-semi-time-slider"/);
     assert.match(beachPanelSource, /class="panel-content"[\s\S]*class="detail-metrics"[\s\S]*\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
     assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);
+    assert.match(css, /\.beach-panel-header\s*{[^}]*padding:\s*7px 10px 4px 12px/s);
+    assert.match(css, /\.beach-panel-handle\s*{[^}]*grid-column:\s*1 \/ -1/s);
+});
+
+test('nearby list does not expose raw source link chips', () => {
+    assert.doesNotMatch(recommendationPanel, /source-links compact/);
+    assert.doesNotMatch(recommendationPanel, /aria-label="\{place\.name\} source links"/);
+    assert.match(recommendationPanel, /aria-label="\{selectedRecommendation\.beach\.name\} source links"/);
 });
 
 test('recommendation panel labels watch-state recommendations as caution', () => {

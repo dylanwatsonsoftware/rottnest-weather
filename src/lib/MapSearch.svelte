@@ -1,5 +1,5 @@
 <script>
-    import { tick } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { buildPlaceSearchIndex, searchPlaces } from './placeSearch.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
@@ -22,6 +22,10 @@
     const searchOrigin = $derived(userLocation || localSearchLocation);
     const results = $derived(searchPlaces(searchIndex, query, 8, searchOrigin));
     const hasQuery = $derived(query.trim().length > 0);
+
+    onMount(() => {
+        requestSearchLocation();
+    });
 
     async function openSearch() {
         isOpen = true;

@@ -429,9 +429,18 @@ main {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 40px;
     align-items: start;
-    gap: 8px;
-    padding: 7px 10px 8px 12px;
+    gap: 4px 8px;
+    padding: 7px 10px 4px 12px;
     flex: 0 0 auto;
+}
+
+.beach-panel-handle {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 42px;
+    height: 5px;
+    border-radius: 999px;
+    background: #afc2c4;
 }
 
 .beach-panel-title {
@@ -1355,15 +1364,6 @@ main {
     color: #607072;
     font-size: 0.74rem;
     font-weight: 800;
-}
-
-.source-links.compact {
-    margin: 0 0 4px 8px;
-}
-
-.source-links.compact a {
-    padding: 3px 7px;
-    font-size: 0.68rem;
 }
 
 #controls {
