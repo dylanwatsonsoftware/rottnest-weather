@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { mockForecastApis } from './mockForecast.js';
 
 test('map search jumps to places and opens beach recommendations', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
     await page.goto('/');
 
     const searchToggle = page.getByRole('button', { name: 'Open map search' });

@@ -11,6 +11,7 @@ import {
     getPanelModeMapOffset,
     getPanelModePanOffset,
     shouldShowBeachLabel,
+    shouldShowPlaceMarker,
     shouldShowPlaceLabel,
     getVisibleMapAnchorOffset,
     getVisibleBeachFitReason,
@@ -228,4 +229,14 @@ test('place labels stay hidden unless the place was selected', () => {
     assert.equal(shouldShowPlaceLabel(place, 15, ''), false);
     assert.equal(shouldShowPlaceLabel(place, 15, 'Parker Point Stop'), true);
     assert.equal(shouldShowPlaceLabel(place, 11, 'Parker Point Stop'), true);
+});
+
+test('place markers use category priority to reduce map clutter', () => {
+    assert.equal(shouldShowPlaceMarker({ name: 'Bathurst Lighthouse', type: 'landmark', subtype: 'lighthouse' }, 10), true);
+    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 13), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 13), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 14), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 14), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 15), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 11, 'Parker Point Facilities'), true);
 });

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { mockForecastApis } from './mockForecast.js';
 
 test('user location appears only after moving inside Rottnest bounds', async ({ browser }) => {
     const context = await browser.newContext({
@@ -7,6 +8,7 @@ test('user location appears only after moving inside Rottnest bounds', async ({ 
         viewport: { width: 390, height: 844 }
     });
     const page = await context.newPage();
+    await mockForecastApis(page);
 
     await page.goto('http://127.0.0.1:4173/');
 

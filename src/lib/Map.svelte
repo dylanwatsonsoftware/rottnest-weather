@@ -8,6 +8,7 @@
         getNavigationSettleDelay,
         getPanelModePanOffset,
         shouldShowBeachLabel,
+        shouldShowPlaceMarker,
         shouldShowPlaceLabel,
         getVisibleMapAnchorOffset,
         getVisibleBeachFitReason,
@@ -224,11 +225,12 @@
     }
 
     function shouldShowPlace(place) {
+        const selected = place.name && place.name === selectedPlaceName;
         if (place.type === 'facility' || place.type === 'business') {
-            return filters.showFacilities === true && currentZoom > 12;
+            return (filters.showFacilities === true || selected) && shouldShowPlaceMarker(place, currentZoom, selectedPlaceName);
         }
-        if (filters.showLandmarks === false) return false;
-        return currentZoom > 10 || place.subtype === 'lighthouse';
+        if (filters.showLandmarks === false && !selected) return false;
+        return shouldShowPlaceMarker(place, currentZoom, selectedPlaceName);
     }
 
     function getPlaceIcon(place) {

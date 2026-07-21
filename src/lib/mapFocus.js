@@ -57,6 +57,20 @@ export function shouldShowPlaceLabel(place = {}, zoom = 12, selectedPlaceName = 
     return Boolean(place.name && place.name === selectedPlaceName);
 }
 
+export function shouldShowPlaceMarker(place = {}, zoom = 12, selectedPlaceName = '') {
+    if (place.name && place.name === selectedPlaceName) return true;
+    if (place.subtype === 'lighthouse') return true;
+
+    const category = place.category || place.subtype || place.type;
+    if (place.type === 'landmark') return zoom > 10;
+    if (category === 'cafe' || category === 'restaurant' || place.type === 'business') return zoom >= 13;
+    if (category === 'visitor_centre' || category === 'bus_stop') return zoom >= 14;
+    if (category === 'toilets' || category === 'drinking_water' || category === 'bbq' || category === 'bicycle_parking' || category === 'shower') {
+        return zoom >= 15;
+    }
+    return zoom >= 15;
+}
+
 export function getVisibleBeachFitPoints(recommendations = []) {
     return recommendations
         .map((recommendation) => recommendation.beach)

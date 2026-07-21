@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { mockForecastApis } from './mockForecast.js';
 
 const viewports = [
     { name: 'narrow phone', width: 360, height: 740 },
@@ -11,6 +12,7 @@ const viewports = [
 for (const viewport of viewports) {
     test(`primary layout fits ${viewport.name}`, async ({ page }) => {
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await mockForecastApis(page);
         await page.goto('/');
 
         await expect(page.locator('header')).toBeVisible();
