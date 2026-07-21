@@ -216,13 +216,16 @@ export function getMapLayoutChangeTarget(beach, panelMode = 'collapsed', previou
 export function getMapNavigationTarget(place, zoom = 15, offset = [0, 180]) {
     if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return null;
 
-    return {
+    const target = {
         name: place.name,
         lat: place.lat,
         lon: place.lon,
         zoom,
         offset
     };
+    if (place.source_url) target.source_url = place.source_url;
+    if (place.coordinate_source_url) target.coordinate_source_url = place.coordinate_source_url;
+    return target;
 }
 
 export function getVisibleMapAnchorOffset({

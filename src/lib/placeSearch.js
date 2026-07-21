@@ -50,7 +50,9 @@ function toSearchResult(place, kind) {
         category: place.category,
         subtype: place.subtype,
         type: place.type || kind,
-        ratingLabel: getFacilityRatingLabel(place)
+        ratingLabel: getFacilityRatingLabel(place),
+        source_url: place.source_url,
+        coordinate_source_url: place.coordinate_source_url
     };
 }
 

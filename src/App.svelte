@@ -111,6 +111,18 @@
         return target?.type === 'landmark' || target?.type === 'facility' || target?.type === 'business';
     }
 
+    function getSelectedMapPlaceLinks(place = selectedMapPlace) {
+        const links = [];
+        const addLink = (url, label) => {
+            if (!url || links.some((link) => link.url === url)) return;
+            links.push({ url, label });
+        };
+
+        addLink(place?.source_url, 'Source');
+        addLink(place?.coordinate_source_url, 'Coordinate source');
+        return links;
+    }
+
     function selectTopRecommendation(name) {
         revealBeachInPanel(name);
     }
@@ -316,6 +328,7 @@
         onNavigateToMap={navigateToMapTarget}
     />
     {#if selectedMapPlace}
+        {@const selectedMapPlaceLinks = getSelectedMapPlaceLinks(selectedMapPlace)}
         <aside class="selected-map-place-card" aria-label="Selected map place">
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
             <div>
@@ -324,6 +337,13 @@
                 <span>
                     {[selectedMapPlaceDistanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
                 </span>
+                {#if selectedMapPlaceLinks.length}
+                    <nav class="selected-map-place-links" aria-label="{selectedMapPlace.name} source links">
+                        {#each selectedMapPlaceLinks as link}
+                            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+                        {/each}
+                    </nav>
+                {/if}
             </div>
         </aside>
     {/if}

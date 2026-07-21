@@ -350,6 +350,31 @@ main {
     white-space: nowrap;
 }
 
+.selected-map-place-links,
+.source-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.selected-map-place-links a,
+.source-links a {
+    border-radius: 999px;
+    background: #e4eeee;
+    padding: 4px 8px;
+    color: #0b6476;
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-decoration: none;
+}
+
+.selected-map-place-links a:focus-visible,
+.source-links a:focus-visible {
+    outline: 3px solid rgba(11, 117, 131, 0.3);
+    outline-offset: 2px;
+}
+
 .selected-map-place-close {
     width: 36px;
     height: 36px;
@@ -1161,6 +1186,10 @@ main {
     margin: 4px 4px 0 0;
 }
 
+.source-links {
+    margin: 8px 0 2px;
+}
+
 .nearby-list {
     margin-top: 10px;
     display: grid;
@@ -1171,6 +1200,11 @@ main {
 
 .nearby-list strong {
     color: #1d2b2c;
+}
+
+.nearby-place-row {
+    display: grid;
+    gap: 4px;
 }
 
 .nearby-list button {
@@ -1219,6 +1253,15 @@ main {
     color: #607072;
     font-size: 0.74rem;
     font-weight: 800;
+}
+
+.source-links.compact {
+    margin: 0 0 4px 8px;
+}
+
+.source-links.compact a {
+    padding: 3px 7px;
+    font-size: 0.68rem;
 }
 
 #controls {

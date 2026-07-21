@@ -97,6 +97,14 @@ test('selected map place card derives distance from the current user location', 
     assert.match(app, /\[selectedMapPlaceDistanceLabel,\s*selectedMapPlace\.ratingLabel\]\.filter\(Boolean\)\.join\(' · '\)/);
 });
 
+test('selected map place card exposes source links when available', () => {
+    assert.match(app, /function getSelectedMapPlaceLinks\(place = selectedMapPlace\)/);
+    assert.match(app, /place\?\.source_url/);
+    assert.match(app, /place\?\.coordinate_source_url/);
+    assert.match(app, /class="selected-map-place-links"/);
+    assert.match(app, /href=\{link\.url\}/);
+});
+
 test('selected beach remains visible on the map even when filters exclude it', () => {
     assert.match(app, /const mapRecommendations = \$derived/);
     assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);

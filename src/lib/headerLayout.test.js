@@ -182,6 +182,16 @@ test('nearby landmarks and food venues can show bundled place photos', () => {
     assert.match(css, /\.nearby-place-thumbnail\s*{[^}]*aspect-ratio:\s*4 \/ 3/s);
 });
 
+test('beach and nearby details expose source links when bundled data has them', () => {
+    assert.match(recommendationPanel, /function getSourceLinks\(place = \{\}\)/);
+    assert.match(recommendationPanel, /place\.guide_sources/);
+    assert.match(recommendationPanel, /class="source-links"/);
+    assert.match(recommendationPanel, /href=\{link\.url\}/);
+    assert.match(recommendationPanel, /Official guide/);
+    assert.match(recommendationPanel, /Source/);
+    assert.match(css, /\.source-links\s*{/);
+});
+
 test('beach photos can open in a larger modal view', () => {
     assert.match(recommendationPanel, /let selectedPhoto = \$state\(null\)/);
     assert.match(recommendationPanel, /onclick=\{\(\) => selectedPhoto = image\}/);

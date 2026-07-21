@@ -164,6 +164,19 @@
         return formatDistanceLabel(getDistanceKm(origin.lat, origin.lon, beach.lat, beach.lon));
     }
 
+    function getSourceLinks(place = {}) {
+        const links = [];
+        const addLink = (url, label) => {
+            if (!url || links.some((link) => link.url === url)) return;
+            links.push({ url, label });
+        };
+
+        place.guide_sources?.forEach((url, index) => addLink(url, index === 0 ? 'Official guide' : `Guide ${index + 1}`));
+        addLink(place.source_url, 'Source');
+        addLink(place.coordinate_source_url, 'Coordinate source');
+        return links;
+    }
+
     function scrollBeachDetailIntoView() {
         beachDetailElement?.scrollIntoView({
             behavior: 'smooth',
@@ -443,6 +456,13 @@
                 {#each beachDetailNotes as note}
                     <p class="detail-note">{note}</p>
                 {/each}
+                {#if getSourceLinks(selectedRecommendation.beach).length}
+                    <div class="source-links" aria-label="{selectedRecommendation.beach.name} source links">
+                        {#each getSourceLinks(selectedRecommendation.beach) as link}
+                            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+                        {/each}
+                    </div>
+                {/if}
                 {#if selectedRecommendation.nextGood}
                     <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
                 {/if}
@@ -451,21 +471,31 @@
                         <strong>Nearby</strong>
                         {#each nearbyPlaces as place}
                             {@const placeImage = getPrimaryPlaceImage(place)}
-                            <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
-                                {#if placeImage}
-                                    <img class="nearby-place-thumbnail" src={placeImage.src} alt={placeImage.alt} loading="lazy" />
-                                {/if}
-                                <span>
-                                    <small aria-hidden="true">{place.icon || getFacilityIcon(place.category)}</small>
-                                    {place.name}
-                                </span>
-                                <small>
-                                    {#if getFacilityRatingLabel(place)}
-                                        {getFacilityRatingLabel(place)} ·
+                            {@const sourceLinks = getSourceLinks(place)}
+                            <div class="nearby-place-row">
+                                <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
+                                    {#if placeImage}
+                                        <img class="nearby-place-thumbnail" src={placeImage.src} alt={placeImage.alt} loading="lazy" />
                                     {/if}
-                                    {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
-                                </small>
-                            </button>
+                                    <span>
+                                        <small aria-hidden="true">{place.icon || getFacilityIcon(place.category)}</small>
+                                        {place.name}
+                                    </span>
+                                    <small>
+                                        {#if getFacilityRatingLabel(place)}
+                                            {getFacilityRatingLabel(place)} ·
+                                        {/if}
+                                        {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
+                                    </small>
+                                </button>
+                                {#if sourceLinks.length}
+                                    <div class="source-links compact" aria-label="{place.name} source links">
+                                        {#each sourceLinks as link}
+                                            <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+                                        {/each}
+                                    </div>
+                                {/if}
+                            </div>
                         {/each}
                     </div>
                 {/if}
