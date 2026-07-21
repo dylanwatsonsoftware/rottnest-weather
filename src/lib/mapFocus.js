@@ -66,6 +66,14 @@ export function shouldShowBeachLabel(recommendation = {}, zoom = 12, selectedBea
     return rank < 1;
 }
 
+export function shouldShowBeachMarker(recommendation = {}, zoom = 12, selectedBeachName = '', rank = 0) {
+    const beachName = recommendation.beach?.name || '';
+    if (beachName && beachName === selectedBeachName) return true;
+    if (zoom > 12) return true;
+    if (recommendation.state === 'best') return true;
+    return rank < 2;
+}
+
 export function getBeachMarkerSize(recommendation = {}, zoom = 12, selectedBeachName = '', rank = 0) {
     const beachName = recommendation.beach?.name || '';
     if (beachName && beachName === selectedBeachName) return toMarkerSize(40);
@@ -74,6 +82,54 @@ export function getBeachMarkerSize(recommendation = {}, zoom = 12, selectedBeach
     if (rank < 4) return toMarkerSize(34);
     if (zoom >= 12) return toMarkerSize(28);
     return toMarkerSize(24);
+}
+
+export function getGoodBeachOverlayAreas(recommendations = [], {
+    clusterDistanceKm = 1.8,
+    maxAreas = 5,
+    paddingLat = 0.0024,
+    paddingLon = 0.0032
+} = {}) {
+    const candidates = recommendations
+        .filter((recommendation) => recommendation.state === 'best' || recommendation.state === 'good')
+        .filter((recommendation) => Number.isFinite(recommendation.beach?.lat) && Number.isFinite(recommendation.beach?.lon));
+
+    const clusters = [];
+    candidates.forEach((recommendation) => {
+        const cluster = clusters.find((item) => getApproxDistanceKm(getClusterCenter(item), recommendation.beach) <= clusterDistanceKm);
+        if (cluster) {
+            cluster.items.push(recommendation);
+        } else {
+            clusters.push({ items: [recommendation] });
+        }
+    });
+
+    return clusters
+        .map((cluster, index) => {
+            const lats = cluster.items.map((item) => item.beach.lat);
+            const lons = cluster.items.map((item) => item.beach.lon);
+            const minLat = Math.min(...lats) - paddingLat;
+            const maxLat = Math.max(...lats) + paddingLat;
+            const minLon = Math.min(...lons) - paddingLon;
+            const maxLon = Math.max(...lons) + paddingLon;
+            const bestScore = Math.max(...cluster.items.map((item) => item.score || 0));
+            const state = cluster.items.some((item) => item.state === 'best') ? 'best' : 'good';
+
+            return {
+                id: `area-${index}-${cluster.items.map((item) => item.beach.name).join('-')}`,
+                state,
+                score: bestScore,
+                beachNames: cluster.items.map((item) => item.beach.name),
+                points: [
+                    [minLat, minLon],
+                    [maxLat, minLon],
+                    [maxLat, maxLon],
+                    [minLat, maxLon]
+                ]
+            };
+        })
+        .sort((a, b) => b.score - a.score || b.beachNames.length - a.beachNames.length)
+        .slice(0, maxAreas);
 }
 
 export function shouldShowPlaceLabel(place = {}, zoom = 12, selectedPlaceName = '') {
@@ -215,6 +271,24 @@ function toMarkerSize(size) {
         size,
         anchor: size / 2
     };
+}
+
+function getClusterCenter(cluster) {
+    const totals = cluster.items.reduce((sum, item) => ({
+        lat: sum.lat + item.beach.lat,
+        lon: sum.lon + item.beach.lon
+    }), { lat: 0, lon: 0 });
+
+    return {
+        lat: totals.lat / cluster.items.length,
+        lon: totals.lon / cluster.items.length
+    };
+}
+
+function getApproxDistanceKm(a, b) {
+    const latKm = (a.lat - b.lat) * 111;
+    const lonKm = (a.lon - b.lon) * 111 * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180);
+    return Math.sqrt(latKm ** 2 + lonKm ** 2);
 }
 
 function isPanelOpen(panelMode) {

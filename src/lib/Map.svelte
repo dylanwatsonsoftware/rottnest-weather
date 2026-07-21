@@ -8,7 +8,9 @@
         getNavigationSettleDelay,
         getPanelModePanOffset,
         getBeachMarkerSize,
+        getGoodBeachOverlayAreas,
         shouldShowBeachLabel,
+        shouldShowBeachMarker,
         shouldShowPlaceMarker,
         shouldShowPlaceLabel,
         getVisibleMapAnchorOffset,
@@ -126,7 +128,7 @@
 
         recommendations.forEach((recommendation, index) => {
             const beach = recommendation.beach;
-            if (beach.lat && beach.lon) {
+            if (beach.lat && beach.lon && shouldShowBeachMarker(recommendation, currentZoom, selectedBeachName, index)) {
                 const marker = L.marker([beach.lat, beach.lon], {
                     icon: getBeachIcon(recommendation, index)
                 })
@@ -162,28 +164,36 @@
         beachQualityOverlays = [];
         if (!map || !shouldShowGoodBeachOverlay(currentZoom)) return;
 
-        recommendations
-            .filter((recommendation) => recommendation.state === 'best' || recommendation.state === 'good')
-            .filter((recommendation) => Number.isFinite(recommendation.beach?.lat) && Number.isFinite(recommendation.beach?.lon))
-            .slice(0, 8)
-            .forEach((recommendation) => {
-                const color = recommendation.state === 'best' ? '#167a52' : '#2e8b86';
-                const overlay = L.circleMarker([recommendation.beach.lat, recommendation.beach.lon], {
-                    radius: recommendation.state === 'best' ? 28 : 22,
+        getGoodBeachOverlayAreas(recommendations)
+            .forEach((area) => {
+                const color = area.state === 'best' ? '#167a52' : '#2e8b86';
+                const overlay = L.polygon(area.points, {
                     color,
                     fillColor: color,
-                    fillOpacity: 0.22,
-                    opacity: 0.82,
-                    weight: 2,
+                    fillOpacity: area.state === 'best' ? 0.24 : 0.18,
+                    opacity: 0.78,
+                    weight: area.state === 'best' ? 3 : 2,
                     interactive: false,
-                    className: `good-beach-overlay ${recommendation.state}`
+                    className: `good-beach-overlay ${area.state}`
                 }).addTo(map);
+                overlay.bindTooltip(getBeachQualityOverlayLabel(area), {
+                    permanent: true,
+                    direction: 'center',
+                    className: `good-beach-overlay-label ${area.state}`,
+                    opacity: 0.92
+                });
                 beachQualityOverlays.push(overlay);
             });
     }
 
     function shouldShowGoodBeachOverlay(zoom) {
         return zoom <= 12;
+    }
+
+    function getBeachQualityOverlayLabel(area) {
+        const count = area.beachNames.length;
+        const state = area.state === 'best' ? 'Best area' : 'Good area';
+        return count > 1 ? `${state} · ${count} beaches` : state;
     }
 
     function initUserLocation() {
