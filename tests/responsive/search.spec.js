@@ -69,6 +69,11 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toBeVisible();
     await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('time=');
+    await expect(page).toHaveTitle(/Little Salmon Bay at .* \| Rottnest/);
+    await expect.poll(() => page.locator('meta[property="og:title"]').getAttribute('content')).toContain('Little Salmon Bay');
+    await expect.poll(() => page.locator('meta[property="og:description"]').getAttribute('content')).toContain('recommended beaches');
+    await expect.poll(() => page.locator('meta[property="og:description"]').getAttribute('content')).toContain('Wind');
+    await expect.poll(() => page.locator('meta[property="og:url"]').getAttribute('content')).toContain('location=beach%3Alittle-salmon-bay');
 
     await page.getByRole('button', { name: 'Open map search' }).click();
     await search.fill('Parker Point Bus Stop');

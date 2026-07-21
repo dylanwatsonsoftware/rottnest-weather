@@ -157,6 +157,16 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /shareUrl=\{currentShareUrl\}/);
 });
 
+test('social meta follows selected location time recommendations conditions and image', () => {
+    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount,\s*updateDocumentSocialMeta \} from '\.\/lib\/socialMeta\.js';/);
+    assert.match(app, /const selectedSocialLocationName = \$derived/);
+    assert.match(app, /const selectedSocialImage = \$derived/);
+    assert.match(app, /getPrimaryPlaceImage\(selectedMapPlace\)/);
+    assert.match(app, /getBeachImages\(selectedRecommendation\?\.beach\?\.name\)\[0\]/);
+    assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl[\s\S]*imageUrl:\s*selectedSocialImage\?\.src/);
+    assert.match(app, /updateDocumentSocialMeta\(document,\s*currentSocialMeta\)/);
+});
+
 test('incoming shared beach and place links are restored after app data loads', () => {
     assert.match(app, /sharedLocationState = getSharedLocationFromUrl\(window\.location\.href\)/);
     assert.match(app, /function applySharedLocationState\(appData\)/);

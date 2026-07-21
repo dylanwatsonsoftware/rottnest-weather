@@ -13,7 +13,9 @@
     import { formatDistanceLabel, getDistanceKm, getFacilityRatingLabel, getFacilityTypeLabel, mergeFacilityEnrichment } from './lib/facilities.js';
     import { readForecastCache, writeForecastCache } from './lib/forecastCache.js';
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
+    import { getBeachImages } from './lib/beachMedia.js';
     import { getPrimaryPlaceImage } from './lib/placeMedia.js';
+    import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
     import {
         buildShareUrl,
         getSharedLocationFromUrl,
@@ -402,6 +404,20 @@
             : selectedMapPlace?.distanceLabel || ''
     );
     const selectedMapPlaceImage = $derived(getPrimaryPlaceImage(selectedMapPlace));
+    const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
+    const selectedSocialImage = $derived(
+        selectedMapPlace
+            ? getPrimaryPlaceImage(selectedMapPlace)
+            : getBeachImages(selectedRecommendation?.beach?.name)[0]
+    );
+    const currentSocialMeta = $derived(buildSocialMeta({
+        locationName: selectedSocialLocationName,
+        selectedTime: selectedForecastTime,
+        recommendedBeachCount: getRecommendedBeachCount(recommendations),
+        conditions: currentConditions,
+        url: currentShareUrl,
+        imageUrl: selectedSocialImage?.src
+    }));
 
     $effect(() => {
         if (!selectedMapPlace || !mapNavigationRequest || mapNavigationRequest.name !== selectedMapPlace.name) return;
@@ -417,6 +433,10 @@
         const selectedName = selectedBeachName || selectedMapPlace?.name || '';
         const selectedHour = hourIndex;
         updateShareUrl();
+    });
+
+    $effect(() => {
+        updateDocumentSocialMeta(document, currentSocialMeta);
     });
 
 </script>
