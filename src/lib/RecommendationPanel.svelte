@@ -383,7 +383,10 @@
                         </div>
                     {/if}
                     {#if selectedRecommendation.nextGood}
-                        <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
+                        <p class="next-good-window">
+                            <span>Next good window</span>
+                            <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
+                        </p>
                     {/if}
                     {#if nearbyPlaces.length}
                         <div class="nearby-list">
@@ -637,7 +640,10 @@
                     </div>
                 {/if}
                 {#if selectedRecommendation.nextGood}
-                    <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
+                    <p class="next-good-window">
+                        <span>Next good window</span>
+                        <strong>{formatTime(selectedRecommendation.nextGood.time)}</strong>
+                    </p>
                 {/if}
                 {#if nearbyPlaces.length}
                     <div class="nearby-list">

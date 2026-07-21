@@ -1078,6 +1078,30 @@ main {
     font-size: 0.76rem;
 }
 
+.next-good-window {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 0;
+    border: 1px solid #d28a16;
+    border-radius: 999px;
+    background: #fff4d8;
+    padding: 6px 10px;
+    color: #593b00;
+    font-size: 0.78rem;
+    font-weight: 850;
+}
+
+.next-good-window span {
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.next-good-window strong {
+    color: #0b6476;
+    font-size: 0.86rem;
+}
+
 .beach-photo-strip {
     display: grid;
     grid-auto-flow: column;

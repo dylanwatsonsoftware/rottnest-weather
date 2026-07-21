@@ -279,6 +279,13 @@ test('recommendation rows show a status heatbar instead of window summary text',
     assert.match(css, /\.recommendation-heatbar-marker\s*{[^}]*left:\s*var\(--recommendation-progress,\s*0%\)/s);
 });
 
+test('next good window hints are visually highlighted in beach details', () => {
+    assert.match(recommendationPanel, /class="next-good-window"/);
+    assert.doesNotMatch(recommendationPanel, /<p class="detail-note">Next good window:/);
+    assert.match(css, /\.next-good-window\s*{[^}]*background:\s*#fff4d8/s);
+    assert.match(css, /\.next-good-window\s*{[^}]*border:\s*1px solid #d28a16/s);
+});
+
 test('settings are shown in a dialog instead of a tab', () => {
     assert.match(recommendationPanel, /let settingsOpen = \$state\(false\)/);
     assert.match(recommendationPanel, /class="settings-modal"/);
