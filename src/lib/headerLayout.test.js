@@ -65,6 +65,7 @@ test('floating map search is a compact icon until opened', () => {
 test('selected nearby map places have an obvious marker and label', () => {
     assert.match(css, /\.landmark-icon\.selected\s*{[^}]*border:\s*3px solid white/s);
     assert.match(css, /\.landmark-icon\.selected\s*{[^}]*box-shadow:[^}]*0 0 0 4px #0b7583/s);
+    assert.match(css, /\.landmark-icon span\s*{[^}]*pointer-events:\s*none/s);
     assert.match(css, /\.place-label\s*{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.96\)/s);
     assert.match(css, /\.place-label\.selected\s*{[^}]*border-color:\s*#0b7583/s);
 });

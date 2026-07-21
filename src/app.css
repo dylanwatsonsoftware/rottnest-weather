@@ -1659,6 +1659,7 @@ main {
 
 .landmark-icon span {
     font-size: 15px;
+    pointer-events: none;
 }
 
 .user-location-marker {

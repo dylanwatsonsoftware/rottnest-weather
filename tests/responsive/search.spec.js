@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { mockForecastApis } from './mockForecast.js';
+import { getMockForecastTime, getMockForecastTimePattern, mockForecastApis } from './mockForecast.js';
 
 test('map search jumps to places and opens beach recommendations', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -22,6 +22,18 @@ test('map search jumps to places and opens beach recommendations', async ({ page
     await page.locator('.map-search-results').getByRole('button', { name: /Little Salmon Bay/i }).click();
     await expect(page.locator('.recommendation-panel:not(.collapsed)')).toBeVisible();
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
+});
+
+test('clicking a non-beach map marker opens the selected place card', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/');
+
+    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+
+    await expect(page.locator('.selected-map-place-card')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Share / })).toBeVisible();
+    await expect(page.locator('.recommendation-panel.closed')).toBeVisible();
 });
 
 test('selected locations and forecast time are encoded in the URL for sharing', async ({ page }) => {
@@ -50,36 +62,39 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
 test('shared beach URLs restore the selected beach and time', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
-    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&panel=open');
+    const sharedTime = getMockForecastTime(2);
+    await page.goto(`/?location=beach%3Alittle-salmon-bay&time=${encodeURIComponent(sharedTime)}&panel=open`);
 
     await expect(page.locator('.recommendation-panel.beach-mode.open')).toBeVisible();
     await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
-    await expect(page.locator('.detail-time-control')).toContainText(/8am/i);
+    await expect(page.locator('.detail-time-control')).toContainText(getMockForecastTimePattern(2));
     await expect(page.locator('.beach-label', { hasText: 'Little Salmon Bay' }).first()).toBeVisible();
 });
 
 test('shared URLs preserve selected beach panel state', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
+    const sharedTime = getMockForecastTime(2);
 
-    await page.goto('/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&panel=semi');
+    await page.goto(`/?location=beach%3Alittle-salmon-bay&time=${encodeURIComponent(sharedTime)}&panel=semi`);
 
     await expect(page.locator('.recommendation-panel.beach-mode.semi')).toBeVisible();
     await expect(page.locator('.beach-panel-title', { hasText: 'Little Salmon Bay' })).toBeVisible();
-    await expect(page.locator('.beach-mode-time-control')).toContainText(/8am/i);
+    await expect(page.locator('.beach-mode-time-control')).toContainText(getMockForecastTimePattern(2));
     await expect.poll(() => page.url()).toContain('panel=semi');
 });
 
 test('shared cafe and dive spot URLs restore selected map places', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
+    const sharedTime = encodeURIComponent(getMockForecastTime(2));
 
-    await page.goto('/?location=facility%3Apinkys-rottnest-island&time=2026-07-21T08%3A00');
+    await page.goto(`/?location=facility%3Apinkys-rottnest-island&time=${sharedTime}`);
     await expect(page.locator('.selected-map-place-card', { hasText: "Pinky's Beach Club" })).toBeVisible();
     await expect(page.getByRole('button', { name: "Share Pinky's Beach Club" })).toBeVisible();
     await expect.poll(() => page.url()).toContain('location=facility%3Apinkys-rottnest-island');
 
-    await page.goto('/?location=landmark%3Acrystal-palace-dive-site&time=2026-07-21T08%3A00');
+    await page.goto(`/?location=landmark%3Acrystal-palace-dive-site&time=${sharedTime}`);
     await expect(page.locator('.selected-map-place-card', { hasText: 'Crystal Palace Dive Site' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Share Crystal Palace Dive Site' })).toBeVisible();
     await expect.poll(() => page.url()).toContain('location=landmark%3Acrystal-palace-dive-site');

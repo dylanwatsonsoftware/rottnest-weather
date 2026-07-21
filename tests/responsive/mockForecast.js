@@ -28,6 +28,21 @@ export async function mockForecastApis(page) {
     });
 }
 
+export function getMockForecastTime(offsetHours = 2) {
+    const start = new Date();
+    start.setMinutes(0, 0, 0);
+    start.setHours(start.getHours() + offsetHours);
+    return start.toISOString().slice(0, 16);
+}
+
+export function getMockForecastTimePattern(offsetHours = 2) {
+    const date = new Date(getMockForecastTime(offsetHours));
+    const hour = date.getHours();
+    const hour12 = hour % 12 || 12;
+    const period = hour >= 12 ? 'pm' : 'am';
+    return new RegExp(`${hour12}${period}`, 'i');
+}
+
 function buildForecastPayload(hours = 240) {
     const start = new Date();
     start.setMinutes(0, 0, 0);

@@ -5,6 +5,7 @@
     import {
         getInitialFitSettings,
         getLandmarkFitPoints,
+        getMapNavigationTarget,
         getNavigationSettleDelay,
         getPanelModeMapOffset,
         getPanelModePanOffset,
@@ -44,6 +45,7 @@
     let beachMarkers = [];
     let beachQualityOverlays = [];
     let placeMarkers = [];
+    let placeClickTargets = new Map();
     let userLocationMarker = null;
     let userLocationCircle = null;
     let currentZoom = $state(12);
@@ -79,6 +81,7 @@
         }).addTo(map);
 
         initUserLocation();
+        mapElement.addEventListener('click', handleMapElementClick);
         map.on('zoomend', () => {
             const nextZoom = map.getZoom();
             currentZoom = nextZoom;
@@ -91,6 +94,7 @@
         onZoomChange(currentZoom);
 
         return () => {
+            mapElement.removeEventListener('click', handleMapElementClick);
             map.remove();
         };
     });
@@ -98,6 +102,7 @@
     function initLandmarks() {
         placeMarkers.forEach(({ marker }) => marker.remove());
         placeMarkers = [];
+        placeClickTargets = new Map();
 
         [...landmarks, ...facilities].forEach(place => {
             if (!shouldShowPlace(place)) return;
@@ -111,11 +116,15 @@
                 iconSize: [28, 28],
                 iconAnchor: [14, 14]
             });
-            const marker = L.marker([place.lat, place.lon], { icon })
-                .on('click', () => {
-                    const target = getPlaceNavigationTarget(place);
-                    if (target) onNavigateToMap(target);
-                })
+            const selectPlace = () => {
+                const target = getPlaceNavigationTarget(place);
+                if (target) onNavigateToMap(target);
+            };
+            const placeKey = `${place.type || 'landmark'}:${place.id || place.name}`;
+            placeClickTargets.set(placeKey, selectPlace);
+            const marker = L.marker([place.lat, place.lon], { icon });
+            marker.on('click', selectPlace);
+            marker
                 .bindTooltip(getPlaceTooltipLabel(place), {
                     permanent: shouldShowPlaceLabel(place, currentZoom, selectedPlaceName),
                     direction: 'top',
@@ -123,8 +132,34 @@
                     offset: [0, -8]
                 })
                 .addTo(map);
+            attachPlaceClickTarget(marker, selectPlace, placeKey);
             if (selected) marker.setZIndexOffset(1000);
             placeMarkers.push({ marker, place });
+        });
+    }
+
+    function handleMapElementClick(event) {
+        const markerElement = event.target.closest?.('.landmark-icon');
+        const placeKey = markerElement?.dataset?.placeKey;
+        const selectPlace = placeClickTargets.get(placeKey);
+        if (!selectPlace) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        selectPlace();
+    }
+
+    function attachPlaceClickTarget(marker, selectPlace, placeKey) {
+        requestAnimationFrame(() => {
+            const markerElement = marker.getElement();
+            if (!markerElement) return;
+
+            markerElement.dataset.placeKey = placeKey;
+            markerElement.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                selectPlace();
+            };
         });
     }
 

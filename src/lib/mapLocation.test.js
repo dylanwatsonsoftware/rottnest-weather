@@ -30,6 +30,19 @@ test('map highlights selected nearby places with a visible label', () => {
     assert.match(mapSource, /if \(selected\) marker\.setZIndexOffset\(1000\)/);
 });
 
+test('map place markers have a direct DOM click path for custom div icons', () => {
+    assert.match(mapSource, /const selectPlace = \(\) => \{/);
+    assert.match(mapSource, /mapElement\.addEventListener\('click',\s*handleMapElementClick\)/);
+    assert.match(mapSource, /function handleMapElementClick\(event\)/);
+    assert.match(mapSource, /event\.target\.closest\?\.\('\.landmark-icon'\)/);
+    assert.match(mapSource, /placeClickTargets\.get\(placeKey\)/);
+    assert.match(mapSource, /attachPlaceClickTarget\(marker,\s*selectPlace,\s*placeKey\)/);
+    assert.match(mapSource, /function attachPlaceClickTarget\(marker,\s*selectPlace,\s*placeKey\)/);
+    assert.match(mapSource, /requestAnimationFrame\(\(\) => \{/);
+    assert.match(mapSource, /markerElement\.onclick = \(event\) => \{/);
+    assert.match(mapSource, /markerElement\.dataset\.placeKey = placeKey/);
+});
+
 test('manual zoom does not recenter to the selected navigation request', () => {
     const zoomHandlerStart = mapSource.indexOf("map.on('zoomend'");
     assert.notEqual(zoomHandlerStart, -1);

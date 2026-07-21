@@ -100,7 +100,8 @@ test('map place markers use selected-place navigation for deep links', () => {
 
     assert.match(app, /<Map[\s\S]*onNavigateToMap=\{navigateToMapTarget\}/);
     assert.match(map, /onNavigateToMap = \(\) => \{\}/);
-    assert.match(map, /\.on\('click',\s*\(\) => \{[\s\S]*getPlaceNavigationTarget\(place\)[\s\S]*onNavigateToMap\(target\)/);
+    assert.match(map, /const selectPlace = \(\) => \{[\s\S]*getPlaceNavigationTarget\(place\)[\s\S]*onNavigateToMap\(target\)/);
+    assert.match(map, /\.on\('click',\s*selectPlace\)/);
     assert.match(map, /function getPlaceNavigationTarget\(place\)/);
     assert.match(map, /getPanelModeMapOffset\(panelMode,\s*mapLayout\)/);
 });
