@@ -28,6 +28,7 @@
     let panelOpenRequest = $state(0);
     let panelScrollRequest = $state(0);
     let mapNavigationRequest = $state(null);
+    let selectedMapPlace = $state(null);
     let userLocation = $state(null);
     let mapNavigationSequence = 0;
     let mapLayout = $state('default');
@@ -67,6 +68,7 @@
     function navigateToMapTarget(target) {
         if (!target) return;
         mapNavigationSequence += 1;
+        selectedMapPlace = isMapPlaceTarget(target) ? target : null;
         mapNavigationRequest = {
             ...target,
             requestId: mapNavigationSequence
@@ -88,10 +90,20 @@
     }
 
     function selectBeach(name, targetPanelMode = panelMode) {
+        selectedMapPlace = null;
         selectedBeachName = name;
         const beach = beaches.find((item) => item.name === name);
         const target = getBeachSelectionMapTarget(beach, targetPanelMode, mapLayout);
         if (target) navigateToMapTarget(target);
+    }
+
+    function clearSelectedMapPlace() {
+        selectedMapPlace = null;
+        mapNavigationRequest = null;
+    }
+
+    function isMapPlaceTarget(target) {
+        return target?.type === 'landmark' || target?.type === 'facility' || target?.type === 'business';
     }
 
     function selectTopRecommendation(name) {
@@ -280,6 +292,18 @@
         onSelectBeach={selectSearchBeach}
         onNavigateToMap={navigateToMapTarget}
     />
+    {#if selectedMapPlace}
+        <aside class="selected-map-place-card" aria-label="Selected map place">
+            <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
+            <div>
+                <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
+                <strong>{selectedMapPlace.name}</strong>
+                <span>
+                    {[selectedMapPlace.distanceLabel, selectedMapPlace.ratingLabel].filter(Boolean).join(' · ')}
+                </span>
+            </div>
+        </aside>
+    {/if}
     {#if hasLoadedForecast}
         <RecommendationPanel
             {beaches}

@@ -19,6 +19,14 @@ test('nearby facility and business navigation enables the places layer', () => {
     assert.match(app, /target\.type === 'facility' \|\| target\.type === 'business'/);
 });
 
+test('non-beach map places use a dismissible selected-place mode', () => {
+    assert.match(app, /let selectedMapPlace = \$state\(null\)/);
+    assert.match(app, /function clearSelectedMapPlace\(\)/);
+    assert.match(app, /selectedMapPlace = isMapPlaceTarget\(target\) \? target : null/);
+    assert.match(app, /class="selected-map-place-card"/);
+    assert.match(app, /aria-label="Close selected place"/);
+});
+
 test('food and facilities layer is visible by default', () => {
     assert.match(app, /showLandmarks: true,\s+showFacilities: true,\s+showUserLocation: true/);
 });

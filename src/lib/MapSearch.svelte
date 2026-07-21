@@ -52,6 +52,7 @@
                 onNavigateToMap({
                     ...target,
                     type: result.kind,
+                    label: result.label,
                     distanceKm: result.distanceKm,
                     distanceLabel: result.distanceLabel,
                     ratingLabel: result.ratingLabel

@@ -123,8 +123,10 @@
         onNavigateToMap({
             ...target,
             type: place.type,
+            label: place.label,
             distanceKm: place.distanceKm,
-            distanceLabel: Number.isFinite(place.distanceKm) ? formatDistanceLabel(place.distanceKm) : ''
+            distanceLabel: Number.isFinite(place.distanceKm) ? formatDistanceLabel(place.distanceKm) : '',
+            ratingLabel: getFacilityRatingLabel(place)
         });
     }
 

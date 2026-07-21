@@ -305,6 +305,63 @@ main {
     border-radius: 16px 16px 0 0;
 }
 
+.recommendation-panel.closed {
+    max-height: 58px;
+}
+
+.selected-map-place-card {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: 76px;
+    z-index: 1260;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 12px 14px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #203133;
+    box-shadow: 0 12px 32px rgba(13, 34, 38, 0.24);
+    backdrop-filter: blur(12px);
+}
+
+.selected-map-place-card div {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.selected-map-place-card small,
+.selected-map-place-card span {
+    color: #5d6d6f;
+    font-size: 0.74rem;
+    font-weight: 750;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.selected-map-place-card strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.selected-map-place-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(34, 60, 63, 0.16);
+    border-radius: 999px;
+    background: #eef5f5;
+    color: #0b6476;
+    font-size: 1.2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
 .panel-collapse-toggle {
     width: 100%;
     min-height: 46px;
@@ -1559,6 +1616,17 @@ main {
         max-height: 160px;
     }
 
+    .recommendation-panel.closed {
+        max-height: 58px;
+    }
+
+    .selected-map-place-card {
+        left: 12px;
+        right: auto;
+        bottom: 12px;
+        width: min(360px, 44vw);
+    }
+
     .graph-container {
         height: 60px;
     }
@@ -1607,6 +1675,17 @@ main {
         width: 300px;
         border-radius: 12px;
         max-height: 164px;
+    }
+
+    .recommendation-panel.closed {
+        max-height: 58px;
+    }
+
+    .selected-map-place-card {
+        left: 18px;
+        right: auto;
+        bottom: 18px;
+        width: min(360px, calc(100vw - 500px));
     }
 
     .panel-collapse-toggle {
