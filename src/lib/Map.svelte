@@ -21,7 +21,6 @@
         getVisibleBeachFitSettings
     } from './mapFocus.js';
     import { formatDistanceLabel, getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
-    import { getPrimaryPlaceImage } from './placeMedia.js';
     import { isWithinRottnestBounds } from './recommendations.js';
 
     let {
@@ -123,7 +122,6 @@
                     className: `place-label ${place.type} ${selected}`,
                     offset: [0, -8]
                 })
-                .bindPopup(getPlacePopup(place))
                 .addTo(map);
             if (selected) marker.setZIndexOffset(1000);
             placeMarkers.push({ marker, place });
@@ -329,28 +327,6 @@
         return '📍';
     }
 
-    function getPlacePopup(place) {
-        const image = getPrimaryPlaceImage(place);
-        const parts = [
-            image ? `<img class="place-popup-image" src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" />` : '',
-            `<strong>${escapeHtml(place.name)}</strong>`,
-            `Type: ${escapeHtml(getFacilityTypeLabel(place))}`
-        ].filter(Boolean);
-
-        const ratingLabel = mapNavigationRequest?.name === place.name && mapNavigationRequest?.ratingLabel
-            ? mapNavigationRequest.ratingLabel
-            : getFacilityRatingLabel(place);
-        if (ratingLabel) {
-            parts.push(`Rating: ${escapeHtml(ratingLabel)}`);
-        }
-
-        if (place.name === selectedPlaceName && selectedPlaceDistanceLabel) {
-            parts.push(`Distance: ${escapeHtml(selectedPlaceDistanceLabel)}`);
-        }
-
-        return parts.join('<br>');
-    }
-
     function updateLandmarks() {
         if (map && landmarks.length > 0) {
             initLandmarks();
@@ -516,15 +492,6 @@
             visibleTop: headerRect ? Math.max(headerRect.bottom - mapRect.top, 0) : 0,
             visibleBottom: constrainVerticalByPanel && !isSidePanel && panelRect ? Math.max(panelRect.top - mapRect.top, 0) : mapRect.height
         };
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
     }
 
     $effect(() => {

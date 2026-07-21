@@ -91,8 +91,8 @@
             requestId: mapNavigationSequence
         };
 
-        if (isMapPlace && panelMode === 'open') {
-            panelMode = 'semi';
+        if (isMapPlace) {
+            panelMode = 'closed';
         }
 
         if (target.type === 'landmark') {

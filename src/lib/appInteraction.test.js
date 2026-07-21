@@ -36,11 +36,10 @@ test('non-beach map places use a dismissible selected-place mode', () => {
     assert.match(app, /aria-label="Close selected place"/);
 });
 
-test('non-beach map place selection shrinks only a fully open recommendation panel', () => {
+test('non-beach map place selection closes the recommendation panel enough to reveal the place card', () => {
     assert.match(app, /const isMapPlace = isMapPlaceTarget\(target\)/);
     assert.match(app, /selectedMapPlace = isMapPlace \? target : null/);
-    assert.match(app, /if \(isMapPlace && panelMode === 'open'\) \{/);
-    assert.match(app, /panelMode = 'semi'/);
+    assert.match(app, /if \(isMapPlace\) \{[\s\S]*panelMode = 'closed'/);
 });
 
 test('food and facilities layer is visible by default', () => {
@@ -106,12 +105,23 @@ test('map place markers use selected-place navigation for deep links', () => {
     assert.match(map, /getPanelModeMapOffset\(panelMode,\s*mapLayout\)/);
 });
 
+test('map place markers do not open competing Leaflet popups', () => {
+    const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
+    const initLandmarksStart = map.indexOf('function initLandmarks()');
+    const getPlaceNavigationTargetStart = map.indexOf('function getPlaceNavigationTarget', initLandmarksStart);
+    const initLandmarksBody = map.slice(initLandmarksStart, getPlaceNavigationTargetStart);
+
+    assert.doesNotMatch(initLandmarksBody, /bindPopup/);
+});
+
 test('selected map places request a close zoom level', () => {
     const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
     const search = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 
     assert.match(map, /getMapNavigationTarget\(\s*place,\s*16,/);
     assert.match(search, /getMapNavigationTarget\(\s*result,\s*16,/);
+    const panel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
+    assert.match(panel, /getMapNavigationTarget\(place,\s*16,/);
 });
 
 test('map and search beach selections request the panel detail scroll', () => {

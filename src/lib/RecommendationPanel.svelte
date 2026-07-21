@@ -123,7 +123,7 @@
     }
 
     function navigatePlaceToMap(place) {
-        const target = getMapNavigationTarget(place, 15, getPanelModeMapOffset(panelMode, mapLayout));
+        const target = getMapNavigationTarget(place, 16, getPanelModeMapOffset(panelMode, mapLayout));
         if (!target) return;
         onNavigateToMap({
             ...target,
