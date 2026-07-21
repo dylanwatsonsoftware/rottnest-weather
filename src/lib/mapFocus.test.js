@@ -321,10 +321,13 @@ test('place labels stay hidden unless the place was selected', () => {
 
 test('place markers use category priority to reduce map clutter', () => {
     assert.equal(shouldShowPlaceMarker({ name: 'Bathurst Lighthouse', type: 'landmark', subtype: 'lighthouse' }, 10), true);
-    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 13), true);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 13), false);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 14), true);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 14), false);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 15), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Henrietta Rocks', type: 'landmark', subtype: 'dive_site' }, 12), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Henrietta Rocks', type: 'landmark', subtype: 'dive_site' }, 14), true);
+    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 13), false);
+    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 15), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 15), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 16), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 15), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 16), true);
     assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 11, 'Parker Point Facilities'), true);
 });

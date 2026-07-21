@@ -29,7 +29,7 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
     await mockForecastApis(page);
     await page.goto('/');
 
-    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+    await page.locator('.landmark-icon.landmark', { hasText: '🗼' }).first().click({ force: true });
 
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
     await expect(page.locator('.selected-map-place-card img')).toBeVisible();
@@ -43,7 +43,7 @@ test('zooming out keeps the selected map place anchored on screen', async ({ pag
     await mockForecastApis(page);
     await page.goto('/');
 
-    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+    await page.locator('.landmark-icon.landmark', { hasText: '🗼' }).first().click({ force: true });
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
     await page.waitForTimeout(700);
     const before = await getSelectedMarkerCenter(page);
