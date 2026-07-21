@@ -306,9 +306,9 @@ main {
 }
 
 .recommendation-panel.closed {
-    min-height: 48px;
-    max-height: 48px;
-    bottom: 28px;
+    min-height: 62px;
+    max-height: 62px;
+    bottom: 0;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.94);
     border-color: rgba(34, 60, 63, 0.12);
@@ -318,7 +318,7 @@ main {
 
 .recommendation-panel.closed .panel-collapse-toggle {
     min-height: 46px;
-    padding: 5px 12px 6px;
+    padding: 5px 12px 20px;
 }
 
 .recommendation-panel.closed .panel-body {
@@ -1662,8 +1662,8 @@ main {
     }
 
     .recommendation-panel.closed {
-        min-height: 48px;
-        max-height: 48px;
+        min-height: 62px;
+        max-height: 62px;
     }
 
     .selected-map-place-card {
@@ -1724,8 +1724,8 @@ main {
     }
 
     .recommendation-panel.closed {
-        min-height: 48px;
-        max-height: 48px;
+        min-height: 62px;
+        max-height: 62px;
     }
 
     .selected-map-place-card {

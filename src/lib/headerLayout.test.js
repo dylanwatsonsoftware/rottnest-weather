@@ -120,14 +120,15 @@ test('collapsed recommendation toggle shows a compact count badge', () => {
 });
 
 test('fully closed recommendation panel hides body content and stays compact', () => {
-    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*max-height:\s*48px/s);
-    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*min-height:\s*48px/s);
-    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*bottom:\s*28px/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*max-height:\s*62px/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*min-height:\s*62px/s);
+    assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*bottom:\s*0/s);
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*overflow:\s*hidden/s);
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.94\)/s);
     assert.match(css, /\.recommendation-panel\.closed\s*{[^}]*box-shadow:\s*0 -10px 28px rgba\(13,\s*34,\s*38,\s*0\.2\)/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-body\s*{[^}]*display:\s*none/s);
     assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*min-height:\s*46px/s);
+    assert.match(css, /\.recommendation-panel\.closed \.panel-collapse-toggle\s*{[^}]*padding:\s*5px 12px 20px/s);
 });
 
 test('recommendation panel supports swipe gestures between panel states', () => {
