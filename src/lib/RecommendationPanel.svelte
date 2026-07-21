@@ -39,7 +39,9 @@
         mapLayout = 'default',
         panelOpenRequest = 0,
         panelScrollRequest = 0,
+        isBeachView = false,
         onSelectBeach = () => {},
+        onCloseBeach = () => {},
         onStateFilterChange = () => {},
         onToggleFilter = () => {},
         onNavigateToMap = () => {}
@@ -240,7 +242,186 @@
 
 </script>
 
-<section class="recommendation-panel" class:collapsed={isCollapsed} class:closed={isClosed} class:semi={isSemi} class:open={isOpen} aria-label="Snorkelling recommendations">
+<section class="recommendation-panel" class:collapsed={isCollapsed} class:closed={isClosed} class:semi={isSemi} class:open={isOpen} class:beach-mode={isBeachView} aria-label={isBeachView ? `${selectedRecommendation?.beach.name} beach view` : 'Snorkelling recommendations'}>
+    {#if isBeachView && selectedRecommendation}
+        <div
+            class="beach-panel-header"
+            role="group"
+            aria-label="{selectedRecommendation.beach.name} panel controls"
+            ontouchstart={handlePanelTouchStart}
+            ontouchend={handlePanelTouchEnd}
+        >
+            <button
+                class="beach-panel-title"
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls="beach-panel-content"
+                onclick={() => panelMode = getNextPanelMode(panelMode)}
+            >
+                <span>
+                    <strong>{selectedRecommendation.beach.name}</strong>
+                </span>
+            </button>
+            <button class="beach-panel-close" type="button" aria-label="Close beach view" onclick={onCloseBeach}>×</button>
+        </div>
+
+        {#if isSemi && beachTimeline.length}
+            <div class="beach-mode-time-control">
+                <label for="beach-mode-semi-time-slider">
+                    Forecast time
+                    <strong>{selectedTime}</strong>
+                </label>
+                <input
+                    type="range"
+                    id="beach-mode-semi-time-slider"
+                    style:--slider-heat={beachDetailHeatGradient}
+                    min={forecastRange.min}
+                    max={forecastRange.max}
+                    bind:value={hourIndex}
+                />
+            </div>
+        {/if}
+
+        <div id="beach-panel-content" class="panel-body" hidden={!isOpen}>
+            {#if isOpen && safetyNotices.length}
+                <div class="safety-strip">
+                    {#each safetyNotices as notice}
+                        <p>{notice}</p>
+                    {/each}
+                </div>
+            {/if}
+
+            <div class="panel-content">
+                <article class="beach-detail {selectedRecommendation.state}" bind:this={beachDetailElement}>
+                    <div class="detail-heading">
+                        <p class="eyebrow">{getRecommendationWindowSummary(selectedRecommendation)}</p>
+                        <h2>{selectedRecommendation.beach.name}</h2>
+                        {#if selectedBeachDistanceLabel}
+                            <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
+                        {/if}
+                        <button
+                            class="map-jump-button"
+                            type="button"
+                            aria-label="Show {selectedRecommendation.beach.name} on map"
+                            title="Show on map"
+                            onclick={() => navigatePlaceToMap(selectedRecommendation.beach)}
+                        >
+                            ⌖
+                        </button>
+                    </div>
+                    {#if beachTimeline.length}
+                        <div class="status-timeline" aria-label="{selectedRecommendation.beach.name} status over selected time range">
+                            <div class="detail-time-control">
+                                <label for="beach-mode-time-slider">
+                                    Forecast time
+                                    <strong>{selectedTime}</strong>
+                                </label>
+                                <input
+                                    type="range"
+                                    id="beach-mode-time-slider"
+                                    style:--slider-heat={beachDetailHeatGradient}
+                                    min={forecastRange.min}
+                                    max={forecastRange.max}
+                                    bind:value={hourIndex}
+                                />
+                            </div>
+                            <div class="timeline-labels">
+                                <span>{beachTimeline[0].label}</span>
+                                <span>{beachTimeline[beachTimeline.length - 1].label}</span>
+                            </div>
+                        </div>
+                    {/if}
+                    <div class="detail-metrics">
+                        <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
+                        <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
+                        {#if shouldShowConfidenceLabel(selectedRecommendation.confidence)}
+                            <span>{selectedRecommendation.confidence} confidence</span>
+                        {/if}
+                    </div>
+                    {#key selectedRecommendation.beach.name}
+                        {#if selectedBeachImages.length}
+                            <div class="beach-photo-strip" aria-label="{selectedRecommendation.beach.name} photos">
+                                {#each selectedBeachImages as image (image.src)}
+                                    <figure>
+                                        <button
+                                            class="beach-photo-button"
+                                            type="button"
+                                            aria-label="Open larger photo of {selectedRecommendation.beach.name}"
+                                            onclick={() => selectedPhoto = image}
+                                        >
+                                            <img src={image.src} alt={image.alt} loading="lazy" />
+                                        </button>
+                                        <figcaption>
+                                            <a href={image.sourceUrl} target="_blank" rel="noreferrer">{image.author}</a>
+                                            <span>{image.license}</span>
+                                        </figcaption>
+                                    </figure>
+                                {/each}
+                            </div>
+                        {/if}
+                    {/key}
+                    <ul>
+                        {#each selectedRecommendation.reasons.slice(0, 3) as reason}
+                            <li>{reason}</li>
+                        {/each}
+                    </ul>
+                    <p class="detail-note">Good winds: {selectedRecommendation.beach.ok_winds.join(', ')}</p>
+                    {#if selectedRecommendation.beach.difficulty}
+                        <p class="detail-note">{selectedRecommendation.beach.difficulty}</p>
+                    {/if}
+                    {#if selectedRecommendation.beach.access}
+                        <p class="detail-note">{selectedRecommendation.beach.access}</p>
+                    {/if}
+                    {#each beachDetailNotes as note}
+                        <p class="detail-note">{note}</p>
+                    {/each}
+                    {#if getSourceLinks(selectedRecommendation.beach).length}
+                        <div class="source-links" aria-label="{selectedRecommendation.beach.name} source links">
+                            {#each getSourceLinks(selectedRecommendation.beach) as link}
+                                <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+                            {/each}
+                        </div>
+                    {/if}
+                    {#if selectedRecommendation.nextGood}
+                        <p class="detail-note">Next good window: {formatTime(selectedRecommendation.nextGood.time)}</p>
+                    {/if}
+                    {#if nearbyPlaces.length}
+                        <div class="nearby-list">
+                            <strong>Nearby</strong>
+                            {#each nearbyPlaces as place}
+                                {@const placeImage = getPrimaryPlaceImage(place)}
+                                {@const sourceLinks = getSourceLinks(place)}
+                                <div class="nearby-place-row">
+                                    <button class:with-photo={Boolean(placeImage)} type="button" onclick={() => navigatePlaceToMap(place)}>
+                                        {#if placeImage}
+                                            <img class="nearby-place-thumbnail" src={placeImage.src} alt={placeImage.alt} loading="lazy" />
+                                        {/if}
+                                        <span>
+                                            <small aria-hidden="true">{place.icon || getFacilityIcon(place.category)}</small>
+                                            {place.name}
+                                        </span>
+                                        <small>
+                                            {#if getFacilityRatingLabel(place)}
+                                                {getFacilityRatingLabel(place)} ·
+                                            {/if}
+                                            {place.label ? `${place.label} · ` : ''}{place.distanceKm.toFixed(1)} km
+                                        </small>
+                                    </button>
+                                    {#if sourceLinks.length}
+                                        <div class="source-links compact" aria-label="{place.name} source links">
+                                            {#each sourceLinks as link}
+                                                <a href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+                                            {/each}
+                                        </div>
+                                    {/if}
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
+                </article>
+            </div>
+        </div>
+    {:else}
     <button
         class="panel-collapse-toggle"
         type="button"
@@ -589,6 +770,7 @@
                 </div>
             </div>
         </div>
+    {/if}
     {/if}
 
     {#if selectedPhoto}

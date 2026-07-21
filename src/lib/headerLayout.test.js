@@ -150,7 +150,7 @@ test('expanded panel shows compact forecast controls near the top', () => {
     assert.match(recommendationPanel, /for="expanded-time-slider">\{selectedTime\}/);
     assert.match(recommendationPanel, /class="range-mode-toggle" aria-label="Expanded forecast range"/);
     assert.match(css, /\.expanded-time-control\s*{[^}]*padding:\s*0 12px 10px/s);
-    assert.match(css, /\.expanded-time-control input\[type="range"\]\s*{[^}]*background:\s*var\(--slider-heat,\s*#dbe5e5\)/s);
+    assert.match(css, /\.expanded-time-control input\[type="range"\],[\s\S]*\{[^}]*background:\s*var\(--slider-heat,\s*#dbe5e5\)/);
 });
 
 test('best beach row selection scrolls the detail card into view', () => {
@@ -230,6 +230,21 @@ test('recommendation panel has one selected-time list with better-time and setti
     assert.doesNotMatch(recommendationPanel, /Good Later/);
     assert.doesNotMatch(recommendationPanel, /class="panel-tabs"/);
     assert.doesNotMatch(recommendationPanel, /activeTab/);
+});
+
+test('selected beach mode uses a dedicated beach panel instead of recommendation chrome', () => {
+    assert.match(recommendationPanel, /isBeachView = false/);
+    assert.match(recommendationPanel, /onCloseBeach = \(\) => \{\}/);
+    assert.match(recommendationPanel, /class:beach-mode=\{isBeachView\}/);
+    assert.match(recommendationPanel, /\{#if isBeachView && selectedRecommendation\}/);
+    assert.match(recommendationPanel, /class="beach-panel-header"/);
+    assert.match(recommendationPanel, /class="beach-panel-close"/);
+    assert.match(recommendationPanel, /aria-label="Close beach view"/);
+    assert.match(recommendationPanel, /onclick=\{onCloseBeach\}/);
+    assert.match(recommendationPanel, /id="beach-mode-time-slider"/);
+    assert.match(recommendationPanel, /id="beach-mode-semi-time-slider"/);
+    assert.match(recommendationPanel, /\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
+    assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);
 });
 
 test('recommendation panel labels watch-state recommendations as caution', () => {

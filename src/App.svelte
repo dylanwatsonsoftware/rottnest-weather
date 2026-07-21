@@ -107,6 +107,10 @@
         mapNavigationRequest = null;
     }
 
+    function clearSelectedBeach() {
+        selectedBeachName = '';
+    }
+
     function isMapPlaceTarget(target) {
         return target?.type === 'landmark' || target?.type === 'facility' || target?.type === 'business';
     }
@@ -254,8 +258,9 @@
     const recommendations = $derived(buildRecommendations(beaches, forecastData, hourIndex));
     const visibleRecommendations = $derived(filterRecommendations(recommendations, filters, mapZoom));
     const selectedRecommendation = $derived(
-        recommendations.find((item) => item.beach.name === selectedBeachName) || recommendations[0] || null
+        recommendations.find((item) => item.beach.name === selectedBeachName) || null
     );
+    const isBeachView = $derived(Boolean(selectedBeachName && selectedRecommendation));
     const mapRecommendations = $derived(
         selectedRecommendation && !visibleRecommendations.some((item) => item.beach.name === selectedRecommendation?.beach.name)
             ? [...visibleRecommendations, selectedRecommendation]
@@ -364,6 +369,8 @@
             {panelOpenRequest}
             {panelScrollRequest}
             onSelectBeach={selectBeach}
+            isBeachView={isBeachView}
+            onCloseBeach={clearSelectedBeach}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}
             onNavigateToMap={navigateToMapTarget}

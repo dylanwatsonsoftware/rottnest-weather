@@ -110,3 +110,13 @@ test('selected beach remains visible on the map even when filters exclude it', (
     assert.match(app, /visibleRecommendations\.some\(\(item\) => item\.beach\.name === selectedRecommendation\?\.beach\.name\)/);
     assert.match(app, /recommendations=\{\$state\.snapshot\(mapRecommendations\)\}/);
 });
+
+test('explicit beach selection switches recommendation panel into beach view mode', () => {
+    assert.match(app, /function clearSelectedBeach\(\)/);
+    assert.match(app, /selectedBeachName = ''/);
+    assert.match(app, /const isBeachView = \$derived\(Boolean\(selectedBeachName && selectedRecommendation\)\)/);
+    assert.match(app, /recommendations\.find\(\(item\) => item\.beach\.name === selectedBeachName\) \|\| null/);
+    assert.doesNotMatch(app, /recommendations\.find\(\(item\) => item\.beach\.name === selectedBeachName\) \|\| recommendations\[0\] \|\| null/);
+    assert.match(app, /isBeachView=\{isBeachView\}/);
+    assert.match(app, /onCloseBeach=\{clearSelectedBeach\}/);
+});
