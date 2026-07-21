@@ -121,6 +121,17 @@ test('getRecommendationHeading labels the selected forecast time truthfully', ()
     );
 });
 
+test('getRecommendationHeading includes dates for selected times beyond this week', () => {
+    assert.equal(
+        getRecommendationHeading(hourlyForecast, 15, new Date('2026-07-20T12:20')),
+        'Best Sun 6am'
+    );
+    assert.equal(
+        getRecommendationHeading(hourlyForecast, 17, new Date('2026-07-20T12:20')),
+        'Best Mon 27 Jul 6am'
+    );
+});
+
 test('getStatusWindowSummary describes the contiguous selected status window', () => {
     const timeline = [
         { hourIndex: 0, state: 'avoid' },

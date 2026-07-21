@@ -210,7 +210,7 @@ export function getRecommendationHeading(forecastData, hourIndex = 0, now = new 
         return `Best at ${formatHeadingTime(selectedDate)}`;
     }
 
-    return `Best ${formatHeadingDayTime(selectedDate)}`;
+    return `Best ${formatHeadingDayTime(selectedDate, nowDate)}`;
 }
 
 export function getStatusWindowSummary(timeline = [], selectedHourIndex = 0) {
@@ -276,9 +276,8 @@ function formatHeadingTime(value) {
     return formatCompactTime(value);
 }
 
-function formatHeadingDayTime(value) {
-    const dayName = value.toLocaleDateString([], { weekday: 'short' });
-    return `${dayName} ${formatHeadingTime(value)}`;
+function formatHeadingDayTime(value, now) {
+    return formatCompactTime(value, { weekday: true, now });
 }
 
 function formatChartTime(value) {

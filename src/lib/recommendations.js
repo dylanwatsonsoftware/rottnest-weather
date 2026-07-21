@@ -337,9 +337,9 @@ export function getSafetyNotices({ windSpeed, swellHeight, forecastData }) {
     return notices;
 }
 
-export function formatTime(time) {
+export function formatTime(time, options = {}) {
     if (!time) return 'Later';
-    return formatCompactTime(time, { weekday: true });
+    return formatCompactTime(time, { weekday: true, ...options });
 }
 
 function getState(score, directionMatches, flexibility) {

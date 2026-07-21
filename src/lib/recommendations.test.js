@@ -9,6 +9,7 @@ import {
     getBeachDetailNotes,
     getInitialFocusRecommendations,
     getSafetyNotices,
+    formatTime,
     shouldUseUserLocationForFocus
 } from './recommendations.js';
 
@@ -58,6 +59,13 @@ test('buildRecommendations finds the next better forecast window', () => {
     assert.equal(sheltered.state, 'avoid');
     assert.equal(sheltered.nextGood.time, '2026-07-20T11:00');
     assert.equal(sheltered.nextGood.state, 'good');
+});
+
+test('formatTime includes dates for forecast times beyond this week', () => {
+    assert.equal(
+        formatTime('2026-07-27T08:00', { now: new Date('2026-07-20T09:00') }),
+        'Mon 27 Jul 8am'
+    );
 });
 
 test('buildBeachStatusTimeline scores one beach across a selected time range', () => {
