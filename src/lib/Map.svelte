@@ -50,6 +50,7 @@
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
     let isProgrammaticMapMove = false;
+    let shouldRecenterSelectedNavigation = false;
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'closed';
     let lastVisibleBeachMapLayout = 'default';
@@ -81,6 +82,7 @@
 
         initUserLocation();
         mapElement.addEventListener('click', handleMapElementClick);
+        map.on('dragstart', handleManualMapMove);
         map.on('zoomend', () => {
             const nextZoom = map.getZoom();
             currentZoom = nextZoom;
@@ -94,9 +96,15 @@
 
         return () => {
             mapElement.removeEventListener('click', handleMapElementClick);
+            map.off('dragstart', handleManualMapMove);
             map.remove();
         };
     });
+
+    function handleManualMapMove() {
+        if (isProgrammaticMapMove) return;
+        shouldRecenterSelectedNavigation = false;
+    }
 
     function initLandmarks() {
         placeMarkers.forEach(({ marker }) => marker.remove());
@@ -432,9 +440,15 @@
     }
 
     function navigateToMapRequest(request) {
-        if (!map || !request || request.requestId === lastNavigationRequestId) return;
+        if (!map) return;
+        if (!request) {
+            cancelSelectedNavigationTracking();
+            return;
+        }
+        if (request.requestId === lastNavigationRequestId) return;
         if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
 
+        shouldRecenterSelectedNavigation = true;
         lastNavigationRequestId = request.requestId;
         window.setTimeout(() => {
             if (!map) return;
@@ -454,6 +468,11 @@
         }, getNavigationSettleDelay(request));
     }
 
+    function cancelSelectedNavigationTracking() {
+        lastNavigationRequestId = null;
+        shouldRecenterSelectedNavigation = false;
+    }
+
     function getSelectedPlaceVisibleAnchor() {
         return {
             targetXRatio: 0.5,
@@ -464,7 +483,7 @@
     }
 
     function recenterSelectedNavigationOnZoom(zoom) {
-        if (!mapNavigationRequest || isProgrammaticMapMove) return;
+        if (!mapNavigationRequest || isProgrammaticMapMove || !shouldRecenterSelectedNavigation) return;
         if (!Number.isFinite(mapNavigationRequest.lat) || !Number.isFinite(mapNavigationRequest.lon)) return;
 
         requestAnimationFrame(() => {

@@ -53,11 +53,29 @@ test('manual zoom recenters the selected navigation request at the new zoom leve
     assert.match(zoomHandler, /recenterSelectedNavigationOnZoom\(nextZoom\)/);
     assert.match(mapSource, /let isProgrammaticMapMove = false/);
     assert.match(mapSource, /function recenterSelectedNavigationOnZoom\(zoom\)/);
-    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove\) return/);
+    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove \|\| !shouldRecenterSelectedNavigation\) return/);
     assert.match(mapSource, /const center = getOffsetCenter\(mapNavigationRequest,\s*zoom\)/);
     assert.match(mapSource, /setViewProgrammatically\(center,\s*zoom,\s*\{\s*animate:\s*false\s*\}\)/);
     assert.match(mapSource, /function setViewProgrammatically\(center,\s*zoom,\s*options\)/);
     assert.match(mapSource, /map\.setView\(center,\s*zoom,\s*options\)/);
+});
+
+test('manual map dragging disables selected navigation zoom anchoring', () => {
+    assert.match(mapSource, /let shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /map\.on\('dragstart',\s*handleManualMapMove\)/);
+    assert.match(mapSource, /function handleManualMapMove\(\)/);
+    assert.match(mapSource, /if \(isProgrammaticMapMove\) return/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = true;[\s\S]*lastNavigationRequestId = request\.requestId/);
+    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove \|\| !shouldRecenterSelectedNavigation\) return/);
+});
+
+test('clearing the map navigation request cancels pending selected-location recenters', () => {
+    assert.match(mapSource, /function cancelSelectedNavigationTracking\(\)/);
+    assert.match(mapSource, /lastNavigationRequestId = null/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /if \(!request\) \{[\s\S]*cancelSelectedNavigationTracking\(\);[\s\S]*return;[\s\S]*\}/);
+    assert.match(mapSource, /if \(request\.requestId !== lastNavigationRequestId\) return/);
 });
 
 test('beach marker icons use rank-aware sizes', () => {

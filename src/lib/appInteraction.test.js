@@ -234,3 +234,7 @@ test('explicit beach selection switches recommendation panel into beach view mod
     assert.match(app, /isBeachView=\{isBeachView\}/);
     assert.match(app, /onCloseBeach=\{clearSelectedBeach\}/);
 });
+
+test('closing selected beach clears stale map navigation requests', () => {
+    assert.match(app, /function clearSelectedBeach\(\) \{[\s\S]*selectedBeachName = '';[\s\S]*mapNavigationRequest = null;[\s\S]*panelMode = 'closed';[\s\S]*\}/);
+});

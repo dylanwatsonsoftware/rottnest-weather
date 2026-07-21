@@ -142,6 +142,7 @@
 
     function clearSelectedBeach() {
         selectedBeachName = '';
+        mapNavigationRequest = null;
         panelMode = 'closed';
     }
 
