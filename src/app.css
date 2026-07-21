@@ -1106,6 +1106,19 @@ main {
     font-size: 0.76rem;
 }
 
+.detail-metrics .distance-metric {
+    background: transparent;
+    padding-inline: 2px 0;
+    color: #5d6d6f;
+    font-weight: 750;
+}
+
+.detail-metrics .distance-metric::before {
+    content: "•";
+    margin-right: 6px;
+    color: #9aacaf;
+}
+
 .next-good-window {
     display: inline-flex;
     align-items: center;

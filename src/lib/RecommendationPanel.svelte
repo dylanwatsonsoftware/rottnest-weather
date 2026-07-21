@@ -305,9 +305,6 @@
                                 🔗
                             </button>
                         </h2>
-                        {#if selectedBeachDistanceLabel}
-                            <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
-                        {/if}
                         <button
                             class="map-jump-button"
                             type="button"
@@ -343,6 +340,9 @@
                     <div class="detail-metrics">
                         <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                         <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
+                        {#if selectedBeachDistanceLabel}
+                            <span class="distance-metric">{selectedBeachDistanceLabel} away</span>
+                        {/if}
                         {#if shouldShowConfidenceLabel(selectedRecommendation.confidence)}
                             <span>{selectedRecommendation.confidence} confidence</span>
                         {/if}
@@ -580,9 +580,6 @@
                             🔗
                         </button>
                     </h2>
-                    {#if selectedBeachDistanceLabel}
-                        <p class="detail-distance">{selectedBeachDistanceLabel} away</p>
-                    {/if}
                     <button
                         class="map-jump-button"
                         type="button"
@@ -618,6 +615,9 @@
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                     <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
+                    {#if selectedBeachDistanceLabel}
+                        <span class="distance-metric">{selectedBeachDistanceLabel} away</span>
+                    {/if}
                     {#if shouldShowConfidenceLabel(selectedRecommendation.confidence)}
                         <span>{selectedRecommendation.confidence} confidence</span>
                     {/if}

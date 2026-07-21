@@ -277,6 +277,13 @@ test('nearby list does not expose raw source link chips', () => {
     assert.match(recommendationPanel, /aria-label="\{selectedRecommendation\.beach\.name\} source links"/);
 });
 
+test('selected beach distance is shown subtly with condition metrics', () => {
+    assert.doesNotMatch(recommendationPanel, /class="detail-distance"/);
+    assert.match(recommendationPanel, /class="detail-metrics"[\s\S]*selectedRecommendation\.conditions\.windSpeed[\s\S]*selectedRecommendation\.conditions\.swellHeight[\s\S]*selectedBeachDistanceLabel[\s\S]*class="distance-metric"/);
+    assert.match(css, /\.detail-metrics \.distance-metric\s*{[^}]*background:\s*transparent/s);
+    assert.match(css, /\.detail-metrics \.distance-metric\s*{[^}]*color:\s*#5d6d6f/s);
+});
+
 test('recommendation panel labels watch-state recommendations as caution', () => {
     assert.match(recommendationPanel, /watch:\s*'Caution'/);
     assert.doesNotMatch(recommendationPanel, /watch:\s*'Watch'/);
