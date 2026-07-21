@@ -13,6 +13,7 @@ import {
     getBetterTimeSelection,
     getRangeModeLabel,
     getRangeModeForHourIndex,
+    getRangeModeSelection,
     getForecastChartDensity,
     getForecastChartLabels,
     getRangeProgressPercent,
@@ -253,6 +254,21 @@ test('getRangeModeForHourIndex expands range to include the selected hour', () =
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 8), 'threeDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 13), 'tenDay');
     assert.equal(getRangeModeForHourIndex(hourlyForecast, 22), 'tenDay');
+});
+
+test('getRangeModeSelection clamps far future selected hours into the chosen range', () => {
+    assert.deepEqual(getRangeModeSelection(hourlyForecast, 'today', 17), {
+        rangeMode: 'today',
+        hourIndex: 3
+    });
+    assert.deepEqual(getRangeModeSelection(hourlyForecast, 'twoDay', 17), {
+        rangeMode: 'twoDay',
+        hourIndex: 6
+    });
+    assert.deepEqual(getRangeModeSelection(hourlyForecast, 'threeDay', 17), {
+        rangeMode: 'threeDay',
+        hourIndex: 8
+    });
 });
 
 test('shouldShowConfidenceLabel hides normal confidence', () => {

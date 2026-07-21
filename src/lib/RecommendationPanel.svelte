@@ -11,6 +11,7 @@
         getRecommendationHeading,
         getRangeModeLabel,
         getRangeModeForHourIndex,
+        getRangeModeSelection,
         getRangeProgressPercent,
         getSliderHeatGradient,
         getStatusWindowSummary,
@@ -139,6 +140,12 @@
         rangeMode = nextSelection.rangeMode;
         hourIndex = nextSelection.hourIndex;
         betterTimeStatus = 'Showing next good window';
+    }
+
+    function selectRangeMode(mode) {
+        const nextSelection = getRangeModeSelection(forecastData, mode, hourIndex);
+        rangeMode = nextSelection.rangeMode;
+        hourIndex = nextSelection.hourIndex;
     }
 
     function getRecommendationWindowSummary(recommendation) {
@@ -442,7 +449,7 @@
                         {forecastRange}
                         {rangeMode}
                         {sliderHeatGradient}
-                        onRangeModeChange={(mode) => rangeMode = mode}
+                        onRangeModeChange={selectRangeMode}
                         bind:hourIndex
                     />
                 {/if}
@@ -476,7 +483,7 @@
                     <button
                         type="button"
                         class:active={rangeMode === mode}
-                        onclick={() => rangeMode = mode}
+                        onclick={() => selectRangeMode(mode)}
                     >
                         {getRangeModeLabel(mode)}
                     </button>
@@ -525,7 +532,7 @@
                     <button
                         type="button"
                         class:active={rangeMode === mode}
-                        onclick={() => rangeMode = mode}
+                        onclick={() => selectRangeMode(mode)}
                     >
                         {getRangeModeLabel(mode)}
                     </button>
@@ -722,7 +729,7 @@
                 {forecastRange}
                 {rangeMode}
                 {sliderHeatGradient}
-                onRangeModeChange={(mode) => rangeMode = mode}
+                onRangeModeChange={selectRangeMode}
                 bind:hourIndex
             />
         {/if}

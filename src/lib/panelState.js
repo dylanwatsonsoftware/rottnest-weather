@@ -187,6 +187,16 @@ export function getRangeModeForHourIndex(forecastData, hourIndex) {
     return 'tenDay';
 }
 
+export function getRangeModeSelection(forecastData, rangeMode, hourIndex) {
+    const range = getForecastRange(forecastData, rangeMode);
+    const selectedHourIndex = Number.isFinite(hourIndex) ? hourIndex : range.min;
+
+    return {
+        rangeMode,
+        hourIndex: Math.max(range.min, Math.min(selectedHourIndex, range.max))
+    };
+}
+
 export function getBetterTimeSelection(recommendations = [], currentHourIndex = 0, forecastData = null) {
     const hourIndex = getLaterTabHourIndex(recommendations, currentHourIndex, forecastData);
 
