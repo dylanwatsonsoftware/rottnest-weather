@@ -151,3 +151,45 @@ test('named food venues record coordinate provenance', () => {
     assert.equal(facilityData.find((facility) => facility.id === 'pinkys-rottnest-island')?.osm_id, 9409361909);
     assert.equal(facilityData.find((facility) => facility.id === 'the-lane-cafe')?.osm_id, 4583455993);
 });
+
+test('beach toilet and Parker Point stop coordinates use the RIA visitor facilities cache', () => {
+    assert.deepEqual(getFacilityCoordinateAudit('the-basin-facilities'), {
+        lat: -31.989855985646585,
+        lon: 115.53546936014801,
+        coordinate_source: 'ria_arcgis_visitor_facilities_static_cache',
+        ria_layer: 'Toilets',
+        ria_name: 'Basin'
+    });
+    assert.deepEqual(getFacilityCoordinateAudit('geordie-bay-facilities'), {
+        lat: -31.990717355352196,
+        lon: 115.52521982360396,
+        coordinate_source: 'ria_arcgis_visitor_facilities_static_cache',
+        ria_layer: 'Toilets',
+        ria_name: 'Geordie Bay'
+    });
+    assert.deepEqual(getFacilityCoordinateAudit('parker-point-facilities'), {
+        lat: -32.022735000008481,
+        lon: 115.52790270315269,
+        coordinate_source: 'ria_arcgis_visitor_facilities_static_cache',
+        ria_layer: 'Toilets',
+        ria_name: 'Parker Point'
+    });
+    assert.deepEqual(getFacilityCoordinateAudit('parker-point-bus-stop'), {
+        lat: -32.022936415114295,
+        lon: 115.52828555996027,
+        coordinate_source: 'ria_arcgis_visitor_facilities_static_cache',
+        ria_layer: 'Bus Stops',
+        ria_name: '5 - Parker Point'
+    });
+});
+
+function getFacilityCoordinateAudit(id) {
+    const facility = facilityData.find((item) => item.id === id);
+    return {
+        lat: facility?.lat,
+        lon: facility?.lon,
+        coordinate_source: facility?.coordinate_source,
+        ria_layer: facility?.ria_layer,
+        ria_name: facility?.ria_name
+    };
+}

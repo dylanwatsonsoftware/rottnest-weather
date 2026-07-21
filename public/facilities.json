@@ -208,8 +208,8 @@
     {
         "id": "the-basin-facilities",
         "name": "The Basin Facilities",
-        "lat": -31.9892,
-        "lon": 115.5351,
+        "lat": -31.989855985646585,
+        "lon": 115.53546936014801,
         "type": "facility",
         "category": "toilets",
         "amenities": [
@@ -224,7 +224,12 @@
             "shower": "yes",
             "bbq": "yes"
         },
-        "source": "rottnest_official_amenities"
+        "source": "rottnest_official_amenities",
+        "coordinate_source": "ria_arcgis_visitor_facilities_static_cache",
+        "coordinate_source_url": "https://services6.arcgis.com/CubtY3H3UowKJNc4/arcgis/rest/services/Visitor_facilities_at_Rottnest_Island_(public)/FeatureServer/0",
+        "coordinate_checked_at": "2026-07-21",
+        "ria_layer": "Toilets",
+        "ria_name": "Basin"
     },
     {
         "id": "geordie-bay-cafe",
@@ -244,8 +249,8 @@
     {
         "id": "geordie-bay-facilities",
         "name": "Geordie Bay Facilities",
-        "lat": -31.9913,
-        "lon": 115.5209,
+        "lat": -31.990717355352196,
+        "lon": 115.52521982360396,
         "type": "facility",
         "category": "toilets",
         "amenities": [
@@ -258,13 +263,18 @@
             "drinking_water": "yes",
             "shower": "yes"
         },
-        "source": "rottnest_official_amenities"
+        "source": "rottnest_official_amenities",
+        "coordinate_source": "ria_arcgis_visitor_facilities_static_cache",
+        "coordinate_source_url": "https://services6.arcgis.com/CubtY3H3UowKJNc4/arcgis/rest/services/Visitor_facilities_at_Rottnest_Island_(public)/FeatureServer/0",
+        "coordinate_checked_at": "2026-07-21",
+        "ria_layer": "Toilets",
+        "ria_name": "Geordie Bay"
     },
     {
         "id": "parker-point-facilities",
         "name": "Parker Point Facilities",
-        "lat": -32.0229,
-        "lon": 115.5277,
+        "lat": -32.022735000008481,
+        "lon": 115.52790270315269,
         "type": "facility",
         "category": "toilets",
         "amenities": [
@@ -273,7 +283,12 @@
         "osm_tags": {
             "amenity": "toilets"
         },
-        "source": "rottnest_official_accessibility"
+        "source": "rottnest_official_accessibility",
+        "coordinate_source": "ria_arcgis_visitor_facilities_static_cache",
+        "coordinate_source_url": "https://services6.arcgis.com/CubtY3H3UowKJNc4/arcgis/rest/services/Visitor_facilities_at_Rottnest_Island_(public)/FeatureServer/0",
+        "coordinate_checked_at": "2026-07-21",
+        "ria_layer": "Toilets",
+        "ria_name": "Parker Point"
     },
     {
         "id": "army-jetty-water",
@@ -314,13 +329,18 @@
     {
         "id": "parker-point-bus-stop",
         "name": "Parker Point Bus Stop",
-        "lat": -32.0229,
-        "lon": 115.5277,
+        "lat": -32.022936415114295,
+        "lon": 115.52828555996027,
         "type": "facility",
         "category": "bus_stop",
         "osm_tags": {
             "highway": "bus_stop"
         },
-        "source": "osm_seed"
+        "source": "osm_seed",
+        "coordinate_source": "ria_arcgis_visitor_facilities_static_cache",
+        "coordinate_source_url": "https://services6.arcgis.com/CubtY3H3UowKJNc4/arcgis/rest/services/Visitor_facilities_at_Rottnest_Island_(public)/FeatureServer/1",
+        "coordinate_checked_at": "2026-07-21",
+        "ria_layer": "Bus Stops",
+        "ria_name": "5 - Parker Point"
     }
 ]
