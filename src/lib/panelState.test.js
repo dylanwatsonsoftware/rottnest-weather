@@ -49,20 +49,21 @@ const hourlyForecast = {
     ]
 };
 
-test('getDefaultPanelMode starts collapsed', () => {
-    assert.equal(getDefaultPanelMode(), 'collapsed');
+test('getDefaultPanelMode starts closed', () => {
+    assert.equal(getDefaultPanelMode(), 'closed');
 });
 
-test('getNextPanelMode collapses an expanded panel', () => {
-    assert.equal(getNextPanelMode('expanded'), 'collapsed');
+test('getNextPanelMode moves an open panel back to semi-open', () => {
+    assert.equal(getNextPanelMode('open'), 'semi');
 });
 
-test('getNextPanelMode expands a collapsed panel', () => {
-    assert.equal(getNextPanelMode('collapsed'), 'expanded');
+test('getNextPanelMode cycles closed to semi to open', () => {
+    assert.equal(getNextPanelMode('closed'), 'semi');
+    assert.equal(getNextPanelMode('semi'), 'open');
 });
 
-test('getNextPanelMode recovers unknown state to expanded', () => {
-    assert.equal(getNextPanelMode('mystery'), 'expanded');
+test('getNextPanelMode recovers unknown state to semi-open', () => {
+    assert.equal(getNextPanelMode('mystery'), 'semi');
 });
 
 test('getForecastSliderMax uses the last forecast index', () => {
@@ -263,10 +264,10 @@ test('shouldShowConfidenceLabel shows non-normal confidence', () => {
     assert.equal(shouldShowConfidenceLabel('low'), true);
 });
 
-test('getPanelModeAfterOpenRequest expands when a new request arrives', () => {
-    assert.equal(getPanelModeAfterOpenRequest('collapsed', 2, 1), 'expanded');
+test('getPanelModeAfterOpenRequest opens when a new request arrives', () => {
+    assert.equal(getPanelModeAfterOpenRequest('semi', 2, 1), 'open');
 });
 
 test('getPanelModeAfterOpenRequest keeps current mode for an already handled request', () => {
-    assert.equal(getPanelModeAfterOpenRequest('collapsed', 2, 2), 'collapsed');
+    assert.equal(getPanelModeAfterOpenRequest('semi', 2, 2), 'semi');
 });

@@ -70,7 +70,10 @@
     let settingsOpen = $state(false);
     let betterTimeStatus = $state('');
     let beachDetailElement = $state(null);
-    const isCollapsed = $derived(panelMode === 'collapsed');
+    const isOpen = $derived(panelMode === 'open');
+    const isSemi = $derived(panelMode === 'semi');
+    const isClosed = $derived(panelMode === 'closed');
+    const isCollapsed = $derived(!isOpen);
     const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
     const recommendationHeading = $derived(getRecommendationHeading(forecastData, hourIndex));
@@ -245,18 +248,18 @@
     });
 </script>
 
-<section class="recommendation-panel" class:collapsed={isCollapsed} aria-label="Snorkelling recommendations">
+<section class="recommendation-panel" class:collapsed={isCollapsed} class:closed={isClosed} class:semi={isSemi} class:open={isOpen} aria-label="Snorkelling recommendations">
     <button
         class="panel-collapse-toggle"
         type="button"
-        aria-expanded={!isCollapsed}
+        aria-expanded={isOpen}
         aria-controls="recommendation-panel-content"
         onclick={() => panelMode = getNextPanelMode(panelMode)}
     >
         <span class="sheet-handle" aria-hidden="true"></span>
         <span class="panel-toggle-title">
-            <span>{isCollapsed ? 'Show recommendations' : 'Hide recommendations'}</span>
-            {#if isCollapsed}
+            <span>{isOpen ? 'Hide recommendations' : 'Show recommendations'}</span>
+            {#if !isOpen}
                 <span class="recommendation-count-badge" aria-label="{listedRecommendations.length} recommendations">
                     {listedRecommendations.length}
                 </span>
@@ -264,7 +267,7 @@
         </span>
     </button>
 
-    {#if isCollapsed && forecastData}
+    {#if isSemi && forecastData}
         <div class="collapsed-time-control" aria-label="Forecast time control">
             <div class="range-mode-toggle" aria-label="Forecast range">
                 {#each RANGE_MODES as mode}
@@ -292,7 +295,7 @@
         </div>
     {/if}
 
-    <div id="recommendation-panel-content" class="panel-body" hidden={isCollapsed}>
+    <div id="recommendation-panel-content" class="panel-body" hidden={!isOpen}>
     <div class="panel-toolbar">
         <div class="panel-heading">
             <p class="eyebrow">Best Beaches</p>

@@ -7,7 +7,7 @@
         beaches = [],
         landmarks = [],
         facilities = [],
-        panelMode = 'collapsed',
+        panelMode = 'closed',
         mapLayout = 'default',
         userLocation = null,
         onSelectBeach = () => {},

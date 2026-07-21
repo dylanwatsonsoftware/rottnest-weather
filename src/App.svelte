@@ -24,7 +24,7 @@
     let loadError = $state('');
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
-    let panelMode = $state('collapsed');
+    let panelMode = $state('closed');
     let panelOpenRequest = $state(0);
     let panelScrollRequest = $state(0);
     let mapNavigationRequest = $state(null);
@@ -103,7 +103,7 @@
     }
 
     function revealBeachInPanel(name) {
-        selectBeach(name, 'expanded');
+        selectBeach(name, 'open');
         panelOpenRequest += 1;
         panelScrollRequest += 1;
     }

@@ -4,10 +4,10 @@ import test from 'node:test';
 
 const app = readFileSync(new URL('../App.svelte', import.meta.url), 'utf8');
 
-test('map beach selection navigates with the expanded panel offset it will open into', () => {
+test('map beach selection navigates with the open panel offset it will open into', () => {
     assert.match(app, /function selectBeach\(name,\s*targetPanelMode = panelMode\)/);
     assert.match(app, /getBeachSelectionMapTarget\(beach,\s*targetPanelMode,\s*mapLayout\)/);
-    assert.match(app, /selectBeach\(name,\s*'expanded'\)/);
+    assert.match(app, /selectBeach\(name,\s*'open'\)/);
     assert.doesNotMatch(app, /activeTab/);
 });
 
@@ -53,7 +53,7 @@ test('app wires floating map search to all map data and navigation callbacks', (
     assert.match(app, /onSelectBeach=\{selectSearchBeach\}/);
     assert.match(app, /onNavigateToMap=\{navigateToMapTarget\}/);
     assert.match(app, /function selectSearchBeach\(name\)/);
-    assert.match(app, /selectBeach\(name,\s*'expanded'\)/);
+    assert.match(app, /selectBeach\(name,\s*'open'\)/);
     assert.match(app, /panelOpenRequest \+= 1/);
 });
 

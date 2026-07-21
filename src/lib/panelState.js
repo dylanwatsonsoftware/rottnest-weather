@@ -1,8 +1,9 @@
 import { formatCompactTime } from './timeFormat.js';
 
 export const PANEL_MODES = {
-    expanded: 'expanded',
-    collapsed: 'collapsed'
+    open: 'open',
+    semi: 'semi',
+    closed: 'closed'
 };
 
 export const RANGE_MODES = ['today', 'twoDay', 'threeDay', 'tenDay'];
@@ -16,13 +17,14 @@ export const SLIDER_STATE_COLORS = {
 };
 
 export function getDefaultPanelMode() {
-    return PANEL_MODES.collapsed;
+    return PANEL_MODES.closed;
 }
 
 export function getNextPanelMode(mode) {
-    if (mode === PANEL_MODES.expanded) return PANEL_MODES.collapsed;
-    if (mode === PANEL_MODES.collapsed) return PANEL_MODES.expanded;
-    return PANEL_MODES.expanded;
+    if (mode === PANEL_MODES.open) return PANEL_MODES.semi;
+    if (mode === PANEL_MODES.semi) return PANEL_MODES.open;
+    if (mode === PANEL_MODES.closed) return PANEL_MODES.semi;
+    return PANEL_MODES.semi;
 }
 
 export function getForecastSliderMax(forecastData) {
@@ -234,7 +236,7 @@ export function shouldShowConfidenceLabel(confidence) {
 }
 
 export function getPanelModeAfterOpenRequest(mode, openRequest, lastHandledRequest) {
-    return openRequest !== lastHandledRequest ? PANEL_MODES.expanded : mode;
+    return openRequest !== lastHandledRequest ? PANEL_MODES.open : mode;
 }
 
 function getForecastDayRangeMax(times, dayCount) {

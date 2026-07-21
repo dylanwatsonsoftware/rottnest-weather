@@ -27,7 +27,7 @@
         filters = {},
         selectedBeachName = '',
         hasExplicitBeachSelection = false,
-        panelMode = 'collapsed',
+        panelMode = 'closed',
         mapLayout = 'default',
         mapNavigationRequest = null,
         onSelectBeach = () => {},
@@ -45,7 +45,7 @@
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
     let lastVisibleBeachPointsSignature = '';
-    let lastVisibleBeachPanelMode = 'collapsed';
+    let lastVisibleBeachPanelMode = 'closed';
     let lastVisibleBeachMapLayout = 'default';
     const selectedPlaceName = $derived(
         mapNavigationRequest?.type === 'landmark' || mapNavigationRequest?.type === 'facility' || mapNavigationRequest?.type === 'business'

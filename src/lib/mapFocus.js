@@ -20,7 +20,7 @@ export function getMapLayout({ width = 0, height = 0 } = {}) {
 }
 
 export function getVisibleBeachFitSettings(panelMode = 'collapsed', mapLayout = 'default') {
-    const expandedPanel = panelMode !== 'collapsed';
+    const expandedPanel = isPanelOpen(panelMode);
 
     if (mapLayout === 'shortLandscape') {
         return {
@@ -105,17 +105,18 @@ export function getVisibleBeachFitReason(
 
 export function getPanelModePanOffset(previousPanelMode, nextPanelMode, mapLayout = 'default') {
     if (previousPanelMode === nextPanelMode) return [0, 0];
+    if (isPanelOpen(previousPanelMode) === isPanelOpen(nextPanelMode)) return [0, 0];
     if (mapLayout === 'shortLandscape') {
-        return nextPanelMode === 'collapsed' ? [-280, 90] : [280, -90];
+        return isPanelOpen(nextPanelMode) ? [280, -90] : [-280, 90];
     }
-    return nextPanelMode === 'collapsed' ? [0, -300] : [0, 300];
+    return isPanelOpen(nextPanelMode) ? [0, 300] : [0, -300];
 }
 
 export function getPanelModeMapOffset(panelMode = 'collapsed', mapLayout = 'default') {
     if (mapLayout === 'shortLandscape') {
-        return panelMode === 'collapsed' ? [170, 90] : [360, 0];
+        return isPanelOpen(panelMode) ? [360, 0] : [170, 90];
     }
-    return panelMode === 'collapsed' ? [0, 180] : [0, 320];
+    return isPanelOpen(panelMode) ? [0, 320] : [0, 180];
 }
 
 export const PANEL_TRANSITION_SETTLE_MS = 220;
@@ -198,4 +199,8 @@ function toMarkerSize(size) {
         size,
         anchor: size / 2
     };
+}
+
+function isPanelOpen(panelMode) {
+    return panelMode === 'open' || panelMode === 'expanded';
 }
