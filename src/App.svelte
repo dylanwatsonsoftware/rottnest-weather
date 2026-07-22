@@ -419,7 +419,7 @@
                 const nextLandmarks = await landmarksRes.json();
                 const nextFacilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
-                const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
+                const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth');
                 if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
                 const weatherJson = await weatherRes.json();
 
@@ -428,7 +428,7 @@
                 };
 
                 try {
-                    const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10');
+                    const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth');
                     if (marineRes.ok) {
                         const marineJson = await marineRes.json();
                         nextForecastData = {

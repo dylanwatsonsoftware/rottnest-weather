@@ -79,6 +79,11 @@ test('app preserves the selected forecast time when fresh data replaces cached d
     assert.doesNotMatch(app, /hourIndex = getNearestForecastHourIndex\(nextAppData\.forecastData\);/);
 });
 
+test('forecast API requests use Rottnest local time for shared URL hour matching', () => {
+    assert.match(app, /api\.open-meteo\.com\/v1\/forecast\?[^'"]*timezone=Australia%2FPerth/);
+    assert.match(app, /marine-api\.open-meteo\.com\/v1\/marine\?[^'"]*timezone=Australia%2FPerth/);
+});
+
 test('recommendation panel waits until forecast data is ready', () => {
     assert.match(app, /const hasLoadedForecast = \$derived\(!loading && Boolean\(forecastData\?\.time\?\.length\)\);/);
     assert.match(app, /\{#if hasLoadedForecast\}[\s\S]*<RecommendationPanel/);

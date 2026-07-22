@@ -224,7 +224,7 @@ test('time-only shared URLs ignore stale cached forecasts that miss the requeste
     await page.addInitScript(() => {
         const staleForecastTime = new Date();
         staleForecastTime.setMinutes(0, 0, 0);
-        localStorage.setItem('rottnest-snorkelling-app-cache-v4', JSON.stringify({
+        localStorage.setItem('rottnest-snorkelling-app-cache-v5', JSON.stringify({
             beaches: [],
             landmarks: [],
             facilities: [],
@@ -256,7 +256,7 @@ test('time-only shared URLs survive fresh forecast refresh after cached restore'
     await page.addInitScript((selectedTime) => {
         const nowTime = new Date();
         nowTime.setMinutes(0, 0, 0);
-        localStorage.setItem('rottnest-snorkelling-app-cache-v4', JSON.stringify({
+        localStorage.setItem('rottnest-snorkelling-app-cache-v5', JSON.stringify({
             beaches: [],
             landmarks: [],
             facilities: [],
