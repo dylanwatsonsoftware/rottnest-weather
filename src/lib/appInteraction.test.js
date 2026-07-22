@@ -157,6 +157,14 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /shareUrl=\{currentShareUrl\}/);
 });
 
+test('share buttons show visible copy feedback', () => {
+    assert.match(app, /let shareStatus = \$state\(''\)/);
+    assert.match(app, /function showShareStatus\(message\)/);
+    assert.match(app, /showShareStatus\('Link copied'\)/);
+    assert.match(app, /class="share-toast"/);
+    assert.match(app, /aria-live="polite"/);
+});
+
 test('social meta follows selected location time recommendations conditions and image', () => {
     assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount,\s*updateDocumentSocialMeta \} from '\.\/lib\/socialMeta\.js';/);
     assert.match(app, /const selectedSocialLocationName = \$derived/);

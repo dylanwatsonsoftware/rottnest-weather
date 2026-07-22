@@ -329,7 +329,7 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /id="beach-mode-semi-time-slider"/);
     assert.match(recommendationPanel, /class="beach-share-button"/);
     assert.match(recommendationPanel, /aria-label="Share \{selectedRecommendation\.beach\.name\}"/);
-    assert.match(recommendationPanel, /onclick=\{onShareLocation\}/);
+    assert.match(recommendationPanel, /onclick=\{\(\) => onShareLocation\(\)\}/);
     assert.match(beachPanelSource, /class="panel-content"[\s\S]*class="detail-metrics"[\s\S]*\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
     assert.match(beachPanelSource, /<Controls[\s\S]*\{forecastData\}[\s\S]*\{forecastRange\}[\s\S]*\{rangeMode\}[\s\S]*bind:hourIndex/);
     assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);

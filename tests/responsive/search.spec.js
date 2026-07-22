@@ -58,6 +58,16 @@ test('zooming out keeps the selected map place anchored on screen', async ({ pag
 
 test('selected locations and forecast time are encoded in the URL for sharing', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+            value: {
+                writeText: async (value) => {
+                    window.__lastCopiedShareUrl = value;
+                }
+            },
+            configurable: true
+        });
+    });
     await mockForecastApis(page);
     await page.goto('/');
 
@@ -67,6 +77,9 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await page.locator('.map-search-results').getByRole('button', { name: /Little Salmon Bay/i }).click();
 
     await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'Share Little Salmon Bay' }).first().click();
+    await expect(page.locator('.share-toast')).toHaveText('Link copied');
+    await expect.poll(() => page.evaluate(() => window.__lastCopiedShareUrl)).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('time=');
     await expect(page).toHaveTitle(/Little Salmon Bay at .* \| Rottnest/);

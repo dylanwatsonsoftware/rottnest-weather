@@ -326,7 +326,7 @@
                                 type="button"
                                 aria-label="Share {selectedRecommendation.beach.name}"
                                 title="Copy share link"
-                                onclick={onShareLocation}
+                                onclick={() => onShareLocation()}
                             >
                                 🔗
                             </button>
@@ -616,7 +616,7 @@
                             type="button"
                             aria-label="Share {selectedRecommendation.beach.name}"
                             title="Copy share link"
-                            onclick={onShareLocation}
+                            onclick={() => onShareLocation()}
                         >
                             🔗
                         </button>

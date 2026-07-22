@@ -55,6 +55,8 @@
     let droppedPin = $state(null);
     let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
     let currentShareUrl = $state('');
+    let shareStatus = $state('');
+    let shareStatusTimer = null;
     let mapNavigationSequence = 0;
     let didApplySharedLocationState = false;
     let mapLayout = $state('default');
@@ -306,8 +308,22 @@
     async function shareCurrentLocation() {
         if (!currentShareUrl) updateShareUrl();
         const url = currentShareUrl || window.location.href;
-        await navigator.clipboard?.writeText(url);
+        try {
+            if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+            await navigator.clipboard.writeText(url);
+            showShareStatus('Link copied');
+        } catch (error) {
+            showShareStatus('Copy failed');
+        }
         return url;
+    }
+
+    function showShareStatus(message) {
+        shareStatus = message;
+        window.clearTimeout(shareStatusTimer);
+        shareStatusTimer = window.setTimeout(() => {
+            shareStatus = '';
+        }, 2200);
     }
 
     function selectSearchBeach(name) {
@@ -540,6 +556,9 @@
 />
 
 <main>
+    {#if shareStatus}
+        <div class="share-toast" aria-live="polite">{shareStatus}</div>
+    {/if}
     <Map
         recommendations={$state.snapshot(mapRecommendations)}
         landmarks={$state.snapshot(landmarks)}
