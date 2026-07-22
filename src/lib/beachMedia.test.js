@@ -23,6 +23,12 @@ test('beach media is keyed to known beaches and local image files', () => {
     }
 });
 
+test('every known beach has at least one bundled image', () => {
+    const missingImages = beaches.filter((beach) => !getBeachImages(beach.name).length).map((beach) => beach.name);
+
+    assert.deepEqual(missingImages, []);
+});
+
 test('beach image lookup returns exact media without exposing mutable catalog data', () => {
     const images = getBeachImages('The Basin');
 

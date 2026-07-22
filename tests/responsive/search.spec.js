@@ -29,7 +29,7 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
     await mockForecastApis(page);
     await page.goto('/');
 
-    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+    await page.locator('.landmark-icon.landmark', { hasText: '🗼' }).first().click({ force: true });
 
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
     await expect(page.locator('.selected-map-place-card img')).toBeVisible();
@@ -41,9 +41,11 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
 test('zooming out keeps the selected map place anchored on screen', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
+    const forecastRefresh = page.waitForResponse((response) => response.url().includes('api.open-meteo.com'));
     await page.goto('/');
+    await forecastRefresh;
 
-    await page.locator('.landmark-icon.facility', { hasText: '☕' }).first().click({ force: true });
+    await page.locator('.landmark-icon.landmark', { hasText: '🗼' }).first().click({ force: true });
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
     await page.waitForTimeout(700);
     const before = await getSelectedMarkerCenter(page);
@@ -58,6 +60,16 @@ test('zooming out keeps the selected map place anchored on screen', async ({ pag
 
 test('selected locations and forecast time are encoded in the URL for sharing', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+            value: {
+                writeText: async (value) => {
+                    window.__lastCopiedShareUrl = value;
+                }
+            },
+            configurable: true
+        });
+    });
     await mockForecastApis(page);
     await page.goto('/');
 
@@ -67,6 +79,11 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await page.locator('.map-search-results').getByRole('button', { name: /Little Salmon Bay/i }).click();
 
     await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'Share Little Salmon Bay' }).first().click();
+    await expect(page.locator('.share-toast')).toHaveText('Link copied');
+    await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toHaveClass(/copied/);
+    await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toHaveText('✓');
+    await expect.poll(() => page.evaluate(() => window.__lastCopiedShareUrl)).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('time=');
     await expect(page).toHaveTitle(/Little Salmon Bay at .* \| Rottnest/);
@@ -82,6 +99,52 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await expect(page.getByRole('button', { name: 'Share Parker Point Bus Stop' })).toBeVisible();
     await expect.poll(() => page.url()).toContain('location=facility%3Aparker-point-bus-stop');
     await expect.poll(() => page.url()).toContain('time=');
+});
+
+test('route planning and dropped pins can be shared from the map', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/');
+
+    await page.getByRole('button', { name: 'Start route planning' }).click();
+    await page.locator('#map').click({ position: { x: 145, y: 330 } });
+    await expect(page.locator('.route-planner-card')).toContainText('1 waypoint');
+    await page.locator('#map').click({ position: { x: 130, y: 430 } });
+
+    await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
+    await expect(page.locator('.planned-route-line')).toBeVisible();
+    await expect(page.locator('.route-planner-card')).toContainText(/m|km/);
+    await page.getByPlaceholder('Name this route').fill('West End snorkel ride');
+    await expect(page.locator('.route-planner-card a', { hasText: 'Open route' })).toHaveAttribute('href', /google\.com\/maps\/dir\/\?api=1.*travelmode=walking/);
+    await expect(page.getByRole('button', { name: 'Share' }).first()).toBeEnabled();
+    await expect.poll(() => page.url()).toContain('route=');
+    await expect.poll(() => page.url()).toContain('routeName=West+End+snorkel+ride');
+    await expect.poll(() => page.locator('meta[property="og:title"]').getAttribute('content')).toContain('West End snorkel ride route');
+
+    await page.getByRole('button', { name: 'Drop a pin' }).click();
+    await page.locator('#map').click({ position: { x: 180, y: 360 } });
+
+    await expect(page.locator('.dropped-pin-card')).toBeVisible();
+    await expect(page.locator('.dropped-pin-card')).toContainText(/°S/);
+    await expect(page.locator('.dropped-pin-card a', { hasText: 'Open in Google Maps' })).toHaveAttribute('href', /google\.com\/maps\?q=.*&t=k&z=17/);
+    await expect(page.locator('.dropped-pin-marker')).toBeVisible();
+    await expect.poll(() => page.url()).toContain('pin=');
+});
+
+test('shared route and pin URLs restore map planning overlays', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    await page.goto('/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride');
+    await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
+    await expect(page.locator('.route-planner-card')).toBeVisible();
+    await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End snorkel ride');
+    await expect(page.locator('.planned-route-line')).toBeVisible();
+
+    await page.goto('/?pin=-32.00641%2C115.50999');
+    await expect(page.locator('.dropped-pin-card')).toBeVisible();
+    await expect(page.locator('.dropped-pin-marker')).toBeVisible();
+    await expect(page.locator('.dropped-pin-card')).toContainText('32.00641°S');
 });
 
 async function getSelectedMarkerCenter(page) {
@@ -144,11 +207,31 @@ test('time-only shared URLs preserve future forecast dates', async ({ page }) =>
     sharedTime.setHours(sharedTime.getHours() + 216);
     const sharedTimeValue = sharedTime.toISOString().slice(0, 16);
 
-    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}`);
+    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}&panel=semi`);
 
     await expect(page.locator('.recommendation-panel')).toBeVisible();
     await expect.poll(() => page.url()).toContain(`time=${encodeURIComponent(sharedTimeValue)}`);
     await expect.poll(() => page.url()).not.toContain('location=');
+    await expect.poll(() => page.locator('#collapsed-time-slider').inputValue()).toBe('216');
+});
+
+test('forecast slider changes update the shared URL time', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    const forecastRefresh = page.waitForResponse((response) => response.url().includes('api.open-meteo.com'));
+    await page.goto('/?panel=semi');
+    await forecastRefresh;
+
+    await expect(page.locator('#collapsed-time-slider')).toBeVisible();
+    const initialTimeParam = new URL(page.url()).searchParams.get('time');
+
+    await page.locator('#collapsed-time-slider').evaluate((slider) => {
+        slider.value = String(Number(slider.value) + 3);
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    await expect.poll(() => new URL(page.url()).searchParams.get('time')).not.toBe(initialTimeParam);
 });
 
 test('time-only shared URLs ignore stale cached forecasts that miss the requested date', async ({ page }) => {
@@ -163,7 +246,7 @@ test('time-only shared URLs ignore stale cached forecasts that miss the requeste
     await page.addInitScript(() => {
         const staleForecastTime = new Date();
         staleForecastTime.setMinutes(0, 0, 0);
-        localStorage.setItem('rottnest-snorkelling-app-cache-v4', JSON.stringify({
+        localStorage.setItem('rottnest-snorkelling-app-cache-v5', JSON.stringify({
             beaches: [],
             landmarks: [],
             facilities: [],
@@ -195,7 +278,7 @@ test('time-only shared URLs survive fresh forecast refresh after cached restore'
     await page.addInitScript((selectedTime) => {
         const nowTime = new Date();
         nowTime.setMinutes(0, 0, 0);
-        localStorage.setItem('rottnest-snorkelling-app-cache-v4', JSON.stringify({
+        localStorage.setItem('rottnest-snorkelling-app-cache-v5', JSON.stringify({
             beaches: [],
             landmarks: [],
             facilities: [],
@@ -227,7 +310,7 @@ test('map search autocomplete shows distance when browser location is available'
     });
     const page = await context.newPage();
     await mockForecastApis(page);
-    await page.goto('http://127.0.0.1:4173/');
+    await page.goto('http://127.0.0.1:4273/');
 
     await page.getByRole('button', { name: 'Open map search' }).click();
     await page.locator('.map-search input').fill('pink');

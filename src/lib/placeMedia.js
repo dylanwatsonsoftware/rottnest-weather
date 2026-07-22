@@ -1,5 +1,6 @@
 const COMMONS = 'https://commons.wikimedia.org/wiki/File:';
 const CC_BY_30 = 'https://creativecommons.org/licenses/by/3.0';
+const CC_BY_SA_20 = 'https://creativecommons.org/licenses/by-sa/2.0';
 const CC_BY_SA_40 = 'https://creativecommons.org/licenses/by-sa/4.0';
 
 function commonsFile(fileName) {
@@ -69,6 +70,33 @@ const parkerPointRoadImage = {
     licenseUrl: CC_BY_SA_40
 };
 
+const parkerPointCoastImage = {
+    src: '/beach-images/parker-point-01.jpg',
+    alt: 'Coastline near Parker Point facilities on Rottnest Island',
+    sourceUrl: commonsFile('Rottnest_Island_coastline_near_Parker_Point_01.jpg'),
+    author: 'Pedro Szekely',
+    license: 'CC BY-SA 2.0',
+    licenseUrl: CC_BY_SA_20
+};
+
+const visitorCentreImage = {
+    src: '/place-images/visitor-centre-01.jpg',
+    alt: 'Rottnest Island Visitor Centre building in Thomson Bay Settlement',
+    sourceUrl: commonsFile('Rottnest_Island_VC_2018.jpg'),
+    author: 'Vivien Huey Wen Chen',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: CC_BY_SA_40
+};
+
+const bikeRideImage = {
+    src: '/place-images/rottnest-bike-01.jpg',
+    alt: 'Bike beside a salt lake on Rottnest Island',
+    sourceUrl: commonsFile('Photo_of_Bike_Ride_at_Rottnest_Island_(2).jpg'),
+    author: 'Shcmilly',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: CC_BY_SA_40
+};
+
 export const PLACE_MEDIA = {
     'The Settlement': [thomsonBaySettlementImage],
     'Wadjemup Lighthouse': [
@@ -87,7 +115,13 @@ export const PLACE_MEDIA = {
     'Denton Holme Shipwreck': [bathurstLighthouseImage],
     'Geordie Bay Facilities': [geordieBayImage],
     'The Basin Facilities': [theBasinImage],
+    'Parker Point Facilities': [parkerPointCoastImage],
     'Parker Point Bus Stop': [parkerPointRoadImage],
+    'Visitor Centre': [visitorCentreImage],
+    'Settlement Bike Parking': [bikeRideImage],
+    'Army Jetty Water Refill': [thomsonBaySettlementImage],
+    'Kingstown Barracks Water Refill': [parkerPointRoadImage],
+    'Vlamingh Lookout Water Refill': [bikeRideImage],
     'The Lane Cafe': [thomsonBaySettlementImage],
     'Rottnest Bakery': [thomsonBaySettlementImage],
     Subway: [thomsonBaySettlementImage],

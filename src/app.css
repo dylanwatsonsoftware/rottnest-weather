@@ -5,6 +5,7 @@ body {
 
 :root {
     --header-offset: 68px;
+    --map-control-right: 14px;
 }
 
 body {
@@ -125,7 +126,7 @@ main {
 .map-search {
     position: fixed;
     top: calc(var(--header-offset) + 8px);
-    right: 14px;
+    right: var(--map-control-right);
     z-index: 1250;
     width: 42px;
     color: #203133;
@@ -268,6 +269,405 @@ main {
 .map-search-empty {
     margin: 0;
     padding: 10px;
+}
+
+.route-planner {
+    position: fixed;
+    top: calc(var(--header-offset) + 92px);
+    right: var(--map-control-right);
+    z-index: 1240;
+    width: min(280px, calc(100vw - 110px));
+    color: #203133;
+    pointer-events: none;
+}
+
+.share-toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--panel-closed-height, 104px) + 18px);
+    z-index: 1600;
+    transform: translateX(-50%);
+    padding: 9px 14px;
+    border: 1px solid rgba(209, 224, 224, 0.9);
+    border-radius: 999px;
+    background: rgba(8, 84, 96, 0.94);
+    color: white;
+    box-shadow: 0 12px 30px rgba(9, 31, 34, 0.24);
+    font-size: 0.82rem;
+    font-weight: 850;
+    pointer-events: none;
+}
+
+.route-planner-actions,
+.route-planner-card-actions button,
+.route-planner-card-actions a {
+    pointer-events: auto;
+}
+
+.route-planner-card {
+    pointer-events: none;
+}
+
+.route-planner-actions {
+    display: grid;
+    justify-content: end;
+    gap: 6px;
+    padding: 3px;
+    width: max-content;
+    margin-left: auto;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px rgba(13, 34, 38, 0.18);
+    backdrop-filter: blur(12px);
+}
+
+.route-planner-actions button,
+.route-planner-card button,
+.route-planner-card a,
+.dropped-pin-card button {
+    border: 0;
+    border-radius: 8px;
+    background: #eef5f5;
+    color: #0b6476;
+    padding: 7px 9px;
+    font-size: 0.74rem;
+    font-weight: 850;
+    transition:
+        background 0.16s ease,
+        color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.16s ease;
+}
+
+.route-planner-card a {
+    text-decoration: none;
+}
+
+.google-maps-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.google-maps-icon {
+    width: 14px;
+    height: 16px;
+    display: inline-block;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+.route-planner-actions button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.06rem;
+    line-height: 1;
+}
+
+.route-planner-icon {
+    display: block;
+    line-height: 1;
+}
+
+.route-planner-icon-route {
+    width: 20px;
+    height: 20px;
+}
+
+.route-planner-icon-route svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.route-planner-icon-route circle {
+    fill: currentColor;
+    stroke: none;
+}
+
+.route-planner-icon-pin {
+    transform: translateY(-1px);
+}
+
+.route-planner-actions button.active,
+.route-planner-card a,
+.route-planner-card button:not(:disabled):last-child,
+.dropped-pin-card button:not(.dropped-pin-close) {
+    background: #0b7182;
+    color: white;
+}
+
+.route-planner-actions button:hover,
+.route-planner-actions button:focus-visible,
+.route-planner-card button:not(:disabled):hover,
+.route-planner-card button:not(:disabled):focus-visible,
+.route-planner-card a:hover,
+.route-planner-card a:focus-visible {
+    background: #dceeee;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+    transform: translateY(-1px);
+}
+
+.route-planner-actions button.active:hover,
+.route-planner-actions button.active:focus-visible,
+.route-planner-card a:hover,
+.route-planner-card a:focus-visible,
+.route-planner-card button:not(:disabled):last-child:hover,
+.route-planner-card button:not(:disabled):last-child:focus-visible {
+    background: #095c69;
+    color: white;
+}
+
+.route-planner-actions button:focus-visible,
+.route-planner-card button:focus-visible,
+.route-planner-card a:focus-visible {
+    outline: 0;
+}
+
+.range-mode-toggle button,
+.collapsed-better-time-button,
+.better-time-button,
+.settings-icon-button,
+.recommendation-row,
+.nearby-list button,
+.map-jump-button,
+.beach-share-button,
+.selected-map-place-share,
+.selected-map-place-close,
+.beach-panel-close,
+.settings-sheet-header button,
+.beach-photo-button,
+.beach-photo-modal-close {
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.16s ease,
+        opacity 0.16s ease;
+}
+
+.range-mode-toggle button:not(.active):hover,
+.range-mode-toggle button:not(.active):focus-visible,
+.collapsed-better-time-button:hover,
+.collapsed-better-time-button:focus-visible,
+.settings-icon-button:hover,
+.settings-icon-button:focus-visible,
+.selected-map-place-close:hover,
+.selected-map-place-close:focus-visible,
+.beach-panel-close:hover,
+.beach-panel-close:focus-visible,
+.settings-sheet-header button:hover,
+.settings-sheet-header button:focus-visible {
+    border-color: #b7d2d2;
+    background: #e7f2f2;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
+.better-time-button:hover,
+.better-time-button:focus-visible {
+    border-color: #095c69;
+    background: #095c69;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+}
+
+.recommendation-row:hover,
+.recommendation-row:focus-visible,
+.nearby-list button:hover,
+.nearby-list button:focus-visible {
+    border-color: #b7d2d2;
+    box-shadow: 0 4px 14px rgba(21, 45, 49, 0.12);
+    transform: translateY(-1px);
+}
+
+.map-jump-button:hover,
+.map-jump-button:focus-visible,
+.beach-share-button:hover,
+.beach-share-button:focus-visible,
+.selected-map-place-share:hover,
+.selected-map-place-share:focus-visible {
+    border-color: #b7d2d2;
+    background: #e7f2f2;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
+.beach-photo-button:hover,
+.beach-photo-button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+    transform: translateY(-1px);
+}
+
+.beach-photo-modal-close:hover,
+.beach-photo-modal-close:focus-visible {
+    border-color: rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16);
+}
+
+.range-mode-toggle button:focus-visible,
+.collapsed-better-time-button:focus-visible,
+.better-time-button:focus-visible,
+.settings-icon-button:focus-visible,
+.recommendation-row:focus-visible,
+.nearby-list button:focus-visible,
+.map-jump-button:focus-visible,
+.beach-share-button:focus-visible,
+.selected-map-place-share:focus-visible,
+.selected-map-place-close:focus-visible,
+.beach-panel-close:focus-visible,
+.settings-sheet-header button:focus-visible,
+.beach-photo-button:focus-visible,
+.beach-photo-modal-close:focus-visible {
+    outline: 0;
+}
+
+.route-planner-card button.copied:not(:disabled),
+.dropped-pin-card button.copied,
+.beach-share-button.copied,
+.selected-map-place-share.copied {
+    border-color: #167a52;
+    background: #167a52;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(22, 122, 82, 0.18);
+}
+
+.route-planner-card {
+    margin-top: 6px;
+    width: max-content;
+    max-width: min(190px, calc(100vw - 110px));
+    margin-left: auto;
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 10px 28px rgba(13, 34, 38, 0.22);
+    backdrop-filter: blur(12px);
+}
+
+.route-planner-card strong,
+.dropped-pin-card strong {
+    font-size: 0.9rem;
+}
+
+.route-planner-card small,
+.dropped-pin-card small {
+    color: #5d6d6f;
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.route-name-field {
+    display: grid;
+    gap: 3px;
+}
+
+.route-name-field span {
+    color: #5d6d6f;
+    font-size: 0.66rem;
+    font-weight: 850;
+}
+
+.route-name-field input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #d7e4e4;
+    border-radius: 8px;
+    background: #f6fafa;
+    color: #203133;
+    padding: 7px 8px;
+    font-size: 0.76rem;
+    font-weight: 750;
+}
+
+.route-name-field input::placeholder {
+    color: #7d8f91;
+}
+
+.route-name-field input:focus {
+    border-color: #9dc5c4;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
+.route-planner-card-actions,
+.dropped-pin-card span {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.route-planner-card button:disabled {
+    opacity: 0.45;
+    cursor: default;
+    pointer-events: none;
+}
+
+.dropped-pin-card {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: 76px;
+    z-index: 1265;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 12px 14px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #203133;
+    box-shadow: 0 12px 32px rgba(13, 34, 38, 0.24);
+    backdrop-filter: blur(12px);
+}
+
+.dropped-pin-card > div {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.dropped-pin-card strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropped-pin-card a {
+    color: #0b6476;
+    font-size: 0.74rem;
+    font-weight: 850;
+    text-decoration: none;
+}
+
+.dropped-pin-close {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 999px !important;
+    background: #e8f2f2 !important;
+    color: #0b6476 !important;
+    font-size: 1.1rem !important;
+    line-height: 1;
 }
 
 .recommendation-panel {
@@ -445,6 +845,9 @@ main {
     grid-row: 1;
     width: 36px;
     height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
     border: 1px solid rgba(34, 60, 63, 0.16);
     border-radius: 999px;
     background: #eef5f5;
@@ -528,6 +931,9 @@ main {
 .beach-panel-close {
     width: 34px;
     height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
     border: 1px solid rgba(34, 60, 63, 0.16);
     border-radius: 999px;
     background: #eef5f5;
@@ -1179,6 +1585,9 @@ main {
     color: #34494b;
     font-size: 0.78rem;
     font-weight: 760;
+    cursor: pointer;
+    appearance: none;
+    width: fit-content;
 }
 
 .next-good-window span {
@@ -1188,6 +1597,18 @@ main {
 .next-good-window strong {
     color: #0b6476;
     font-size: 0.86rem;
+}
+
+.next-good-window small {
+    color: #5d6d6f;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.next-good-window:hover,
+.next-good-window:focus-visible {
+    border-color: #9dc5c4;
+    background: #e2f1ef;
 }
 
 .beach-photo-strip {
@@ -1549,6 +1970,37 @@ main {
     top: calc(var(--header-offset) + 8px);
 }
 
+.planned-route-line {
+    filter: drop-shadow(0 2px 4px rgba(13, 34, 38, 0.36));
+}
+
+.route-waypoint-marker,
+.dropped-pin-marker {
+    display: grid !important;
+    place-items: center;
+    border-radius: 999px !important;
+    border: 2px solid white !important;
+    box-shadow: 0 4px 12px rgba(13, 34, 38, 0.32);
+    color: white;
+    font-weight: 900;
+}
+
+.route-waypoint-marker {
+    background: #6f4bc2 !important;
+    font-size: 0.78rem;
+}
+
+.dropped-pin-marker {
+    background: #d39b46 !important;
+    font-size: 1.12rem;
+}
+
+.dropped-pin-glyph {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 .beach-marker {
     --beach-marker-size: 34px;
     width: var(--beach-marker-size) !important;
@@ -1575,14 +2027,21 @@ main {
     --beach-marker-size: 24px;
 }
 
+.beach-marker.tiny {
+    --beach-marker-size: 22px;
+}
+
 .beach-marker.selected {
     --beach-marker-size: 40px;
     outline: 3px solid rgba(255, 255, 255, 0.8);
 }
 
 .beach-marker span {
+    display: grid;
+    place-items: center;
     font-size: 16px;
     font-weight: 900;
+    line-height: 1;
 }
 
 .beach-marker.small span {
@@ -1591,6 +2050,10 @@ main {
 
 .beach-marker.compact span {
     font-size: 12px;
+}
+
+.beach-marker.tiny span {
+    font-size: 11px;
 }
 
 .beach-marker small {
@@ -1616,6 +2079,11 @@ main {
 
 .beach-marker.compact small {
     transform: scale(0.82);
+    transform-origin: center;
+}
+
+.beach-marker.tiny small {
+    transform: scale(0.72);
     transform-origin: center;
 }
 
@@ -1726,6 +2194,7 @@ main {
 @media (max-width: 620px) {
     :root {
         --header-offset: 106px;
+        --map-control-right: 10px;
     }
 
     header {
@@ -1758,7 +2227,6 @@ main {
     }
 
     .map-search {
-        right: 10px;
         width: 40px;
     }
 
@@ -1791,6 +2259,7 @@ main {
 @media (max-height: 430px) and (orientation: landscape) {
     :root {
         --header-offset: 54px;
+        --map-control-right: min(420px, 58vw);
     }
 
     header {
@@ -1800,10 +2269,6 @@ main {
 
     #weather-panel {
         max-width: none;
-    }
-
-    .map-search {
-        right: min(420px, 58vw);
     }
 
     .map-search.open {
@@ -1851,6 +2316,7 @@ main {
 @media (min-width: 900px) and (min-height: 431px) {
     :root {
         --header-offset: 76px;
+        --map-control-right: 18px;
     }
 
     header {
@@ -1868,10 +2334,6 @@ main {
 
     #weather-info {
         font-size: 0.9rem;
-    }
-
-    .map-search {
-        right: 18px;
     }
 
     .map-search.open {

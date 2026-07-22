@@ -229,6 +229,7 @@ export function findNextGoodWindow(beach, forecastData, startIndex = 0) {
                 hourIndex: index,
                 state: candidate.state,
                 score: candidate.score,
+                durationHours: getGoodWindowDuration(beach, forecastData, index),
                 windDirection: conditions.windDirection,
                 windSpeed: conditions.windSpeed,
                 swellHeight: conditions.swellHeight
@@ -237,6 +238,18 @@ export function findNextGoodWindow(beach, forecastData, startIndex = 0) {
     }
 
     return null;
+}
+
+function getGoodWindowDuration(beach, forecastData, startIndex) {
+    let duration = 0;
+
+    for (let index = startIndex; index < forecastData.time.length; index += 1) {
+        const candidate = scoreBeach(beach, getConditions(forecastData, index));
+        if (candidate.state !== 'best' && candidate.state !== 'good') break;
+        duration += 1;
+    }
+
+    return duration;
 }
 
 export function filterRecommendations(recommendations = [], filters = {}, zoom = 13) {
@@ -333,6 +346,11 @@ export function getSafetyNotices({ windSpeed, swellHeight, forecastData }) {
 export function formatTime(time, options = {}) {
     if (!time) return 'Later';
     return formatCompactTime(time, { weekday: true, ...options });
+}
+
+export function shouldShowRecommendationScore(recommendation = {}, options = {}) {
+    return Number.isFinite(recommendation.score)
+        && (options.selected || recommendation.state === 'best' || recommendation.state === 'good');
 }
 
 function getState(score, directionMatches, flexibility) {

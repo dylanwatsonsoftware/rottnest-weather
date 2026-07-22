@@ -9,7 +9,7 @@ test('map watches location without moving the map view', () => {
 });
 
 test('map only exposes user location markers inside Rottnest bounds while keeping distance origin available', () => {
-    assert.match(mapSource, /import \{ isWithinRottnestBounds \} from '\.\/recommendations\.js';/);
+    assert.match(mapSource, /import \{[^}]*isWithinRottnestBounds[^}]*\} from '\.\/recommendations\.js';/);
     assert.match(mapSource, /if \(!isWithinRottnestBounds\(location\)\)\s*\{/);
     assert.match(mapSource, /clearUserLocation\(\);/);
     assert.match(mapSource, /onUserLocationChange\(location\);[\s\S]*if \(!isWithinRottnestBounds\(location\)\)\s*\{/);
@@ -53,18 +53,46 @@ test('manual zoom recenters the selected navigation request at the new zoom leve
     assert.match(zoomHandler, /recenterSelectedNavigationOnZoom\(nextZoom\)/);
     assert.match(mapSource, /let isProgrammaticMapMove = false/);
     assert.match(mapSource, /function recenterSelectedNavigationOnZoom\(zoom\)/);
-    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove\) return/);
+    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove \|\| !shouldRecenterSelectedNavigation\) return/);
     assert.match(mapSource, /const center = getOffsetCenter\(mapNavigationRequest,\s*zoom\)/);
     assert.match(mapSource, /setViewProgrammatically\(center,\s*zoom,\s*\{\s*animate:\s*false\s*\}\)/);
     assert.match(mapSource, /function setViewProgrammatically\(center,\s*zoom,\s*options\)/);
     assert.match(mapSource, /map\.setView\(center,\s*zoom,\s*options\)/);
 });
 
+test('selected place navigation never zooms out from the current map zoom', () => {
+    assert.match(mapSource, /function getSelectionNavigationZoom\(request\)/);
+    assert.match(mapSource, /const requestedZoom = Number\.isFinite\(request\?\.zoom\) \? request\.zoom : 15/);
+    assert.match(mapSource, /const currentMapZoom = map\?\.getZoom\(\)/);
+    assert.match(mapSource, /return Math\.max\(currentMapZoom,\s*requestedZoom\)/);
+    assert.match(mapSource, /const zoom = getSelectionNavigationZoom\(request\)/);
+});
+
+test('manual map dragging disables selected navigation zoom anchoring', () => {
+    assert.match(mapSource, /let shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /map\.on\('dragstart',\s*handleManualMapMove\)/);
+    assert.match(mapSource, /function handleManualMapMove\(\)/);
+    assert.match(mapSource, /if \(isProgrammaticMapMove\) return/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = true;[\s\S]*lastNavigationRequestId = request\.requestId/);
+    assert.match(mapSource, /if \(!mapNavigationRequest \|\| isProgrammaticMapMove \|\| !shouldRecenterSelectedNavigation\) return/);
+});
+
+test('clearing the map navigation request cancels pending selected-location recenters', () => {
+    assert.match(mapSource, /function cancelSelectedNavigationTracking\(\)/);
+    assert.match(mapSource, /lastNavigationRequestId = null/);
+    assert.match(mapSource, /shouldRecenterSelectedNavigation = false/);
+    assert.match(mapSource, /if \(!request\) \{[\s\S]*cancelSelectedNavigationTracking\(\);[\s\S]*return;[\s\S]*\}/);
+    assert.match(mapSource, /if \(request\.requestId !== lastNavigationRequestId\) return/);
+});
+
 test('beach marker icons use rank-aware sizes', () => {
     assert.match(mapSource, /import \{[\s\S]*getBeachMarkerSize/);
+    assert.match(mapSource, /shouldShowRecommendationScore/);
     assert.match(mapSource, /icon:\s*getBeachIcon\(recommendation,\s*index\)/);
     assert.match(mapSource, /marker\.setIcon\(getBeachIcon\(recommendation,\s*rank\)\)/);
     assert.match(mapSource, /getBeachMarkerSize\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*rank\)/);
+    assert.match(mapSource, /const scoreBadge = shouldShowRecommendationScore\(recommendation,\s*\{\s*selected:\s*selected === 'selected'\s*\}\)/);
     assert.match(mapSource, /iconSize:\s*\[markerSize\.size,\s*markerSize\.size\]/);
 });
 

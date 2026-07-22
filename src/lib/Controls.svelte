@@ -223,7 +223,7 @@
     });
 
     $effect(() => {
-        if (!chart && forecastData && canvasElement) {
+        if (Chart && !chart && forecastData && canvasElement) {
             initChart();
         }
     });

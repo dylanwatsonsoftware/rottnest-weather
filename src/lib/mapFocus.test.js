@@ -284,22 +284,22 @@ test('beach marker sizes shrink lower ranked beaches at cluttered zooms', () => 
         { beach: { name: 'Lower Bay' }, state: 'watch' },
         12,
         '',
-        8
-    ), { size: 28, anchor: 14 });
+        1
+    ), { size: 26, anchor: 13 });
 
     assert.deepEqual(getBeachMarkerSize(
         { beach: { name: 'Tiny Bay' }, state: 'avoid' },
-        11,
+        12,
         '',
-        14
-    ), { size: 24, anchor: 12 });
+        1
+    ), { size: 22, anchor: 11 });
 
     assert.deepEqual(getBeachMarkerSize(
         { beach: { name: 'Zoomed Bay' }, state: 'avoid' },
         15,
         '',
         14
-    ), { size: 34, anchor: 17 });
+    ), { size: 22, anchor: 11 });
 });
 
 test('low zoom keeps all beach markers visible without area overlay filtering', () => {
@@ -321,10 +321,13 @@ test('place labels stay hidden unless the place was selected', () => {
 
 test('place markers use category priority to reduce map clutter', () => {
     assert.equal(shouldShowPlaceMarker({ name: 'Bathurst Lighthouse', type: 'landmark', subtype: 'lighthouse' }, 10), true);
-    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 13), true);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 13), false);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 14), true);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 14), false);
-    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 15), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Henrietta Rocks', type: 'landmark', subtype: 'dive_site' }, 12), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Henrietta Rocks', type: 'landmark', subtype: 'dive_site' }, 14), true);
+    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 13), false);
+    assert.equal(shouldShowPlaceMarker({ name: "Pinky's Beach Club", type: 'facility', category: 'restaurant' }, 15), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 15), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Stop', type: 'facility', category: 'bus_stop' }, 16), true);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 15), false);
+    assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 16), true);
     assert.equal(shouldShowPlaceMarker({ name: 'Parker Point Facilities', type: 'facility', category: 'toilets' }, 11, 'Parker Point Facilities'), true);
 });

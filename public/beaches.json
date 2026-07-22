@@ -169,8 +169,12 @@
             "NE",
             "NW"
         ],
-        "lat": -32.01817,
-        "lon": 115.47707,
+        "lat": -32.0189,
+        "lon": 115.4865,
+        "coordinate_source": "surf_spot_location_checked_against_official_strickland_page",
+        "coordinate_source_url": "https://breakfinder.surf/en/surf_spots/strickland-bay-rottnest-island",
+        "coordinate_checked_at": "2026-07-22",
+        "coordinate_note": "App marker uses a surf/shoreline location for Strickland Bay, not the OSM natural=bay centroid, so the marker sits near the practical beach and surf access area.",
         "difficulty": "Advanced water users",
         "access": "Bike, Island Explorer bus stop 10, or Wardan Nara Bidi",
         "exposure_note": "Expansive southern bay and one of WA's most consistent surf breaks",
@@ -368,8 +372,10 @@
             "S",
             "SW"
         ],
-        "lat": -31.9918106,
-        "lon": 115.5074396,
+        "lat": -31.99159,
+        "lon": 115.50578,
+        "coordinate_source": "wikimedia_commons_geotagged_beach_photo",
+        "coordinate_note": "App marker moved to a geotagged shoreline/photo point for Little Armstrong Bay rather than a road/centroid-style point.",
         "access": "Island Explorer bus stop 17 or Karlinyah Bidi",
         "exposure_note": "Small protected north-coast bay with rocky outcrops",
         "activity_tags": [

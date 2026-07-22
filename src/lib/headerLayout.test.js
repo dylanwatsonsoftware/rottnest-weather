@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
+const app = readFileSync(new URL('../App.svelte', import.meta.url), 'utf8');
 const logo = readFileSync(new URL('./Logo.svelte', import.meta.url), 'utf8');
 const mapSearch = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
@@ -38,20 +39,81 @@ test('navbar uses compact Rottnest title', () => {
 test('app icon uses a stylised Rottnest outline in the header and favicon', () => {
     assert.match(header, /<Logo size=\{40\} class="header-logo" \/>/);
     assert.match(logo, /aria-label="Stylised Rottnest Island outline"/);
-    assert.match(logo, /class="rottnest-outline"/);
-    assert.match(logo, /class="rottnest-reef"/);
-    assert.match(logo, /class="rottnest-location"/);
+    assert.match(logo, /width=\{size\}/);
+    assert.match(logo, /height=\{size\}/);
+    assert.match(logo, /viewBox="0 0 250 250"/);
+    assert.match(logo, /class="rottnest-logo-badge"/);
+    assert.match(logo, /class="rottnest-logo-badge"[\s\S]*M 45,139/);
+    assert.match(logo, /class="rottnest-logo-shadow"/);
+    assert.match(logo, /class="rottnest-silhouette"/);
+    assert.match(logo, /d="\s*M 32,168/);
+    assert.match(logo, /C 398,50 415,62 430,72/);
+    assert.doesNotMatch(logo, /class="rottnest-reef"/);
+    assert.doesNotMatch(logo, /class="rottnest-lake"/);
+    assert.doesNotMatch(logo, /class="rottnest-location"/);
     assert.doesNotMatch(logo, /Snorkel Mask/);
 
-    assert.match(favicon, /id="rottnest-outline"/);
-    assert.match(favicon, /id="rottnest-reef"/);
-    assert.match(favicon, /id="rottnest-location"/);
+    assert.match(favicon, /viewBox="0 0 256 256"/);
+    assert.match(favicon, /id="favicon-rounded-square"/);
+    assert.match(favicon, /rx="56"/);
+    assert.match(favicon, /id="favicon-shadow"/);
+    assert.match(favicon, /id="favicon-logo-arc"/);
+    assert.match(favicon, /id="favicon-logo-arc"[\s\S]*M 45,139/);
+    assert.match(favicon, /id="favicon-logo-arc-highlight"/);
+    assert.match(favicon, /id="rottnest-silhouette"/);
+    assert.match(favicon, /d="\s*M 32,168/);
+    assert.match(favicon, /C 398,50 415,62 430,72/);
+    assert.doesNotMatch(favicon, /viewBox="0 0 500 250"/);
+    assert.doesNotMatch(favicon, /id="rottnest-reef"/);
+    assert.doesNotMatch(favicon, /id="rottnest-lake"/);
+    assert.doesNotMatch(favicon, /id="rottnest-location"/);
     assert.doesNotMatch(favicon, /Snorkel Mask/);
 });
 
 test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
+});
+
+test('route and pin controls are icon buttons below the map zoom controls', () => {
+    assert.match(app, /aria-label="Start route planning"/);
+    assert.match(app, /aria-label="Drop a pin"/);
+    assert.match(app, /<span class="route-planner-icon route-planner-icon-route" aria-hidden="true">/);
+    assert.match(app, /<span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖<\/span>/);
+    assert.doesNotMatch(app, /<span class="route-planner-icon" aria-hidden="true">↝<\/span>/);
+    assert.doesNotMatch(app, />\s*Route\s*<\/button>/);
+    assert.doesNotMatch(app, />\s*Pin\s*<\/button>/);
+    assert.match(css, /\.route-planner\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*92px\)/s);
+    assert.match(css, /\.route-planner\s*{[^}]*right:\s*var\(--map-control-right\)/s);
+    assert.doesNotMatch(css, /\.route-planner\s*{[^}]*left:\s*14px/s);
+    assert.match(css, /\.route-planner-actions\s*{[^}]*padding:\s*3px/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*width:\s*32px/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*height:\s*32px/s);
+    assert.match(css, /\.route-planner-actions\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.route-planner-card\s*{[^}]*width:\s*max-content/s);
+    assert.match(css, /\.route-planner-card\s*{[^}]*max-width:\s*min\(190px,\s*calc\(100vw - 110px\)\)/s);
+    assert.match(css, /\.route-planner-actions button:hover/s);
+    assert.match(css, /\.route-planner-actions button:focus-visible/s);
+    assert.match(css, /\.route-planner-card button:not\(:disabled\):hover/s);
+    assert.match(css, /\.route-planner-card a:hover/s);
+});
+
+test('app buttons have subtle hover and focus feedback outside map planning controls', () => {
+    assert.match(css, /\.range-mode-toggle button:not\(\.active\):hover/s);
+    assert.match(css, /\.collapsed-better-time-button:hover/s);
+    assert.match(css, /\.better-time-button:hover/s);
+    assert.match(css, /\.settings-icon-button:hover/s);
+    assert.match(css, /\.recommendation-row:hover/s);
+    assert.match(css, /\.nearby-list button:hover/s);
+    assert.match(css, /\.map-jump-button:hover/s);
+    assert.match(css, /\.beach-share-button:hover/s);
+    assert.match(css, /\.selected-map-place-close:hover/s);
+    assert.match(css, /\.beach-photo-button:hover/s);
+    assert.match(css, /\.beach-photo-modal-close:hover/s);
+    assert.match(css, /\.settings-sheet-header button:hover/s);
+    assert.match(css, /\.range-mode-toggle button:focus-visible/s);
+    assert.match(css, /\.recommendation-row:focus-visible/s);
+    assert.match(css, /\.nearby-list button:focus-visible/s);
 });
 
 test('floating map search is a compact icon until opened', () => {
@@ -72,7 +134,8 @@ test('floating map search is a compact icon until opened', () => {
     assert.doesNotMatch(mapSearch, /type="search"/);
     assert.match(mapSearch, /placeholder="Search beaches or places"/);
     assert.match(css, /\.map-search\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/s);
-    assert.match(css, /\.map-search\s*{[^}]*right:\s*14px/s);
+    assert.match(css, /--map-control-right:\s*14px/);
+    assert.match(css, /\.map-search\s*{[^}]*right:\s*var\(--map-control-right\)/s);
     assert.match(css, /\.map-search\s*{[^}]*width:\s*42px/s);
     assert.match(css, /\.map-search\.open\s*{[^}]*width:\s*min\(420px,\s*calc\(100vw - 110px\)\)/s);
     assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.map-search\.open\s*{[^}]*width:\s*calc\(100vw - 98px\)/s);
@@ -107,8 +170,25 @@ test('ranked beach marker size classes are visually distinct', () => {
     assert.match(css, /\.beach-marker\.prominent\s*{[^}]*--beach-marker-size:\s*38px/s);
     assert.match(css, /\.beach-marker\.small\s*{[^}]*--beach-marker-size:\s*28px/s);
     assert.match(css, /\.beach-marker\.compact\s*{[^}]*--beach-marker-size:\s*24px/s);
+    assert.match(css, /\.beach-marker\.tiny\s*{[^}]*--beach-marker-size:\s*22px/s);
     assert.match(css, /\.beach-marker\.selected\s*{[^}]*--beach-marker-size:\s*40px/s);
     assert.match(css, /\.beach-marker\.compact small\s*{[^}]*transform:\s*scale\(0\.82\)/s);
+    assert.match(css, /\.beach-marker\.tiny small\s*{[^}]*transform:\s*scale\(0\.72\)/s);
+});
+
+test('circular map glyphs are explicitly centered', () => {
+    assert.match(css, /\.beach-marker span\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.beach-marker span\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.beach-marker span\s*{[^}]*line-height:\s*1/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*padding:\s*0/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*padding:\s*0/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*padding:\s*0/s);
 });
 
 test('beach detail timeline has its own time slider styling', () => {
@@ -281,6 +361,7 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /isBeachView = false/);
     assert.match(recommendationPanel, /shareUrl = ''/);
     assert.match(recommendationPanel, /onShareLocation = \(\) => \{\}/);
+    assert.match(recommendationPanel, /shareSucceeded = false/);
     assert.match(recommendationPanel, /onCloseBeach = \(\) => \{\}/);
     assert.match(recommendationPanel, /class:beach-mode=\{isBeachView\}/);
     assert.match(recommendationPanel, /\{#if isBeachView && selectedRecommendation\}/);
@@ -293,10 +374,12 @@ test('selected beach mode uses a dedicated beach panel instead of recommendation
     assert.match(recommendationPanel, /id="beach-mode-time-slider"/);
     assert.match(recommendationPanel, /id="beach-mode-semi-time-slider"/);
     assert.match(recommendationPanel, /class="beach-share-button"/);
+    assert.match(recommendationPanel, /class:copied=\{shareSucceeded\}/);
     assert.match(recommendationPanel, /aria-label="Share \{selectedRecommendation\.beach\.name\}"/);
-    assert.match(recommendationPanel, /onclick=\{onShareLocation\}/);
+    assert.match(recommendationPanel, /onclick=\{\(\) => onShareLocation\(\)\}/);
+    assert.match(recommendationPanel, /\{shareSucceeded \? '✓' : '🔗'\}/);
     assert.match(beachPanelSource, /class="panel-content"[\s\S]*class="detail-metrics"[\s\S]*\{#if isOpen && safetyNotices\.length\}[\s\S]*class="safety-strip"/);
-    assert.match(beachPanelSource, /<Controls[\s\S]*\{forecastData\}[\s\S]*\{forecastRange\}[\s\S]*\{rangeMode\}[\s\S]*bind:hourIndex/);
+    assert.match(beachPanelSource, /<Controls[\s\S]*\{forecastData\}[\s\S]*\{forecastRange\}[\s\S]*rangeMode=\{effectiveRangeMode\}[\s\S]*bind:hourIndex/);
     assert.match(recommendationPanel, /\{:else\}[\s\S]*class="panel-toolbar"/);
     assert.match(css, /\.beach-panel-header\s*{[^}]*padding:\s*7px 10px 4px 12px/s);
     assert.match(css, /\.beach-panel-handle\s*{[^}]*grid-column:\s*1 \/ -1/s);
@@ -322,6 +405,8 @@ test('recommendation panel labels watch-state recommendations as caution', () =>
 
 test('recommendation rows show a status heatbar instead of window summary text', () => {
     assert.match(recommendationPanel, /getRecommendationHeatbar\(item\)/);
+    assert.match(recommendationPanel, /<span class="score">\{item\.score\}<\/span>/);
+    assert.doesNotMatch(recommendationPanel, /\{#if shouldShowRecommendationScore\(item\)\}[\s\S]*class="score"/);
     assert.match(recommendationPanel, /class="recommendation-heatbar"/);
     assert.match(recommendationPanel, /class="recommendation-heatbar-marker"/);
     assert.doesNotMatch(recommendationPanel, /<small>\{getRecommendationWindowSummary\(item\)\}<\/small>/);
@@ -332,9 +417,13 @@ test('recommendation rows show a status heatbar instead of window summary text',
 test('next good window hints are visually highlighted in beach details', () => {
     assert.match(recommendationPanel, /class="next-good-window"/);
     assert.doesNotMatch(recommendationPanel, /<p class="detail-note">Next good window:/);
+    assert.match(recommendationPanel, /<button[\s\S]*class="next-good-window"[\s\S]*onclick=\{\(\) => jumpToNextGoodWindow\(selectedRecommendation\.nextGood\)\}/);
+    assert.match(recommendationPanel, /\{formatNextGoodDuration\(selectedRecommendation\.nextGood\)\}/);
+    assert.match(recommendationPanel, /class="next-good-window"[\s\S]*class="detail-metrics"/);
     assert.match(css, /\.next-good-window\s*{[^}]*background:\s*#eef7f6/s);
     assert.match(css, /\.next-good-window\s*{[^}]*border:\s*1px solid #cfe0e0/s);
     assert.match(css, /\.next-good-window span\s*{[^}]*font-weight:\s*800/s);
+    assert.match(css, /\.next-good-window\s*{[^}]*cursor:\s*pointer/s);
     assert.doesNotMatch(css, /\.next-good-window span\s*{[^}]*text-transform:\s*uppercase/s);
 });
 

@@ -17,6 +17,13 @@
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
     import { buildSocialMeta, getRecommendedBeachCount } from './lib/socialMeta.js';
     import {
+        buildGoogleMapsCoordinateUrl,
+        buildGoogleMapsRouteUrl,
+        formatCoordinateLabel,
+        getRouteDistanceKm,
+        getRouteDistanceLabel
+    } from './lib/routePlanning.js';
+    import {
         buildShareUrl,
         getSharedLocationFromUrl,
         getLocationKey,
@@ -49,8 +56,14 @@
     let mapNavigationRequest = $state(null);
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
+    let routeMode = $state('off');
+    let routePoints = $state(getInitialUrlState().route || []);
+    let routeName = $state(getInitialUrlState().routeName || '');
+    let droppedPin = $state(getInitialUrlState().pin || null);
     let sharedLocationState = $state(getInitialUrlState());
     let currentShareUrl = $state(getInitialUrl());
+    let shareStatus = $state('');
+    let shareStatusTimer = null;
     let mapNavigationSequence = 0;
     let didApplySharedLocationState = false;
     let mapLayout = $state('default');
@@ -96,6 +109,68 @@
             ...filters,
             [name]: value
         };
+    }
+
+    function handleMapPlanningPoint(point) {
+        if (!Number.isFinite(point?.lat) || !Number.isFinite(point?.lon)) return;
+
+        if (routeMode === 'route') {
+            routePoints = [...routePoints, point];
+            droppedPin = null;
+            selectedBeachName = '';
+            selectedMapPlace = null;
+            mapNavigationRequest = null;
+        }
+
+        if (routeMode === 'pin') {
+            droppedPin = point;
+            routeMode = 'off';
+            selectedBeachName = '';
+            selectedMapPlace = null;
+            mapNavigationRequest = null;
+        }
+    }
+
+    function startRoutePlanning() {
+        routeMode = routeMode === 'route' ? 'off' : 'route';
+        if (routeMode === 'route') {
+            droppedPin = null;
+            panelMode = 'closed';
+        }
+    }
+
+    function startPinDrop() {
+        routeMode = routeMode === 'pin' ? 'off' : 'pin';
+        if (routeMode === 'pin') {
+            panelMode = 'closed';
+        }
+    }
+
+    function undoRoutePoint() {
+        routePoints = routePoints.slice(0, -1);
+    }
+
+    function clearRoute() {
+        routePoints = [];
+        routeName = '';
+        if (routeMode === 'route') routeMode = 'off';
+    }
+
+    function clearDroppedPin() {
+        droppedPin = null;
+        if (routeMode === 'pin') routeMode = 'off';
+    }
+
+    function navigateToDroppedPin(pin) {
+        if (!Number.isFinite(pin?.lat) || !Number.isFinite(pin?.lon)) return;
+        navigateToMapTarget({
+            name: 'Pinned location',
+            type: 'pin',
+            lat: pin.lat,
+            lon: pin.lon,
+            zoom: 16,
+            visibleAnchor: getSelectedMapPlaceVisibleAnchor()
+        });
     }
 
     function navigateToMapTarget(target) {
@@ -160,6 +235,7 @@
 
     function clearSelectedBeach() {
         selectedBeachName = '';
+        mapNavigationRequest = null;
         panelMode = 'closed';
     }
 
@@ -194,9 +270,10 @@
         if (Number.isInteger(sharedHourIndex)) {
             hourIndex = sharedHourIndex;
             didApplySharedLocationState = true;
-        } else if (sharedLocationState.time) {
-            // Apply the location immediately for useful SSR HTML, then resolve the
-            // requested hour when a covering forecast becomes available.
+        } else if (sharedLocationState.time && appData.forecastData?.time?.length) {
+            // A loaded forecast cannot satisfy this URL. Release reactive URL updates,
+            // but continue applying the location so SSR still renders useful content.
+            didApplySharedLocationState = true;
         } else {
             didApplySharedLocationState = true;
         }
@@ -239,7 +316,10 @@
         const nextUrl = buildShareUrl(window.location.href, {
             locationKey,
             time: forecastData.time[hourIndex],
-            panelMode
+            panelMode,
+            pin: droppedPin,
+            route: routePoints,
+            routeName
         });
 
         currentShareUrl = nextUrl;
@@ -251,8 +331,22 @@
     async function shareCurrentLocation() {
         if (!currentShareUrl) updateShareUrl();
         const url = currentShareUrl || window.location.href;
-        await navigator.clipboard?.writeText(url);
+        try {
+            if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+            await navigator.clipboard.writeText(url);
+            showShareStatus('Link copied');
+        } catch (error) {
+            showShareStatus('Copy failed');
+        }
         return url;
+    }
+
+    function showShareStatus(message) {
+        shareStatus = message;
+        window.clearTimeout(shareStatusTimer);
+        shareStatusTimer = window.setTimeout(() => {
+            shareStatus = '';
+        }, 5000);
     }
 
     function selectSearchBeach(name) {
@@ -292,12 +386,15 @@
     }
 
     function applyAppData(nextAppData) {
-        const currentSelectedTime = forecastData?.time?.[hourIndex];
+        const currentSelectedTime = hasPendingSharedTime()
+            ? sharedLocationState.time
+            : forecastData?.time?.[hourIndex];
+        const nextHourIndex = getAppDataHourIndex(nextAppData.forecastData, currentSelectedTime);
         beaches = nextAppData.beaches;
         landmarks = nextAppData.landmarks;
         facilities = nextAppData.facilities;
         forecastData = nextAppData.forecastData;
-        hourIndex = getAppDataHourIndex(nextAppData.forecastData, currentSelectedTime);
+        hourIndex = nextHourIndex;
         applySharedLocationState(nextAppData);
     }
 
@@ -311,7 +408,12 @@
     }
 
     onMount(() => {
+        didApplySharedLocationState = false;
         sharedLocationState = getSharedLocationFromUrl(window.location.href);
+        droppedPin = sharedLocationState.pin;
+        routePoints = sharedLocationState.route;
+        routeName = sharedLocationState.routeName;
+        navigateToDroppedPin(sharedLocationState.pin);
 
         function updateMapLayout() {
             const nextMapLayout = getMapLayout({
@@ -343,7 +445,7 @@
                 const nextLandmarks = await landmarksRes.json();
                 const nextFacilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
-                const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10');
+                const weatherRes = await window.fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth');
                 if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
                 const weatherJson = await weatherRes.json();
 
@@ -352,7 +454,7 @@
                 };
 
                 try {
-                    const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10');
+                    const marineRes = await window.fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth');
                     if (marineRes.ok) {
                         const marineJson = await marineRes.json();
                         nextForecastData = {
@@ -410,11 +512,7 @@
         recommendations.find((item) => item.beach.name === selectedBeachName) || null
     );
     const isBeachView = $derived(Boolean(selectedBeachName && selectedRecommendation));
-    const mapRecommendations = $derived(
-        selectedRecommendation && !visibleRecommendations.some((item) => item.beach.name === selectedRecommendation?.beach.name)
-            ? [...visibleRecommendations, selectedRecommendation]
-            : visibleRecommendations
-    );
+    const mapRecommendations = $derived(filters.showBeaches === false ? [] : recommendations);
     const hasLoadedForecast = $derived(!loading && Boolean(forecastData?.time?.length));
     const safetyNotices = $derived([
         ...getSafetyNotices({
@@ -434,6 +532,20 @@
     );
     const selectedMapPlaceImages = $derived(getPlaceImages(selectedMapPlace?.name));
     const selectedMapPlaceImage = $derived(selectedMapPlaceImages[0] ?? null);
+    const routeDistanceKm = $derived(getRouteDistanceKm(routePoints));
+    const routeDistanceLabel = $derived(getRouteDistanceLabel(routeDistanceKm));
+    const routeSocialName = $derived(routePoints.length >= 2 ? routeName.trim() : '');
+    const routePlannerStatus = $derived(
+        routePoints.length > 1
+            ? routeDistanceLabel
+            : routePoints.length === 1
+                ? 'Add another point'
+                : 'Click the map to start'
+    );
+    const pinCoordinateLabel = $derived(formatCoordinateLabel(droppedPin));
+    const googleMapsPinUrl = $derived(buildGoogleMapsCoordinateUrl(droppedPin));
+    const googleMapsRouteUrl = $derived(buildGoogleMapsRouteUrl(routePoints));
+    const shareSucceeded = $derived(shareStatus === 'Link copied');
     const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
     const selectedSocialImage = $derived(
         selectedMapPlace
@@ -442,6 +554,8 @@
     );
     const currentSocialMeta = $derived(buildSocialMeta({
         locationName: selectedSocialLocationName,
+        routeName: routeSocialName,
+        routeDistanceLabel,
         selectedTime: selectedForecastTime,
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: currentConditions,
@@ -462,6 +576,9 @@
     $effect(() => {
         const selectedName = selectedBeachName || selectedMapPlace?.name || '';
         const selectedHour = hourIndex;
+        const plannedRoute = routePoints.length;
+        const plannedRouteName = routeName;
+        const plannedPin = droppedPin?.lat;
         updateShareUrl();
     });
 
@@ -492,6 +609,9 @@
 />
 
 <main>
+    {#if shareStatus}
+        <div class="share-toast" aria-live="polite">{shareStatus}</div>
+    {/if}
     <Map
         recommendations={$state.snapshot(mapRecommendations)}
         landmarks={$state.snapshot(landmarks)}
@@ -502,8 +622,12 @@
         {panelMode}
         {mapLayout}
         {mapNavigationRequest}
+        routeMode={routeMode}
+        routePoints={$state.snapshot(routePoints)}
+        {droppedPin}
         onSelectBeach={revealBeachInPanel}
         onNavigateToMap={navigateToMapTarget}
+        onPlanningPoint={handleMapPlanningPoint}
         onZoomChange={(zoom) => mapZoom = zoom}
         onUserLocationChange={(location) => userLocation = location}
     />
@@ -517,6 +641,82 @@
         onSelectBeach={selectSearchBeach}
         onNavigateToMap={navigateToMapTarget}
     />
+    <section class="route-planner" aria-label="Route and pin sharing">
+        <div class="route-planner-actions">
+            <button
+                type="button"
+                class:active={routeMode === 'route'}
+                aria-pressed={routeMode === 'route'}
+                aria-label="Start route planning"
+                title="Route"
+                onclick={startRoutePlanning}
+            >
+                <span class="route-planner-icon route-planner-icon-route" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M6 18 C6 13 18 13 18 6" />
+                        <circle cx="6" cy="18" r="2.4" />
+                        <circle cx="18" cy="6" r="2.4" />
+                    </svg>
+                </span>
+            </button>
+            <button
+                type="button"
+                class:active={routeMode === 'pin'}
+                aria-pressed={routeMode === 'pin'}
+                aria-label="Drop a pin"
+                title="Pin"
+                onclick={startPinDrop}
+            >
+                <span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖</span>
+            </button>
+        </div>
+        {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
+            <div class="route-planner-card">
+                <strong>{routePlannerStatus}</strong>
+                <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                <label class="route-name-field">
+                    <span>Route name</span>
+                    <input
+                        type="text"
+                        placeholder="Name this route"
+                        maxlength="80"
+                        bind:value={routeName}
+                    />
+                </label>
+                <div class="route-planner-card-actions">
+                    <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
+                    <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>
+                    {#if googleMapsRouteUrl}
+                        <a class="google-maps-action" href={googleMapsRouteUrl} target="_blank" rel="noreferrer">
+                            <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
+                            Open route
+                        </a>
+                    {/if}
+                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>
+                        {shareSucceeded ? 'Copied' : 'Share'}
+                    </button>
+                </div>
+            </div>
+        {/if}
+    </section>
+    {#if droppedPin}
+        <aside class="dropped-pin-card" aria-label="Dropped pin">
+            <button type="button" class="dropped-pin-close" aria-label="Close dropped pin" onclick={clearDroppedPin}>×</button>
+            <div>
+                <small>Pinned location</small>
+                <strong>{pinCoordinateLabel}</strong>
+                <span>
+                    <a class="google-maps-action" href={googleMapsPinUrl} target="_blank" rel="noreferrer">
+                        <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
+                        Open in Google Maps
+                    </a>
+                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()}>
+                        {shareSucceeded ? 'Copied' : 'Share'}
+                    </button>
+                </span>
+            </div>
+        </aside>
+    {/if}
     {#if selectedMapPlace}
         <aside class="selected-map-place-card" class:has-images={selectedMapPlaceImages.length} aria-label="Selected map place">
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>
@@ -536,7 +736,9 @@
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>
                     {selectedMapPlace.name}
-                    <button class="selected-map-place-share" type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>🔗</button>
+                    <button class="selected-map-place-share" class:copied={shareSucceeded} type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>
+                        {shareSucceeded ? '✓' : '🔗'}
+                    </button>
                 </strong>
                 {#if selectedMapPlace.ratingLabel || selectedMapPlaceDistanceLabel}
                     <span class="selected-map-place-meta">
@@ -571,6 +773,7 @@
             isBeachView={isBeachView}
             onCloseBeach={clearSelectedBeach}
             shareUrl={currentShareUrl}
+            shareSucceeded={shareSucceeded}
             onShareLocation={shareCurrentLocation}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}

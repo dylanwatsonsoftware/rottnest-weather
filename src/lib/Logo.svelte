@@ -1,42 +1,82 @@
 <script>
-    let { size = 32, class: className = '' } = $props();
+    let { size = 40, class: className = '' } = $props();
 </script>
 
 <svg
     width={size}
     height={size}
-    viewBox="0 0 64 64"
+    viewBox="0 0 250 250"
     class={className}
-    fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-label="Stylised Rottnest Island outline"
     role="img"
 >
+    <defs>
+        <filter id="rottnest-logo-shadow" class="rottnest-logo-shadow" x="-18%" y="-18%" width="136%" height="136%">
+            <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#04343d" flood-opacity="0.28"/>
+        </filter>
+    </defs>
     <path
-        class="rottnest-reef"
-        d="M9 38C16 43 25 45 35 43C44 41.2 50.5 37.5 56 32"
-        stroke="currentColor"
-        stroke-width="4"
-        stroke-linecap="round"
-        opacity="0.42"
+        class="rottnest-logo-badge"
+        fill="#2fb8b1"
+        filter="url(#rottnest-logo-shadow)"
+        d="
+            M 45,139
+            C 66,156 101,166 139,166
+            C 169,166 193,158 207,146
+            C 194,163 169,174 136,174
+            C 96,173 62,157 45,139 Z
+        "
     />
     <path
-        class="rottnest-outline"
-        d="M7.5 34.5C10.8 29 16.2 25.8 22.5 23.7C27.2 22.1 31.9 18.3 37.8 19.6C42.2 20.6 43.9 23.7 48.1 23.9C52.5 24.1 57.1 25.6 58.5 30C59.7 33.8 56.2 37.8 51.2 38.3C46.2 38.8 43.9 42.5 38.9 41.9C34.1 41.3 29.5 43.5 24.8 42.4C18.3 40.8 11.9 41.4 7.5 34.5Z"
-        fill="currentColor"
+        fill="#9fe3df"
+        opacity="0.82"
+        d="
+            M 55,144
+            C 76,156 105,162 136,162
+            C 160,162 181,156 194,148
+            C 177,158 156,164 132,164
+            C 101,163 74,155 55,144 Z
+        "
     />
-    <circle
-        class="rottnest-location"
-        cx="42.5"
-        cy="30.5"
-        r="4.2"
-        fill="white"
-        opacity="0.96"
-    />
-    <circle
-        cx="42.5"
-        cy="30.5"
-        r="1.9"
-        fill="currentColor"
-    />
+    <g transform="translate(15 72) scale(0.44)">
+        <path
+            class="rottnest-silhouette"
+            fill="#f8fbfb"
+            d="
+                M 32,168
+                C 28,164 25,155 30,148
+                C 36,142 45,145 52,143
+                C 58,141 62,133 70,131
+                C 78,129 83,135 91,130
+                C 98,125 105,120 115,118
+                C 122,116 128,103 138,98
+                C 148,93 158,98 168,90
+                C 178,82 188,72 201,65
+                C 214,58 228,62 242,58
+                C 255,54 266,42 282,45
+                C 292,47 298,38 307,41
+                C 313,43 318,52 326,50
+                C 334,48 342,51 352,48
+                C 362,45 372,50 382,50
+                C 398,50 415,62 430,72
+                C 445,82 458,92 472,100
+                C 455,108 440,113 430,121
+                C 422,127 418,136 411,142
+                C 402,150 392,142 382,147
+                C 372,152 363,165 352,172
+                C 345,177 338,185 332,192
+                C 328,197 322,208 314,210
+                C 307,212 304,200 300,190
+                C 294,178 285,171 274,166
+                C 262,161 248,162 235,158
+                C 222,155 210,165 196,165
+                C 182,165 170,156 156,154
+                C 142,152 132,163 118,160
+                C 106,157 98,145 86,147
+                C 76,149 68,157 58,163
+                C 50,168 40,172 32,168 Z
+            "
+        />
+    </g>
 </svg>

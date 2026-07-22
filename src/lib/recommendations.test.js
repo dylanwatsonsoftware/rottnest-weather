@@ -10,6 +10,7 @@ import {
     getInitialFocusRecommendations,
     getSafetyNotices,
     formatTime,
+    shouldShowRecommendationScore,
     shouldUseUserLocationForFocus
 } from './recommendations.js';
 
@@ -59,6 +60,37 @@ test('buildRecommendations finds the next better forecast window', () => {
     assert.equal(sheltered.state, 'avoid');
     assert.equal(sheltered.nextGood.time, '2026-07-20T11:00');
     assert.equal(sheltered.nextGood.state, 'good');
+});
+
+test('buildRecommendations includes the length of the next good forecast window', () => {
+    const extendedForecast = {
+        ...forecast,
+        time: [
+            ...forecast.time,
+            '2026-07-20T12:00',
+            '2026-07-20T13:00',
+            '2026-07-20T14:00'
+        ],
+        windspeed_10m: [12, 18, 32, 14, 16, 17, 34],
+        winddirection_10m: [225, 0, 225, 180, 180, 180, 180],
+        temperature_2m: [21, 22, 22, 23, 23, 24, 24],
+        swell_wave_height: [0.5, 0.7, 1.6, 0.8, 0.8, 0.9, 1.8]
+    };
+    const recommendations = buildRecommendations(beaches, extendedForecast, 1);
+    const sheltered = recommendations.find((item) => item.beach.name === 'Sheltered Bay');
+
+    assert.equal(sheltered.nextGood.hourIndex, 3);
+    assert.equal(sheltered.nextGood.durationHours, 3);
+});
+
+test('shouldShowRecommendationScore only shows scores for green beach states', () => {
+    assert.equal(shouldShowRecommendationScore({ state: 'best', score: 92 }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'good', score: 76 }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'watch', score: 52 }), false);
+    assert.equal(shouldShowRecommendationScore({ state: 'avoid', score: 30 }), false);
+    assert.equal(shouldShowRecommendationScore({ state: 'watch', score: 52 }, { selected: true }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'avoid', score: 30 }, { selected: true }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'good', score: Number.NaN }), false);
 });
 
 test('formatTime includes dates for forecast times beyond this week', () => {

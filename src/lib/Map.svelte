@@ -20,7 +20,7 @@
         getVisibleBeachFitSettings
     } from './mapFocus.js';
     import { formatDistanceLabel, getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
-    import { isWithinRottnestBounds } from './recommendations.js';
+    import { isWithinRottnestBounds, shouldShowRecommendationScore } from './recommendations.js';
 
     let {
         recommendations = [],
@@ -32,8 +32,12 @@
         panelMode = 'closed',
         mapLayout = 'default',
         mapNavigationRequest = null,
+        routeMode = 'off',
+        routePoints = [],
+        droppedPin = null,
         onSelectBeach = () => {},
         onNavigateToMap = () => {},
+        onPlanningPoint = () => {},
         onZoomChange = () => {},
         onUserLocationChange = () => {}
     } = $props();
@@ -46,10 +50,14 @@
     let placeClickTargets = new Map();
     let userLocationMarker = null;
     let userLocationCircle = null;
+    let routeLine = null;
+    let routeWaypointMarkers = [];
+    let droppedPinMarker = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
     let isProgrammaticMapMove = false;
+    let shouldRecenterSelectedNavigation = false;
     let lastVisibleBeachPointsSignature = '';
     let lastVisibleBeachPanelMode = 'closed';
     let lastVisibleBeachMapLayout = 'default';
@@ -88,6 +96,7 @@
 
             initUserLocation();
             mapElement.addEventListener('click', handleMapElementClick);
+            map.on('dragstart', handleManualMapMove);
             map.on('zoomend', () => {
                 const nextZoom = map.getZoom();
                 currentZoom = nextZoom;
@@ -100,10 +109,12 @@
             onZoomChange(currentZoom);
             initBeaches();
             initLandmarks();
+            updatePlanningLayers();
             fitInitialFocus();
 
             cleanup = () => {
                 mapElement.removeEventListener('click', handleMapElementClick);
+                map?.off('dragstart', handleManualMapMove);
                 map?.remove();
                 map = null;
             };
@@ -114,6 +125,11 @@
             cleanup?.();
         };
     });
+
+    function handleManualMapMove() {
+        if (isProgrammaticMapMove) return;
+        shouldRecenterSelectedNavigation = false;
+    }
 
     function initLandmarks() {
         placeMarkers.forEach(({ marker }) => marker.remove());
@@ -155,6 +171,8 @@
     }
 
     function handleMapElementClick(event) {
+        if (handlePlanningClick(event)) return;
+
         const markerElement = event.target.closest?.('.landmark-icon');
         const placeKey = markerElement?.dataset?.placeKey;
         const selectPlace = placeClickTargets.get(placeKey);
@@ -163,6 +181,16 @@
         event.preventDefault();
         event.stopPropagation();
         selectPlace();
+    }
+
+    function handlePlanningClick(event) {
+        if (routeMode !== 'route' && routeMode !== 'pin') return false;
+        if (!map) return false;
+        event.preventDefault();
+        event.stopPropagation();
+        const latlng = map.mouseEventToLatLng(event);
+        onPlanningPoint({ lat: latlng.lat, lon: latlng.lng });
+        return true;
     }
 
     function attachPlaceClickTarget(marker, selectPlace, placeKey) {
@@ -287,10 +315,13 @@
     function getBeachIcon(recommendation, rank = 0) {
         const selected = recommendation.beach.name === selectedBeachName ? 'selected' : '';
         const markerSize = getBeachMarkerSize(recommendation, currentZoom, selectedBeachName, rank);
-        const sizeClass = markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
+        const sizeClass = markerSize.size < 24 ? 'tiny' : markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
+        const scoreBadge = shouldShowRecommendationScore(recommendation, { selected: selected === 'selected' })
+            ? `<small>${recommendation.score}</small>`
+            : '';
         return L.divIcon({
             className: `beach-marker ${recommendation.state} ${selected} ${sizeClass}`,
-            html: `<span>${stateIcons[recommendation.state]}</span><small>${recommendation.score}</small>`,
+            html: `<span>${stateIcons[recommendation.state]}</span>${scoreBadge}`,
             iconSize: [markerSize.size, markerSize.size],
             iconAnchor: [markerSize.anchor, markerSize.anchor]
         });
@@ -355,6 +386,61 @@
         if (userLocationCircle) {
             if (visible && !map.hasLayer(userLocationCircle)) userLocationCircle.addTo(map);
             if (!visible && map.hasLayer(userLocationCircle)) userLocationCircle.remove();
+        }
+    }
+
+    function updatePlanningLayers() {
+        if (!map) return;
+
+        if (routeLine) {
+            routeLine.remove();
+            routeLine = null;
+        }
+        routeWaypointMarkers.forEach((marker) => marker.remove());
+        routeWaypointMarkers = [];
+
+        const routeLatLngs = routePoints
+            .filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon))
+            .map((point) => [point.lat, point.lon]);
+
+        if (routeLatLngs.length >= 2) {
+            routeLine = L.polyline(routeLatLngs, {
+                className: 'planned-route-line',
+                color: '#f4c96b',
+                weight: 5,
+                opacity: 0.95
+            }).addTo(map);
+        }
+
+        routeLatLngs.forEach((latlng, index) => {
+            const icon = L.divIcon({
+                className: 'route-waypoint-marker',
+                html: `<span>${index + 1}</span>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+            routeWaypointMarkers.push(L.marker(latlng, { icon }).addTo(map));
+        });
+
+        if (droppedPinMarker) {
+            droppedPinMarker.remove();
+            droppedPinMarker = null;
+        }
+
+        if (Number.isFinite(droppedPin?.lat) && Number.isFinite(droppedPin?.lon)) {
+            const pinIcon = L.divIcon({
+                className: 'dropped-pin-marker',
+                html: `
+                    <svg class="dropped-pin-glyph" viewBox="0 0 34 34" aria-hidden="true">
+                        <circle cx="17" cy="17" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <line x1="17" y1="5" x2="17" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="5" y1="17" x2="29" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                `,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+            droppedPinMarker = L.marker([droppedPin.lat, droppedPin.lon], { icon: pinIcon }).addTo(map);
         }
     }
 
@@ -449,9 +535,15 @@
     }
 
     function navigateToMapRequest(request) {
-        if (!map || !request || request.requestId === lastNavigationRequestId) return;
+        if (!map) return;
+        if (!request) {
+            cancelSelectedNavigationTracking();
+            return;
+        }
+        if (request.requestId === lastNavigationRequestId) return;
         if (!Number.isFinite(request.lat) || !Number.isFinite(request.lon)) return;
 
+        shouldRecenterSelectedNavigation = true;
         lastNavigationRequestId = request.requestId;
         window.setTimeout(() => {
             if (!map) return;
@@ -459,7 +551,7 @@
 
             requestAnimationFrame(() => {
                 if (!map || request.requestId !== lastNavigationRequestId) return;
-                const zoom = request.zoom || 15;
+                const zoom = getSelectionNavigationZoom(request);
                 const center = getOffsetCenter(request, zoom);
                 flyToProgrammatically(center, zoom, {
                     animate: true,
@@ -469,6 +561,18 @@
                 onZoomChange(currentZoom);
             });
         }, getNavigationSettleDelay(request));
+    }
+
+    function cancelSelectedNavigationTracking() {
+        lastNavigationRequestId = null;
+        shouldRecenterSelectedNavigation = false;
+    }
+
+    function getSelectionNavigationZoom(request) {
+        const requestedZoom = Number.isFinite(request?.zoom) ? request.zoom : 15;
+        const currentMapZoom = map?.getZoom();
+        if (!Number.isFinite(currentMapZoom)) return requestedZoom;
+        return Math.max(currentMapZoom, requestedZoom);
     }
 
     function getSelectedPlaceVisibleAnchor() {
@@ -481,7 +585,7 @@
     }
 
     function recenterSelectedNavigationOnZoom(zoom) {
-        if (!mapNavigationRequest || isProgrammaticMapMove) return;
+        if (!mapNavigationRequest || isProgrammaticMapMove || !shouldRecenterSelectedNavigation) return;
         if (!Number.isFinite(mapNavigationRequest.lat) || !Number.isFinite(mapNavigationRequest.lon)) return;
 
         requestAnimationFrame(() => {
@@ -610,6 +714,14 @@
         if (map) {
             updateLandmarks();
             navigateToMapRequest(request);
+        }
+    });
+
+    $effect(() => {
+        const currentRoutePoints = routePoints;
+        const currentDroppedPin = droppedPin;
+        if (map) {
+            updatePlanningLayers();
         }
     });
 
