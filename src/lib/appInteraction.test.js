@@ -217,6 +217,41 @@ test('selected map place card has a share link button', () => {
     assert.match(app, /onclick=\{\(\) => shareCurrentLocation\(\)\}/);
 });
 
+test('app wires route planning and dropped pin sharing into the map', () => {
+    const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
+
+    assert.match(app, /import \{[\s\S]*buildGoogleMapsCoordinateUrl[\s\S]*formatCoordinateLabel[\s\S]*getRouteDistanceKm[\s\S]*getRouteDistanceLabel[\s\S]*\} from '\.\/lib\/routePlanning\.js';/);
+    assert.match(app, /let routeMode = \$state\('off'\)/);
+    assert.match(app, /let routePoints = \$state\(\[\]\)/);
+    assert.match(app, /let droppedPin = \$state\(null\)/);
+    assert.match(app, /function handleMapPlanningPoint\(point\)/);
+    assert.match(app, /function navigateToDroppedPin\(pin\)/);
+    assert.match(app, /navigateToDroppedPin\(sharedLocationState\.pin\)/);
+    assert.match(app, /routeMode === 'route'/);
+    assert.match(app, /routeMode === 'pin'/);
+    assert.match(app, /class="route-planner"/);
+    assert.match(app, /class="dropped-pin-card"/);
+    assert.match(app, /googleMapsPinUrl/);
+    assert.match(app, /routeDistanceLabel/);
+    assert.match(app, /pinCoordinateLabel/);
+    assert.match(app, /pin:\s*droppedPin/);
+    assert.match(app, /route:\s*routePoints/);
+    assert.match(app, /routeMode=\{routeMode\}/);
+    assert.match(app, /routePoints=\{\$state\.snapshot\(routePoints\)\}/);
+    assert.match(app, /\{droppedPin\}/);
+    assert.match(app, /onPlanningPoint=\{handleMapPlanningPoint\}/);
+
+    assert.match(map, /routeMode = 'off'/);
+    assert.match(map, /routePoints = \[\]/);
+    assert.match(map, /droppedPin = null/);
+    assert.match(map, /onPlanningPoint = \(\) => \{\}/);
+    assert.match(map, /function handlePlanningClick/);
+    assert.match(map, /onPlanningPoint\(\{ lat: latlng\.lat,\s*lon: latlng\.lng \}\)/);
+    assert.match(map, /L\.polyline/);
+    assert.match(map, /route-waypoint-marker/);
+    assert.match(map, /dropped-pin-marker/);
+});
+
 test('map receives all scored beaches so filtered states can shrink instead of disappear', () => {
     assert.match(app, /const mapRecommendations = \$derived/);
     assert.match(app, /filters\.showBeaches === false \? \[\] : recommendations/);

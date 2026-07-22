@@ -270,6 +270,138 @@ main {
     padding: 10px;
 }
 
+.route-planner {
+    position: fixed;
+    top: calc(var(--header-offset) + 8px);
+    left: 14px;
+    z-index: 1240;
+    width: min(280px, calc(100vw - 110px));
+    color: #203133;
+    pointer-events: none;
+}
+
+.route-planner-actions,
+.route-planner-card {
+    pointer-events: auto;
+}
+
+.route-planner-actions {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px rgba(13, 34, 38, 0.18);
+    backdrop-filter: blur(12px);
+}
+
+.route-planner-actions button,
+.route-planner-card button,
+.dropped-pin-card button {
+    border: 0;
+    border-radius: 8px;
+    background: #eef5f5;
+    color: #0b6476;
+    padding: 7px 9px;
+    font-size: 0.74rem;
+    font-weight: 850;
+}
+
+.route-planner-actions button.active,
+.route-planner-card button:not(:disabled):last-child,
+.dropped-pin-card button:not(.dropped-pin-close) {
+    background: #0b7182;
+    color: white;
+}
+
+.route-planner-card {
+    margin-top: 6px;
+    width: 100%;
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 10px 28px rgba(13, 34, 38, 0.22);
+    backdrop-filter: blur(12px);
+}
+
+.route-planner-card strong,
+.dropped-pin-card strong {
+    font-size: 0.9rem;
+}
+
+.route-planner-card small,
+.dropped-pin-card small {
+    color: #5d6d6f;
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.route-planner-card-actions,
+.dropped-pin-card span {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.route-planner-card button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.dropped-pin-card {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: 76px;
+    z-index: 1265;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 12px 14px;
+    border: 1px solid rgba(34, 60, 63, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #203133;
+    box-shadow: 0 12px 32px rgba(13, 34, 38, 0.24);
+    backdrop-filter: blur(12px);
+}
+
+.dropped-pin-card > div {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.dropped-pin-card strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropped-pin-card a {
+    color: #0b6476;
+    font-size: 0.74rem;
+    font-weight: 850;
+    text-decoration: none;
+}
+
+.dropped-pin-close {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px !important;
+    background: #e8f2f2 !important;
+    color: #0b6476 !important;
+    font-size: 1.1rem !important;
+}
+
 .recommendation-panel {
     position: fixed;
     left: 0;
@@ -1562,6 +1694,31 @@ main {
 
 .leaflet-top.leaflet-left {
     top: calc(var(--header-offset) + 8px);
+}
+
+.planned-route-line {
+    filter: drop-shadow(0 2px 4px rgba(13, 34, 38, 0.36));
+}
+
+.route-waypoint-marker,
+.dropped-pin-marker {
+    display: grid !important;
+    place-items: center;
+    border-radius: 999px !important;
+    border: 2px solid white !important;
+    box-shadow: 0 4px 12px rgba(13, 34, 38, 0.32);
+    color: white;
+    font-weight: 900;
+}
+
+.route-waypoint-marker {
+    background: #0b7182 !important;
+    font-size: 0.78rem;
+}
+
+.dropped-pin-marker {
+    background: #d39b46 !important;
+    font-size: 1.12rem;
 }
 
 .beach-marker {

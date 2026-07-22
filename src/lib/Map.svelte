@@ -33,8 +33,12 @@
         panelMode = 'closed',
         mapLayout = 'default',
         mapNavigationRequest = null,
+        routeMode = 'off',
+        routePoints = [],
+        droppedPin = null,
         onSelectBeach = () => {},
         onNavigateToMap = () => {},
+        onPlanningPoint = () => {},
         onZoomChange = () => {},
         onUserLocationChange = () => {}
     } = $props();
@@ -46,6 +50,9 @@
     let placeClickTargets = new Map();
     let userLocationMarker = null;
     let userLocationCircle = null;
+    let routeLine = null;
+    let routeWaypointMarkers = [];
+    let droppedPinMarker = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
     let lastNavigationRequestId = null;
@@ -146,6 +153,8 @@
     }
 
     function handleMapElementClick(event) {
+        if (handlePlanningClick(event)) return;
+
         const markerElement = event.target.closest?.('.landmark-icon');
         const placeKey = markerElement?.dataset?.placeKey;
         const selectPlace = placeClickTargets.get(placeKey);
@@ -154,6 +163,16 @@
         event.preventDefault();
         event.stopPropagation();
         selectPlace();
+    }
+
+    function handlePlanningClick(event) {
+        if (routeMode !== 'route' && routeMode !== 'pin') return false;
+        if (!map) return false;
+        event.preventDefault();
+        event.stopPropagation();
+        const latlng = map.mouseEventToLatLng(event);
+        onPlanningPoint({ lat: latlng.lat, lon: latlng.lng });
+        return true;
     }
 
     function attachPlaceClickTarget(marker, selectPlace, placeKey) {
@@ -349,6 +368,55 @@
         if (userLocationCircle) {
             if (visible && !map.hasLayer(userLocationCircle)) userLocationCircle.addTo(map);
             if (!visible && map.hasLayer(userLocationCircle)) userLocationCircle.remove();
+        }
+    }
+
+    function updatePlanningLayers() {
+        if (!map) return;
+
+        if (routeLine) {
+            routeLine.remove();
+            routeLine = null;
+        }
+        routeWaypointMarkers.forEach((marker) => marker.remove());
+        routeWaypointMarkers = [];
+
+        const routeLatLngs = routePoints
+            .filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon))
+            .map((point) => [point.lat, point.lon]);
+
+        if (routeLatLngs.length >= 2) {
+            routeLine = L.polyline(routeLatLngs, {
+                className: 'planned-route-line',
+                color: '#f4c96b',
+                weight: 5,
+                opacity: 0.95
+            }).addTo(map);
+        }
+
+        routeLatLngs.forEach((latlng, index) => {
+            const icon = L.divIcon({
+                className: 'route-waypoint-marker',
+                html: `<span>${index + 1}</span>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+            routeWaypointMarkers.push(L.marker(latlng, { icon }).addTo(map));
+        });
+
+        if (droppedPinMarker) {
+            droppedPinMarker.remove();
+            droppedPinMarker = null;
+        }
+
+        if (Number.isFinite(droppedPin?.lat) && Number.isFinite(droppedPin?.lon)) {
+            const pinIcon = L.divIcon({
+                className: 'dropped-pin-marker',
+                html: '<span>⌖</span>',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+            droppedPinMarker = L.marker([droppedPin.lat, droppedPin.lon], { icon: pinIcon }).addTo(map);
         }
     }
 
@@ -613,6 +681,14 @@
         if (map) {
             updateLandmarks();
             navigateToMapRequest(request);
+        }
+    });
+
+    $effect(() => {
+        const currentRoutePoints = routePoints;
+        const currentDroppedPin = droppedPin;
+        if (map) {
+            updatePlanningLayers();
         }
     });
 

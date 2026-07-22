@@ -1,6 +1,8 @@
 const LOCATION_PARAM = 'location';
 const TIME_PARAM = 'time';
 const PANEL_PARAM = 'panel';
+const PIN_PARAM = 'pin';
+const ROUTE_PARAM = 'route';
 const VALID_LOCATION_KINDS = new Set(['beach', 'facility', 'business', 'landmark']);
 const VALID_PANEL_MODES = new Set(['open', 'semi', 'closed']);
 
@@ -27,7 +29,7 @@ export function parseSharedLocationKey(locationKey = '') {
     return { kind, slug };
 }
 
-export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode = '' } = {}) {
+export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode = '', pin = null, route = [] } = {}) {
     const url = new URL(baseUrl);
     url.search = '';
     if (locationKey) {
@@ -42,6 +44,16 @@ export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode 
         url.searchParams.set(PANEL_PARAM, panelMode);
     }
 
+    const pinParam = serializeCoordinate(pin);
+    if (pinParam) {
+        url.searchParams.set(PIN_PARAM, pinParam);
+    }
+
+    const routeParam = serializeRoute(route);
+    if (routeParam) {
+        url.searchParams.set(ROUTE_PARAM, routeParam);
+    }
+
     return url.toString();
 }
 
@@ -50,11 +62,59 @@ export function getSharedLocationFromUrl(urlValue) {
     const locationKey = url.searchParams.get(LOCATION_PARAM) || '';
     const time = url.searchParams.get(TIME_PARAM) || '';
     const panelMode = getSharedPanelMode(url.searchParams.get(PANEL_PARAM));
-    return { locationKey, time, panelMode };
+    const pin = parseSharedPin(url.searchParams.get(PIN_PARAM));
+    const route = parseSharedRoute(url.searchParams.get(ROUTE_PARAM));
+    return { locationKey, time, panelMode, pin, route };
 }
 
 function getSharedPanelMode(panelMode) {
     return VALID_PANEL_MODES.has(panelMode) ? panelMode : '';
+}
+
+export function parseSharedPin(value = '') {
+    const coordinate = parseCoordinate(value);
+    return coordinate && isValidCoordinate(coordinate) ? coordinate : null;
+}
+
+export function parseSharedRoute(value = '') {
+    const route = String(value || '')
+        .split(';')
+        .map(parseCoordinate)
+        .filter((coordinate) => coordinate && isValidCoordinate(coordinate));
+
+    return route.length >= 2 ? route : [];
+}
+
+function serializeRoute(route = []) {
+    if (!Array.isArray(route) || route.length < 2) return '';
+    const coordinates = route
+        .map(serializeCoordinate)
+        .filter(Boolean);
+
+    return coordinates.length >= 2 ? coordinates.join(';') : '';
+}
+
+function serializeCoordinate(coordinate) {
+    if (!isValidCoordinate(coordinate)) return '';
+    return `${coordinate.lat.toFixed(5)},${coordinate.lon.toFixed(5)}`;
+}
+
+function parseCoordinate(value = '') {
+    const [latValue, lonValue] = String(value).split(',');
+    const lat = Number(latValue);
+    const lon = Number(lonValue);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return { lat, lon };
+}
+
+function isValidCoordinate(coordinate = {}) {
+    if (!coordinate) return false;
+    return Number.isFinite(coordinate.lat)
+        && Number.isFinite(coordinate.lon)
+        && coordinate.lat >= -90
+        && coordinate.lat <= 90
+        && coordinate.lon >= -180
+        && coordinate.lon <= 180;
 }
 
 export function findNearestSharedHourIndex(forecastData, sharedTime) {

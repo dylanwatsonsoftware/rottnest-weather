@@ -17,6 +17,12 @@
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
     import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
     import {
+        buildGoogleMapsCoordinateUrl,
+        formatCoordinateLabel,
+        getRouteDistanceKm,
+        getRouteDistanceLabel
+    } from './lib/routePlanning.js';
+    import {
         buildShareUrl,
         getSharedLocationFromUrl,
         getLocationKey,
@@ -43,6 +49,9 @@
     let mapNavigationRequest = $state(null);
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
+    let routeMode = $state('off');
+    let routePoints = $state([]);
+    let droppedPin = $state(null);
     let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
     let currentShareUrl = $state('');
     let mapNavigationSequence = 0;
@@ -78,6 +87,67 @@
             ...filters,
             [name]: value
         };
+    }
+
+    function handleMapPlanningPoint(point) {
+        if (!Number.isFinite(point?.lat) || !Number.isFinite(point?.lon)) return;
+
+        if (routeMode === 'route') {
+            routePoints = [...routePoints, point];
+            droppedPin = null;
+            selectedBeachName = '';
+            selectedMapPlace = null;
+            mapNavigationRequest = null;
+        }
+
+        if (routeMode === 'pin') {
+            droppedPin = point;
+            routeMode = 'off';
+            selectedBeachName = '';
+            selectedMapPlace = null;
+            mapNavigationRequest = null;
+        }
+    }
+
+    function startRoutePlanning() {
+        routeMode = routeMode === 'route' ? 'off' : 'route';
+        if (routeMode === 'route') {
+            droppedPin = null;
+            panelMode = 'closed';
+        }
+    }
+
+    function startPinDrop() {
+        routeMode = routeMode === 'pin' ? 'off' : 'pin';
+        if (routeMode === 'pin') {
+            panelMode = 'closed';
+        }
+    }
+
+    function undoRoutePoint() {
+        routePoints = routePoints.slice(0, -1);
+    }
+
+    function clearRoute() {
+        routePoints = [];
+        if (routeMode === 'route') routeMode = 'off';
+    }
+
+    function clearDroppedPin() {
+        droppedPin = null;
+        if (routeMode === 'pin') routeMode = 'off';
+    }
+
+    function navigateToDroppedPin(pin) {
+        if (!Number.isFinite(pin?.lat) || !Number.isFinite(pin?.lon)) return;
+        navigateToMapTarget({
+            name: 'Pinned location',
+            type: 'pin',
+            lat: pin.lat,
+            lon: pin.lon,
+            zoom: 16,
+            visibleAnchor: getSelectedMapPlaceVisibleAnchor()
+        });
     }
 
     function navigateToMapTarget(target) {
@@ -221,7 +291,9 @@
         const nextUrl = buildShareUrl(window.location.href, {
             locationKey,
             time: forecastData.time[hourIndex],
-            panelMode
+            panelMode,
+            pin: droppedPin,
+            route: routePoints
         });
 
         currentShareUrl = nextUrl;
@@ -292,6 +364,9 @@
 
     onMount(() => {
         sharedLocationState = getSharedLocationFromUrl(window.location.href);
+        droppedPin = sharedLocationState.pin;
+        routePoints = sharedLocationState.route;
+        navigateToDroppedPin(sharedLocationState.pin);
 
         function updateMapLayout() {
             const nextMapLayout = getMapLayout({
@@ -402,6 +477,17 @@
     );
     const selectedMapPlaceImages = $derived(getPlaceImages(selectedMapPlace?.name));
     const selectedMapPlaceImage = $derived(selectedMapPlaceImages[0] ?? null);
+    const routeDistanceKm = $derived(getRouteDistanceKm(routePoints));
+    const routeDistanceLabel = $derived(getRouteDistanceLabel(routeDistanceKm));
+    const routePlannerStatus = $derived(
+        routePoints.length > 1
+            ? routeDistanceLabel
+            : routePoints.length === 1
+                ? 'Add another point'
+                : 'Click the map to start'
+    );
+    const pinCoordinateLabel = $derived(formatCoordinateLabel(droppedPin));
+    const googleMapsPinUrl = $derived(buildGoogleMapsCoordinateUrl(droppedPin));
     const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
     const selectedSocialImage = $derived(
         selectedMapPlace
@@ -430,6 +516,8 @@
     $effect(() => {
         const selectedName = selectedBeachName || selectedMapPlace?.name || '';
         const selectedHour = hourIndex;
+        const plannedRoute = routePoints.length;
+        const plannedPin = droppedPin?.lat;
         updateShareUrl();
     });
 
@@ -460,8 +548,12 @@
         {panelMode}
         {mapLayout}
         {mapNavigationRequest}
+        routeMode={routeMode}
+        routePoints={$state.snapshot(routePoints)}
+        {droppedPin}
         onSelectBeach={revealBeachInPanel}
         onNavigateToMap={navigateToMapTarget}
+        onPlanningPoint={handleMapPlanningPoint}
         onZoomChange={(zoom) => mapZoom = zoom}
         onUserLocationChange={(location) => userLocation = location}
     />
@@ -475,6 +567,50 @@
         onSelectBeach={selectSearchBeach}
         onNavigateToMap={navigateToMapTarget}
     />
+    <section class="route-planner" aria-label="Route and pin sharing">
+        <div class="route-planner-actions">
+            <button
+                type="button"
+                class:active={routeMode === 'route'}
+                aria-pressed={routeMode === 'route'}
+                onclick={startRoutePlanning}
+            >
+                Route
+            </button>
+            <button
+                type="button"
+                class:active={routeMode === 'pin'}
+                aria-pressed={routeMode === 'pin'}
+                onclick={startPinDrop}
+            >
+                Pin
+            </button>
+        </div>
+        {#if routeMode === 'route' || routePoints.length}
+            <div class="route-planner-card">
+                <strong>{routePlannerStatus}</strong>
+                <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                <div class="route-planner-card-actions">
+                    <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
+                    <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>
+                    <button type="button" onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>Share</button>
+                </div>
+            </div>
+        {/if}
+    </section>
+    {#if droppedPin}
+        <aside class="dropped-pin-card" aria-label="Dropped pin">
+            <button type="button" class="dropped-pin-close" aria-label="Close dropped pin" onclick={clearDroppedPin}>×</button>
+            <div>
+                <small>Pinned location</small>
+                <strong>{pinCoordinateLabel}</strong>
+                <span>
+                    <a href={googleMapsPinUrl} target="_blank" rel="noreferrer">Open in Google Maps</a>
+                    <button type="button" onclick={() => shareCurrentLocation()}>Share</button>
+                </span>
+            </div>
+        </aside>
+    {/if}
     {#if selectedMapPlace}
         <aside class="selected-map-place-card" class:has-images={selectedMapPlaceImages.length} aria-label="Selected map place">
             <button type="button" class="selected-map-place-close" aria-label="Close selected place" onclick={clearSelectedMapPlace}>×</button>

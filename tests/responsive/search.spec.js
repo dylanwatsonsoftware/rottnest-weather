@@ -84,6 +84,47 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await expect.poll(() => page.url()).toContain('time=');
 });
 
+test('route planning and dropped pins can be shared from the map', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/');
+
+    await page.getByRole('button', { name: 'Route' }).click();
+    await page.locator('#map').click({ position: { x: 145, y: 330 } });
+    await expect(page.locator('.route-planner-card')).toContainText('1 waypoint');
+    await page.locator('#map').click({ position: { x: 230, y: 390 } });
+
+    await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
+    await expect(page.locator('.planned-route-line')).toBeVisible();
+    await expect(page.locator('.route-planner-card')).toContainText(/m|km/);
+    await expect(page.getByRole('button', { name: 'Share' }).first()).toBeEnabled();
+    await expect.poll(() => page.url()).toContain('route=');
+
+    await page.getByRole('button', { name: 'Pin' }).click();
+    await page.locator('#map').click({ position: { x: 180, y: 360 } });
+
+    await expect(page.locator('.dropped-pin-card')).toBeVisible();
+    await expect(page.locator('.dropped-pin-card')).toContainText(/°S/);
+    await expect(page.locator('.dropped-pin-card a', { hasText: 'Open in Google Maps' })).toHaveAttribute('href', /google\.com\/maps\/search/);
+    await expect(page.locator('.dropped-pin-marker')).toBeVisible();
+    await expect.poll(() => page.url()).toContain('pin=');
+});
+
+test('shared route and pin URLs restore map planning overlays', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+
+    await page.goto('/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520');
+    await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
+    await expect(page.locator('.route-planner-card')).toBeVisible();
+    await expect(page.locator('.planned-route-line')).toBeVisible();
+
+    await page.goto('/?pin=-32.00641%2C115.50999');
+    await expect(page.locator('.dropped-pin-card')).toBeVisible();
+    await expect(page.locator('.dropped-pin-marker')).toBeVisible();
+    await expect(page.locator('.dropped-pin-card')).toContainText('32.00641°S');
+});
+
 async function getSelectedMarkerCenter(page) {
     return page.locator('.landmark-icon.selected').first().evaluate((marker) => {
         const rect = marker.getBoundingClientRect();
