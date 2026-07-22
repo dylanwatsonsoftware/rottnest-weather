@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 const header = readFileSync(new URL('./Header.svelte', import.meta.url), 'utf8');
+const app = readFileSync(new URL('../App.svelte', import.meta.url), 'utf8');
 const logo = readFileSync(new URL('./Logo.svelte', import.meta.url), 'utf8');
 const mapSearch = readFileSync(new URL('./MapSearch.svelte', import.meta.url), 'utf8');
 const recommendationPanel = readFileSync(new URL('./RecommendationPanel.svelte', import.meta.url), 'utf8');
@@ -72,6 +73,18 @@ test('app icon uses a stylised Rottnest outline in the header and favicon', () =
 test('leaflet map controls sit below the fixed top pane', () => {
     assert.match(css, /\.leaflet-top\.leaflet-left\s*{/);
     assert.match(css, /top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/);
+});
+
+test('route and pin controls are icon buttons below the map zoom controls', () => {
+    assert.match(app, /aria-label="Start route planning"/);
+    assert.match(app, /aria-label="Drop a pin"/);
+    assert.match(app, /<span class="route-planner-icon" aria-hidden="true">↝<\/span>/);
+    assert.match(app, /<span class="route-planner-icon" aria-hidden="true">⌖<\/span>/);
+    assert.doesNotMatch(app, />\s*Route\s*<\/button>/);
+    assert.doesNotMatch(app, />\s*Pin\s*<\/button>/);
+    assert.match(css, /\.route-planner\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*92px\)/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*width:\s*42px/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*height:\s*42px/s);
 });
 
 test('floating map search is a compact icon until opened', () => {

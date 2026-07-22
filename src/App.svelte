@@ -573,17 +573,21 @@
                 type="button"
                 class:active={routeMode === 'route'}
                 aria-pressed={routeMode === 'route'}
+                aria-label="Start route planning"
+                title="Route"
                 onclick={startRoutePlanning}
             >
-                Route
+                <span class="route-planner-icon" aria-hidden="true">↝</span>
             </button>
             <button
                 type="button"
                 class:active={routeMode === 'pin'}
                 aria-pressed={routeMode === 'pin'}
+                aria-label="Drop a pin"
+                title="Pin"
                 onclick={startPinDrop}
             >
-                Pin
+                <span class="route-planner-icon" aria-hidden="true">⌖</span>
             </button>
         </div>
         {#if routeMode === 'route' || routePoints.length}

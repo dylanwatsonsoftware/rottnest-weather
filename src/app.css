@@ -272,7 +272,7 @@ main {
 
 .route-planner {
     position: fixed;
-    top: calc(var(--header-offset) + 8px);
+    top: calc(var(--header-offset) + 92px);
     left: 14px;
     z-index: 1240;
     width: min(280px, calc(100vw - 110px));
@@ -281,8 +281,12 @@ main {
 }
 
 .route-planner-actions,
-.route-planner-card {
+.route-planner-card-actions button {
     pointer-events: auto;
+}
+
+.route-planner-card {
+    pointer-events: none;
 }
 
 .route-planner-actions {
@@ -306,6 +310,21 @@ main {
     padding: 7px 9px;
     font-size: 0.74rem;
     font-weight: 850;
+}
+
+.route-planner-actions button {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.22rem;
+    line-height: 1;
+}
+
+.route-planner-icon {
+    display: block;
+    transform: translateY(-1px);
 }
 
 .route-planner-actions button.active,
@@ -351,6 +370,7 @@ main {
 .route-planner-card button:disabled {
     opacity: 0.45;
     cursor: default;
+    pointer-events: none;
 }
 
 .dropped-pin-card {

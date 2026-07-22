@@ -89,7 +89,7 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await mockForecastApis(page);
     await page.goto('/');
 
-    await page.getByRole('button', { name: 'Route' }).click();
+    await page.getByRole('button', { name: 'Start route planning' }).click();
     await page.locator('#map').click({ position: { x: 145, y: 330 } });
     await expect(page.locator('.route-planner-card')).toContainText('1 waypoint');
     await page.locator('#map').click({ position: { x: 230, y: 390 } });
@@ -100,7 +100,7 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await expect(page.getByRole('button', { name: 'Share' }).first()).toBeEnabled();
     await expect.poll(() => page.url()).toContain('route=');
 
-    await page.getByRole('button', { name: 'Pin' }).click();
+    await page.getByRole('button', { name: 'Drop a pin' }).click();
     await page.locator('#map').click({ position: { x: 180, y: 360 } });
 
     await expect(page.locator('.dropped-pin-card')).toBeVisible();
