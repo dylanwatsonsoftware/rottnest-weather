@@ -1,10 +1,5 @@
 import { formatDistanceLabel, getDistanceKm } from './facilities.js';
 
-export function activateRouteNameInput(input, virtualKeyboard = globalThis.navigator?.virtualKeyboard) {
-    input?.focus({ preventScroll: true });
-    virtualKeyboard?.show?.();
-}
-
 export function getRouteDistanceKm(route = []) {
     if (!Array.isArray(route) || route.length < 2) return 0;
 

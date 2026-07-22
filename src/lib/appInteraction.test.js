@@ -175,7 +175,7 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /panelMode/);
     assert.doesNotMatch(app, /time:\s*locationKey \? forecastData\.time\[hourIndex\] : ''/);
     assert.match(app, /history\.replaceState\(history\.state,\s*'',\s*nextUrl\)/);
-    assert.match(app, /\$effect\(\(\) => \{[\s\S]*updateShareUrl\(\)/);
+    assert.match(app, /\$effect\(\(\) => \{[\s\S]*untrack\(updateShareUrl\)/);
     assert.match(app, /shareUrl=\{currentShareUrl\}/);
 });
 
@@ -295,13 +295,18 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /pin:\s*droppedPin/);
     assert.match(app, /route:\s*routePoints/);
     assert.match(app, /routeName/);
-    assert.match(app, /placeholder="Name this route"/);
-    assert.match(app, /bind:value=\{routeName\}/);
-    assert.match(app, /onclick=\{\(event\) => activateRouteNameInput\(event\.currentTarget\)\}/);
-    assert.match(app, /inputmode="text"/);
+    assert.match(app, /function editRouteName\(\)/);
+    assert.match(app, /window\.prompt\('Name this route', routeName\)/);
+    assert.match(app, /onclick=\{editRouteName\}/);
+    assert.match(app, /import \{ onMount, untrack \} from 'svelte'/);
+    assert.match(app, /untrack\(updateShareUrl\)/);
+    assert.doesNotMatch(app, /const plannedRouteName = routeName/);
+    assert.doesNotMatch(app, /activateRouteNameInput/);
+    assert.match(app, /<Pencil/);
     assert.match(app, /class="route-planner-summary-name"/);
     assert.doesNotMatch(app, /[⌄⌃]/);
-    assert.match(app, /class="route-planner-chevron"[\s\S]*<svg[\s\S]*<path/);
+    assert.match(app, /<ChevronDown/);
+    assert.match(app, /<ChevronUp/);
     assert.match(app, /routeMode=\{routeMode\}/);
     assert.match(app, /routePoints=\{\$state\.snapshot\(routePoints\)\}/);
     assert.match(app, /\{droppedPin\}/);

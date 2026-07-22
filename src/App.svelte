@@ -1,5 +1,6 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
+    import { ChevronDown, ChevronUp, MapPin, Pencil, Route } from '@lucide/svelte';
     import Header from './lib/Header.svelte';
     import Map from './lib/Map.svelte';
     import MapSearch from './lib/MapSearch.svelte';
@@ -18,7 +19,6 @@
     import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from './lib/socialMeta.js';
     import { getPlanningSocialImage } from './lib/socialMedia.js';
     import {
-        activateRouteNameInput,
         buildGoogleMapsCoordinateUrl,
         buildGoogleMapsRouteUrl,
         formatCoordinateLabel,
@@ -153,6 +153,13 @@
 
     function undoRoutePoint() {
         routePoints = routePoints.slice(0, -1);
+    }
+
+    function editRouteName() {
+        const nextName = window.prompt('Name this route', routeName);
+        if (nextName === null) return;
+        routeName = nextName.trim().slice(0, 80);
+        updateShareUrl();
     }
 
     function clearRoute() {
@@ -595,10 +602,10 @@
     $effect(() => {
         const selectedName = selectedBeachName || selectedMapPlace?.name || '';
         const selectedHour = hourIndex;
+        const selectedPanelMode = panelMode;
         const plannedRoute = routePoints.length;
-        const plannedRouteName = routeName;
         const plannedPin = droppedPin?.lat;
-        updateShareUrl();
+        untrack(updateShareUrl);
     });
 
 </script>
@@ -676,13 +683,7 @@
                 title="Route"
                 onclick={startRoutePlanning}
             >
-                <span class="route-planner-icon route-planner-icon-route" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M6 18 C6 13 18 13 18 6" />
-                        <circle cx="6" cy="18" r="2.4" />
-                        <circle cx="18" cy="6" r="2.4" />
-                    </svg>
-                </span>
+                <Route class="route-planner-icon route-planner-icon-route" size={20} strokeWidth={2.2} aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -692,7 +693,7 @@
                 title="Pin"
                 onclick={startPinDrop}
             >
-                <span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖</span>
+                <MapPin class="route-planner-icon route-planner-icon-pin" size={20} strokeWidth={2.2} aria-hidden="true" />
             </button>
         </div>
         {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
@@ -710,11 +711,7 @@
                             {routeName.trim() ? `${routePlannerStatus} · ` : ''}{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}
                         </small>
                     </span>
-                    <span class="route-planner-chevron" aria-hidden="true">
-                        <svg viewBox="0 0 16 16" focusable="false">
-                            <path d="M3 6l5 5 5-5" />
-                        </svg>
-                    </span>
+                    <ChevronDown class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
                 </button>
             {:else}
             <div class="route-planner-card">
@@ -730,25 +727,22 @@
                             aria-label="Collapse route details"
                             onclick={() => routePlannerExpanded = false}
                         >
-                            <span class="route-planner-chevron" aria-hidden="true">
-                                <svg viewBox="0 0 16 16" focusable="false">
-                                    <path d="M3 10l5-5 5 5" />
-                                </svg>
-                            </span>
+                            <ChevronUp class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
                         </button>
                     {/if}
                 </div>
-                <label class="route-name-field">
-                    <span>Route name</span>
-                    <input
-                        type="text"
-                        placeholder="Name this route"
-                        maxlength="80"
-                        inputmode="text"
-                        onclick={(event) => activateRouteNameInput(event.currentTarget)}
-                        bind:value={routeName}
-                    />
-                </label>
+                <button
+                    type="button"
+                    class="route-name-button"
+                    aria-label={routeName ? 'Rename route' : 'Name route'}
+                    onclick={editRouteName}
+                >
+                    <Pencil size={16} strokeWidth={2} aria-hidden="true" />
+                    <span>
+                        <small>Route name</small>
+                        <strong>{routeName || 'Name this route'}</strong>
+                    </span>
+                </button>
                 <div class="route-planner-card-actions">
                     <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
                     <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>

@@ -302,8 +302,7 @@ main {
 .route-planner-actions,
 .route-planner-card-actions button,
 .route-planner-card-actions a,
-.route-name-field,
-.route-name-field input {
+.route-name-button {
     pointer-events: auto;
 }
 
@@ -350,17 +349,6 @@ main {
     height: 16px;
     display: block;
     color: #0b7182;
-}
-
-.route-planner-chevron svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
 }
 
 .route-planner-actions {
@@ -431,26 +419,6 @@ main {
 .route-planner-icon-route {
     width: 20px;
     height: 20px;
-}
-
-.route-planner-icon-route svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.route-planner-icon-route circle {
-    fill: currentColor;
-    stroke: none;
-}
-
-.route-planner-icon-pin {
-    transform: translateY(-1px);
 }
 
 .route-planner-actions button.active,
@@ -650,35 +618,43 @@ main {
     font-weight: 750;
 }
 
-.route-name-field {
-    display: grid;
-    gap: 3px;
-}
-
-.route-name-field span {
-    color: #5d6d6f;
-    font-size: 0.66rem;
-    font-weight: 850;
-}
-
-.route-name-field input {
+.route-planner-card .route-name-button {
     width: 100%;
-    min-width: 0;
     box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: center;
+    gap: 7px;
     border: 1px solid #d7e4e4;
     border-radius: 8px;
     background: #f6fafa;
     color: #203133;
     padding: 7px 8px;
-    font-size: 1rem;
-    font-weight: 750;
+    text-align: left;
 }
 
-.route-name-field input::placeholder {
-    color: #7d8f91;
+.route-name-button span,
+.route-name-button small,
+.route-name-button strong {
+    display: block;
 }
 
-.route-name-field input:focus {
+.route-name-button small {
+    color: #5d6d6f;
+    font-size: 0.66rem;
+    font-weight: 850;
+}
+
+.route-name-button strong {
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.route-planner-card .route-name-button:hover,
+.route-planner-card .route-name-button:focus-visible {
     border-color: #9dc5c4;
     outline: 0;
     box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);

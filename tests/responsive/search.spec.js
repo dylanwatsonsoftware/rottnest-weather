@@ -140,17 +140,19 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Show route details' })).toContainText('West End snorkel ride');
-    await expect(page.getByPlaceholder('Name this route')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Rename route' })).toBeHidden();
     await page.getByRole('button', { name: 'Show route details' }).click();
     await expect(page.locator('.route-planner-card')).toBeVisible();
-    await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End snorkel ride');
-    await page.getByPlaceholder('Name this route').click();
-    await expect(page.getByPlaceholder('Name this route')).toBeFocused();
-    await page.getByPlaceholder('Name this route').fill('West End morning loop');
-    await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End morning loop');
+    await expect(page.getByRole('button', { name: 'Rename route' })).toContainText('West End snorkel ride');
+    page.once('dialog', async (dialog) => {
+        expect(dialog.type()).toBe('prompt');
+        await dialog.accept('West End morning loop');
+    });
+    await page.getByRole('button', { name: 'Rename route' }).click();
+    await expect.poll(() => page.url()).toContain('routeName=West+End+morning+loop');
     await page.getByRole('button', { name: 'Collapse route details' }).click();
     await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
-    await expect(page.getByPlaceholder('Name this route')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Rename route' })).toBeHidden();
     await expect(page.locator('.planned-route-line')).toBeVisible();
 
     await page.goto('/?pin=-32.00641%2C115.50999');

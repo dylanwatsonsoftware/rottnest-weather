@@ -86,9 +86,12 @@ test('leaflet map controls sit below the fixed top pane', () => {
 test('route and pin controls are icon buttons below the map zoom controls', () => {
     assert.match(app, /aria-label="Start route planning"/);
     assert.match(app, /aria-label="Drop a pin"/);
-    assert.match(app, /<span class="route-planner-icon route-planner-icon-route" aria-hidden="true">/);
-    assert.match(app, /<span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖<\/span>/);
-    assert.doesNotMatch(app, /<span class="route-planner-icon" aria-hidden="true">↝<\/span>/);
+    assert.match(app, /from '@lucide\/svelte'/);
+    assert.match(app, /<Route[^>]*aria-hidden="true"/);
+    assert.match(app, /<MapPin[^>]*aria-hidden="true"/);
+    assert.match(app, /<ChevronDown[^>]*aria-hidden="true"/);
+    assert.match(app, /<ChevronUp[^>]*aria-hidden="true"/);
+    assert.match(app, /<Pencil[^>]*aria-hidden="true"/);
     assert.doesNotMatch(app, />\s*Route\s*<\/button>/);
     assert.doesNotMatch(app, />\s*Pin\s*<\/button>/);
     assert.match(css, /\.route-planner\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*92px\)/s);
@@ -106,10 +109,9 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*auto/s);
     assert.doesNotMatch(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*none/s);
     assert.match(css, /\.route-planner-card a:hover/s);
-    assert.match(css, /\.route-name-field input[\s\S]*pointer-events:\s*auto/);
+    assert.match(css, /\.route-name-button[\s\S]*pointer-events:\s*auto/);
     assert.match(css, /\.route-planner\s*{[^}]*width:\s*max-content[^}]*pointer-events:\s*auto/s);
     assert.doesNotMatch(css, /\.route-planner\s*{[^}]*pointer-events:\s*none/s);
-    assert.match(css, /\.route-name-field input\s*{[^}]*font-size:\s*1rem/s);
 });
 
 test('app buttons have subtle hover and focus feedback outside map planning controls', () => {
