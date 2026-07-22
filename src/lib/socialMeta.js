@@ -3,7 +3,7 @@ const DEFAULT_DESCRIPTION = 'Find the best Rottnest beach for the current weathe
 const DESCRIPTION_PROMISE = 'Find the best Rottnest beach for this weather.';
 const DEFAULT_IMAGE = '/social-card.jpg';
 const SITE_NAME = 'Rottnest Weather';
-const IMAGE_ALT = 'Rottnest Weather — Find your best beach today';
+const IMAGE_ALT = 'Rottnest Weather — Find the best beach for today';
 
 export function getRecommendedBeachCount(recommendations = []) {
     return recommendations.filter((item) => item.state === 'best' || item.state === 'good').length;
@@ -60,7 +60,7 @@ export function buildSocialMeta({
         description,
         url: absoluteUrl,
         image,
-        imageAlt: cleanLocationName ? `${cleanLocationName} — Find your best beach today` : IMAGE_ALT
+        imageAlt: cleanLocationName ? `${cleanLocationName} — Find the best beach for today` : IMAGE_ALT
     };
 }
 
@@ -174,6 +174,6 @@ function buildLocationImageUrl(imageUrl, locationName, imageDetails, baseUrl) {
     if (imageDetails.goodFor) params.set('goodFor', imageDetails.goodFor);
     if (imageDetails.goodWinds) params.set('goodWinds', imageDetails.goodWinds);
     if (imageDetails.sanctuary) params.set('sanctuary', '1');
-    params.set('v', '3');
+    params.set('v', '4');
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

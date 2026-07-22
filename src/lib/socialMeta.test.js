@@ -37,9 +37,9 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
     assert.equal(meta.url, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
     assert.equal(
         meta.image,
-        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&goodFor=Snorkel+%C2%B7+Beginner+friendly&goodWinds=N+%C2%B7+NE+%C2%B7+E+%C2%B7+SE+%C2%B7+SW+%C2%B7+W+%C2%B7+NW&v=3'
+        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&goodFor=Snorkel+%C2%B7+Beginner+friendly&goodWinds=N+%C2%B7+NE+%C2%B7+E+%C2%B7+SE+%C2%B7+SW+%C2%B7+W+%C2%B7+NW&v=4'
     );
-    assert.equal(meta.imageAlt, 'Little Salmon Bay — Find your best beach today');
+    assert.equal(meta.imageAlt, 'Little Salmon Bay — Find the best beach for today');
 });
 
 test('getBeachSocialImageDetails formats useful beach attributes without repetitive tags', () => {
@@ -71,7 +71,7 @@ test('buildSocialMeta falls back to a general forecast title without a selected 
         'Find the best Rottnest beach for this weather. No recommended beaches at this time. Wind 28 km/h NW.'
     );
     assert.equal(meta.image, 'https://rottnest.test/social-card.jpg');
-    assert.equal(meta.imageAlt, 'Rottnest Weather — Find your best beach today');
+    assert.equal(meta.imageAlt, 'Rottnest Weather — Find the best beach for today');
 });
 
 test('buildSocialMeta uses named routes in social title and description', () => {
@@ -150,9 +150,9 @@ test('updateDocumentSocialMeta writes standard Open Graph and Twitter tags', () 
     assert.equal(tags.get('meta[property="og:site_name"]').content, 'Rottnest Weather');
     assert.equal(tags.get('meta[property="og:image:width"]').content, '1200');
     assert.equal(tags.get('meta[property="og:image:height"]').content, '630');
-    assert.equal(tags.get('meta[property="og:image:alt"]').content, 'Rottnest Weather — Find your best beach today');
+    assert.equal(tags.get('meta[property="og:image:alt"]').content, 'Rottnest Weather — Find the best beach for today');
     assert.equal(tags.get('meta[name="twitter:image"]').content, 'https://rottnest.test/social-card.jpg');
-    assert.equal(tags.get('meta[name="twitter:image:alt"]').content, 'Rottnest Weather — Find your best beach today');
+    assert.equal(tags.get('meta[name="twitter:image:alt"]').content, 'Rottnest Weather — Find the best beach for today');
 });
 
 test('SvelteKit page renders social metadata for crawlers that do not run JavaScript', () => {

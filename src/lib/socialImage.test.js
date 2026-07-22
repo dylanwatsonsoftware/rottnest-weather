@@ -10,6 +10,7 @@ const endpointSource = readFileSync(new URL('../routes/social-image/+server.js',
 test('social image endpoint converts copy to vector paths for production rendering', () => {
     assert.match(endpointSource, /getPath\(/);
     assert.doesNotMatch(endpointSource, /<text\b/);
+    assert.match(endpointSource, /Find the best beach for today/);
 });
 
 test('social image endpoint renders selected photography at Open Graph dimensions', async () => {

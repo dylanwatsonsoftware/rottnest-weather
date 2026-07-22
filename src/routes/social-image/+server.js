@@ -70,7 +70,7 @@ function buildOverlay(title, details) {
     const ctaY = detailRows.length
         ? Math.min(detailStartY + (detailRows.length * 48) + 54, 568)
         : detailStartY + 12;
-    const ctaMarkup = pathMarkup('Find your best beach today', 64, ctaY, detailRows.length ? 30 : 39);
+    const ctaMarkup = pathMarkup('Find the best beach for today', 64, ctaY, detailRows.length ? 30 : 39);
 
     return Buffer.from(`
         <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
