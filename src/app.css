@@ -662,10 +662,12 @@ main {
     height: 34px;
     display: grid;
     place-items: center;
+    padding: 0;
     border-radius: 999px !important;
     background: #e8f2f2 !important;
     color: #0b6476 !important;
     font-size: 1.1rem !important;
+    line-height: 1;
 }
 
 .recommendation-panel {
@@ -843,6 +845,9 @@ main {
     grid-row: 1;
     width: 36px;
     height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
     border: 1px solid rgba(34, 60, 63, 0.16);
     border-radius: 999px;
     background: #eef5f5;
@@ -926,6 +931,9 @@ main {
 .beach-panel-close {
     width: 34px;
     height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
     border: 1px solid rgba(34, 60, 63, 0.16);
     border-radius: 999px;
     background: #eef5f5;
@@ -2029,8 +2037,11 @@ main {
 }
 
 .beach-marker span {
+    display: grid;
+    place-items: center;
     font-size: 16px;
     font-weight: 900;
+    line-height: 1;
 }
 
 .beach-marker.small span {

@@ -176,6 +176,21 @@ test('ranked beach marker size classes are visually distinct', () => {
     assert.match(css, /\.beach-marker\.tiny small\s*{[^}]*transform:\s*scale\(0\.72\)/s);
 });
 
+test('circular map glyphs are explicitly centered', () => {
+    assert.match(css, /\.beach-marker span\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.beach-marker span\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.beach-marker span\s*{[^}]*line-height:\s*1/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.selected-map-place-close\s*{[^}]*padding:\s*0/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.beach-panel-close\s*{[^}]*padding:\s*0/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*place-items:\s*center/s);
+    assert.match(css, /\.dropped-pin-close\s*{[^}]*padding:\s*0/s);
+});
+
 test('beach detail timeline has its own time slider styling', () => {
     assert.match(css, /\.detail-time-control\s*{/);
     assert.match(css, /\.detail-time-control input\[type="range"\]/);
