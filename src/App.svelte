@@ -253,6 +253,7 @@
             hourIndex = sharedHourIndex;
             didApplySharedLocationState = true;
         } else if (sharedLocationState.time) {
+            didApplySharedLocationState = true;
             return;
         } else {
             didApplySharedLocationState = true;

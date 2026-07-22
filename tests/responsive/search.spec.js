@@ -212,6 +212,23 @@ test('time-only shared URLs preserve future forecast dates', async ({ page }) =>
     await expect.poll(() => page.url()).not.toContain('location=');
 });
 
+test('forecast slider changes update the shared URL time', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await mockForecastApis(page);
+    await page.goto('/?panel=semi');
+
+    await expect(page.locator('#collapsed-time-slider')).toBeVisible();
+    const initialTimeParam = new URL(page.url()).searchParams.get('time');
+
+    await page.locator('#collapsed-time-slider').evaluate((slider) => {
+        slider.value = String(Number(slider.value) + 3);
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    await expect.poll(() => new URL(page.url()).searchParams.get('time')).not.toBe(initialTimeParam);
+});
+
 test('time-only shared URLs ignore stale cached forecasts that miss the requested date', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
