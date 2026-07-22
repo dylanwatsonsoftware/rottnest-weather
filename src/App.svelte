@@ -1,6 +1,6 @@
 <script>
     import { onMount, untrack } from 'svelte';
-    import { ChevronDown, ChevronUp, MapPin, Pencil, Route } from '@lucide/svelte';
+    import { ChevronDown, ChevronUp, MapPin, Pencil, Route, Share2, Trash2, Undo2 } from '@lucide/svelte';
     import Header from './lib/Header.svelte';
     import Map from './lib/Map.svelte';
     import MapSearch from './lib/MapSearch.svelte';
@@ -741,15 +741,22 @@
                     </span>
                 </button>
                 <div class="route-planner-card-actions">
-                    <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
-                    <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>
+                    <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>
+                        <Undo2 size={14} strokeWidth={2.2} aria-hidden="true" />
+                        Undo
+                    </button>
+                    <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>
+                        <Trash2 size={14} strokeWidth={2.2} aria-hidden="true" />
+                        Clear
+                    </button>
                     {#if googleMapsRouteUrl}
                         <a class="google-maps-action" href={googleMapsRouteUrl} target="_blank" rel="noreferrer">
                             <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
                             Open route
                         </a>
                     {/if}
-                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>
+                    <button type="button" class="route-share-action" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>
+                        <Share2 size={14} strokeWidth={2.2} aria-hidden="true" />
                         {shareSucceeded ? 'Copied' : 'Share'}
                     </button>
                 </div>

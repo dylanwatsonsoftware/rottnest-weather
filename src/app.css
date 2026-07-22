@@ -423,7 +423,7 @@ main {
 
 .route-planner-actions button.active,
 .route-planner-card a,
-.route-planner-card button:not(:disabled):last-child,
+.route-planner-card .route-share-action:not(:disabled),
 .dropped-pin-card button:not(.dropped-pin-close) {
     background: #0b7182;
     color: white;
@@ -445,8 +445,8 @@ main {
 .route-planner-actions button.active:focus-visible,
 .route-planner-card a:hover,
 .route-planner-card a:focus-visible,
-.route-planner-card button:not(:disabled):last-child:hover,
-.route-planner-card button:not(:disabled):last-child:focus-visible {
+.route-planner-card .route-share-action:not(:disabled):hover,
+.route-planner-card .route-share-action:not(:disabled):focus-visible {
     background: #095c69;
     color: white;
 }
@@ -607,6 +607,7 @@ main {
     display: grid;
     place-items: center;
     padding: 0;
+    background: #eef5f5;
     color: #0b6476;
     font-size: 1rem;
     line-height: 1;
@@ -671,6 +672,12 @@ main {
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
+}
+
+.route-planner-card-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .route-planner-card button:disabled {
