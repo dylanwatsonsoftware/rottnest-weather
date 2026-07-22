@@ -711,8 +711,20 @@
                 </button>
             {:else}
             <div class="route-planner-card">
-                <strong>{routePlannerStatus}</strong>
-                <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                <div class="route-planner-card-header">
+                    <span>
+                        <strong>{routePlannerStatus}</strong>
+                        <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                    </span>
+                    {#if routeMode === 'off' && routePoints.length}
+                        <button
+                            type="button"
+                            class="route-planner-collapse"
+                            aria-label="Collapse route details"
+                            onclick={() => routePlannerExpanded = false}
+                        >⌃</button>
+                    {/if}
+                </div>
                 <label class="route-name-field">
                     <span>Route name</span>
                     <input

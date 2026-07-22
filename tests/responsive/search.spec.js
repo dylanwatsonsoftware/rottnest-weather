@@ -147,6 +147,9 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
     await expect(page.getByPlaceholder('Name this route')).toBeFocused();
     await page.getByPlaceholder('Name this route').fill('West End morning loop');
     await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End morning loop');
+    await page.getByRole('button', { name: 'Collapse route details' }).click();
+    await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
+    await expect(page.getByPlaceholder('Name this route')).toBeHidden();
     await expect(page.locator('.planned-route-line')).toBeVisible();
 
     await page.goto('/?pin=-32.00641%2C115.50999');

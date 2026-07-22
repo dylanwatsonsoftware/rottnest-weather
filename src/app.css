@@ -607,6 +607,30 @@ main {
     font-size: 0.9rem;
 }
 
+.route-planner-card-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.route-planner-card-header span,
+.route-planner-card-header strong,
+.route-planner-card-header small {
+    display: block;
+}
+
+.route-planner-card .route-planner-collapse {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1;
+}
+
 .route-planner-card small,
 .dropped-pin-card small {
     color: #5d6d6f;
