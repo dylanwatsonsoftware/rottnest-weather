@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const app = readFileSync(new URL('../App.svelte', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../app.css', import.meta.url), 'utf8');
 
 test('map beach selection navigates with the open panel offset it will open into', () => {
     assert.match(app, /function selectBeach\(name,\s*targetPanelMode = panelMode\)/);
@@ -272,6 +273,8 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(map, /L\.polyline/);
     assert.match(map, /route-waypoint-marker/);
     assert.match(map, /dropped-pin-marker/);
+    assert.match(css, /\.route-waypoint-marker\s*{[^}]*background:\s*#6f4bc2 !important/s);
+    assert.doesNotMatch(css, /\.route-waypoint-marker\s*{[^}]*background:\s*#0b7182 !important/s);
     assert.match(map, /class="dropped-pin-glyph"/);
     assert.match(map, /<circle cx="17" cy="17" r="7"/);
     assert.match(map, /<line x1="17" y1="5" x2="17" y2="29"/);
