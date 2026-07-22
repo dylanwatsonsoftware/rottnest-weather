@@ -118,7 +118,6 @@
         if (!Number.isFinite(point?.lat) || !Number.isFinite(point?.lon)) return;
 
         if (routeMode === 'route') {
-            routePlannerExpanded = true;
             routePoints = [...routePoints, point];
             droppedPin = null;
             selectedBeachName = '';
@@ -697,7 +696,7 @@
             </button>
         </div>
         {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
-            {#if !routePlannerExpanded && routeMode === 'off'}
+            {#if !routePlannerExpanded}
                 <button
                     type="button"
                     class="route-planner-summary"
@@ -720,16 +719,14 @@
                         <strong>{routePlannerStatus}</strong>
                         <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
                     </span>
-                    {#if routeMode === 'off' && routePoints.length}
-                        <button
-                            type="button"
-                            class="route-planner-collapse"
-                            aria-label="Collapse route details"
-                            onclick={() => routePlannerExpanded = false}
-                        >
-                            <ChevronUp class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
-                        </button>
-                    {/if}
+                    <button
+                        type="button"
+                        class="route-planner-collapse"
+                        aria-label="Collapse route details"
+                        onclick={() => routePlannerExpanded = false}
+                    >
+                        <ChevronUp class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
+                    </button>
                 </div>
                 <button
                     type="button"

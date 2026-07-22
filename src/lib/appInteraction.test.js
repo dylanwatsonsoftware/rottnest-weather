@@ -307,6 +307,7 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.doesNotMatch(app, /[⌄⌃]/);
     assert.match(app, /<ChevronDown/);
     assert.match(app, /<ChevronUp/);
+    assert.doesNotMatch(app, /\{#if routeMode === 'off' && routePoints\.length\}[\s\S]*aria-label="Collapse route details"/);
     assert.match(app, /routeMode=\{routeMode\}/);
     assert.match(app, /routePoints=\{\$state\.snapshot\(routePoints\)\}/);
     assert.match(app, /\{droppedPin\}/);

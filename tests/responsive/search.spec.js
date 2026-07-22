@@ -109,12 +109,16 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await page.getByRole('button', { name: 'Start route planning' }).click();
     await page.locator('#map').click({ position: { x: 145, y: 330 } });
     await expect(page.locator('.route-planner-card')).toContainText('1 waypoint');
+    await page.getByRole('button', { name: 'Collapse route details' }).click();
+    await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
+    await page.getByRole('button', { name: 'Show route details' }).click();
     await page.locator('#map').click({ position: { x: 130, y: 430 } });
 
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.locator('.planned-route-line')).toBeVisible();
     await expect(page.locator('.route-planner-card')).toContainText(/m|km/);
-    await page.getByPlaceholder('Name this route').fill('West End snorkel ride');
+    page.once('dialog', (dialog) => dialog.accept('West End snorkel ride'));
+    await page.getByRole('button', { name: 'Name route' }).click();
     await expect(page.locator('.route-planner-card a', { hasText: 'Open route' })).toHaveAttribute('href', /google\.com\/maps\/dir\/\?api=1.*travelmode=walking/);
     await expect(page.getByRole('button', { name: 'Share' }).first()).toBeEnabled();
     await expect.poll(() => page.url()).toContain('route=');

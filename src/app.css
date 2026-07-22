@@ -607,8 +607,13 @@ main {
     display: grid;
     place-items: center;
     padding: 0;
+    color: #0b6476;
     font-size: 1rem;
     line-height: 1;
+}
+
+.route-planner-collapse .route-planner-chevron {
+    color: currentColor;
 }
 
 .route-planner-card small,

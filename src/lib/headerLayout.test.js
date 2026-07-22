@@ -106,6 +106,8 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-actions button:hover/s);
     assert.match(css, /\.route-planner-actions button:focus-visible/s);
     assert.match(css, /\.route-planner-card button:not\(:disabled\):hover/s);
+    assert.match(css, /\.route-planner-card \.route-planner-collapse\s*{[^}]*color:\s*#0b6476/s);
+    assert.match(css, /\.route-planner-collapse \.route-planner-chevron\s*{[^}]*color:\s*currentColor/s);
     assert.match(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*auto/s);
     assert.doesNotMatch(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*none/s);
     assert.match(css, /\.route-planner-card a:hover/s);
