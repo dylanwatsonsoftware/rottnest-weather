@@ -9,6 +9,33 @@ export function getRecommendedBeachCount(recommendations = []) {
     return recommendations.filter((item) => item.state === 'best' || item.state === 'good').length;
 }
 
+export function getBeachSocialImageDetails(beach) {
+    if (!Array.isArray(beach?.ok_winds)) return {};
+
+    const activities = (beach.activity_tags || [])
+        .filter((tag) => !/marine sanctuary/i.test(tag))
+        .reduce((selected, tag) => {
+            const normalized = cleanText(tag).toLowerCase();
+            if (!normalized || selected.some((item) => normalized.includes(item) || item.includes(normalized))) {
+                return selected;
+            }
+            return [...selected, normalized];
+        }, [])
+        .slice(0, 2)
+        .map(toSentenceCase);
+    const sanctuaryText = [
+        ...(beach.activity_tags || []),
+        beach.exposure_note || '',
+        ...(beach.caution_notes || [])
+    ].join(' ');
+
+    return {
+        goodFor: activities.join(' · '),
+        goodWinds: beach.ok_winds.join(' · '),
+        sanctuary: /(?:marine\s+)?sanctuary(?:\s+zone|-zone)?/i.test(sanctuaryText)
+    };
+}
+
 export function buildSocialMeta({
     locationName = '',
     routeName = '',
@@ -17,14 +44,15 @@ export function buildSocialMeta({
     recommendedBeachCount = 0,
     conditions = {},
     url = '',
-    imageUrl = ''
+    imageUrl = '',
+    imageDetails = {}
 } = {}) {
     const title = buildTitle(locationName, selectedTime, routeName);
     const description = buildDescription(recommendedBeachCount, conditions, routeName, routeDistanceLabel);
     const absoluteUrl = url || '';
     const cleanLocationName = cleanText(locationName);
     const image = cleanLocationName && imageUrl
-        ? buildLocationImageUrl(imageUrl, cleanLocationName, absoluteUrl)
+        ? buildLocationImageUrl(imageUrl, cleanLocationName, imageDetails, absoluteUrl)
         : toAbsoluteUrl(DEFAULT_IMAGE, absoluteUrl);
 
     return {
@@ -93,6 +121,10 @@ function cleanText(value = '') {
     return String(value).replace(/\s+/g, ' ').trim();
 }
 
+function toSentenceCase(value) {
+    return value ? `${value[0].toUpperCase()}${value.slice(1)}` : '';
+}
+
 function formatRecommendationCount(count) {
     if (count === 1) return '1 recommended beach.';
     if (count > 1) return `${count} recommended beaches.`;
@@ -137,7 +169,11 @@ function toAbsoluteUrl(value, baseUrl) {
     }
 }
 
-function buildLocationImageUrl(imageUrl, locationName, baseUrl) {
-    const params = new URLSearchParams({ src: imageUrl, title: locationName, v: '2' });
+function buildLocationImageUrl(imageUrl, locationName, imageDetails, baseUrl) {
+    const params = new URLSearchParams({ src: imageUrl, title: locationName });
+    if (imageDetails.goodFor) params.set('goodFor', imageDetails.goodFor);
+    if (imageDetails.goodWinds) params.set('goodWinds', imageDetails.goodWinds);
+    if (imageDetails.sanctuary) params.set('sanctuary', '1');
+    params.set('v', '3');
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

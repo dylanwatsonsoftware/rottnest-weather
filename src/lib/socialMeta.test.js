@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
     buildSocialMeta,
+    getBeachSocialImageDetails,
     getRecommendedBeachCount,
     updateDocumentSocialMeta
 } from './socialMeta.js';
@@ -20,7 +21,12 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
             swellHeight: 1.2
         },
         url: 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00',
-        imageUrl: '/beach-images/little-salmon-bay-01.jpg'
+        imageUrl: '/beach-images/little-salmon-bay-01.jpg',
+        imageDetails: {
+            goodFor: 'Snorkel · Beginner friendly',
+            goodWinds: 'N · NE · E · SE · SW · W · NW',
+            sanctuary: false
+        }
     });
 
     assert.equal(meta.title, 'Little Salmon Bay at Tue 8am | Rottnest');
@@ -31,9 +37,21 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
     assert.equal(meta.url, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
     assert.equal(
         meta.image,
-        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&v=2'
+        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&goodFor=Snorkel+%C2%B7+Beginner+friendly&goodWinds=N+%C2%B7+NE+%C2%B7+E+%C2%B7+SE+%C2%B7+SW+%C2%B7+W+%C2%B7+NW&v=3'
     );
     assert.equal(meta.imageAlt, 'Little Salmon Bay — Find your best beach today');
+});
+
+test('getBeachSocialImageDetails formats useful beach attributes without repetitive tags', () => {
+    assert.deepEqual(getBeachSocialImageDetails({
+        ok_winds: ['N', 'NE', 'E'],
+        activity_tags: ['snorkel', 'snorkel trail', 'pink coral reef', 'marine sanctuary'],
+        caution_notes: ['Marine sanctuary zone; look but do not take.']
+    }), {
+        goodFor: 'Snorkel · Pink coral reef',
+        goodWinds: 'N · NE · E',
+        sanctuary: true
+    });
 });
 
 test('buildSocialMeta falls back to a general forecast title without a selected location', () => {

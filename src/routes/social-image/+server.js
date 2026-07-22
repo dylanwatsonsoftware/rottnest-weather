@@ -11,6 +11,11 @@ const FONT = opentype.parse(
 export async function GET({ url, fetch }) {
     const source = url.searchParams.get('src') || '';
     const title = cleanTitle(url.searchParams.get('title'));
+    const details = {
+        goodFor: cleanLabel(url.searchParams.get('goodFor')),
+        goodWinds: cleanLabel(url.searchParams.get('goodWinds')),
+        sanctuary: url.searchParams.get('sanctuary') === '1'
+    };
     if (!SOURCE_PATTERN.test(source) || !title) {
         return new Response('Invalid social image request', { status: 400 });
     }
@@ -23,7 +28,7 @@ export async function GET({ url, fetch }) {
     try {
         const image = await sharp(Buffer.from(await sourceResponse.arrayBuffer()))
             .resize(1200, 630, { fit: 'cover', position: 'attention' })
-            .composite([{ input: buildOverlay(title) }])
+            .composite([{ input: buildOverlay(title, details) }])
             .jpeg({ quality: 88, progressive: true })
             .toBuffer();
 
@@ -42,14 +47,30 @@ function cleanTitle(value) {
     return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 80);
 }
 
-function buildOverlay(title) {
+function cleanLabel(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 100);
+}
+
+function buildOverlay(title, details) {
     const lines = wrapTitle(title);
     const fontSize = lines.length > 1 ? 72 : title.length > 22 ? 68 : 84;
+    const titleY = lines.length > 1 ? 150 : 190;
     const titleMarkup = lines.map((line, index) => (
-        pathMarkup(line, 64, 238 + (index * 82), fontSize)
+        pathMarkup(line, 64, titleY + (index * 78), fontSize)
     )).join('');
-    const ctaY = 238 + (lines.length * 82) + 46;
-    const ctaMarkup = pathMarkup('Find your best beach today', 64, ctaY, 39);
+    const detailRows = [
+        details.goodFor ? `Good for  ${details.goodFor}` : '',
+        details.goodWinds ? `Good winds  ${details.goodWinds}` : '',
+        details.sanctuary ? 'Marine sanctuary' : ''
+    ].filter(Boolean);
+    const detailStartY = titleY + (lines.length * 78) + 42;
+    const detailMarkup = detailRows.map((row, index) => (
+        pathMarkup(row, 64, detailStartY + (index * 48), 27)
+    )).join('');
+    const ctaY = detailRows.length
+        ? Math.min(detailStartY + (detailRows.length * 48) + 54, 568)
+        : detailStartY + 12;
+    const ctaMarkup = pathMarkup('Find your best beach today', 64, ctaY, detailRows.length ? 30 : 39);
 
     return Buffer.from(`
         <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
@@ -63,6 +84,7 @@ function buildOverlay(title) {
             </defs>
             <rect width="1200" height="630" fill="url(#shade)" />
             ${titleMarkup}
+            ${detailMarkup}
             ${ctaMarkup}
         </svg>
     `);

@@ -2,7 +2,7 @@ import { mergeFacilityEnrichment } from '$lib/facilities.js';
 import { getBeachImages } from '$lib/beachMedia.js';
 import { getPrimaryPlaceImage } from '$lib/placeMedia.js';
 import { buildRecommendations, getConditions } from '$lib/recommendations.js';
-import { buildSocialMeta, getRecommendedBeachCount } from '$lib/socialMeta.js';
+import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from '$lib/socialMeta.js';
 import { formatCompactTime } from '$lib/timeFormat.js';
 import { findNearestSharedHourIndex, getSharedLocationFromUrl, parseSharedLocationKey, slugifyLocationName } from '$lib/urlState.js';
 import beaches from '../../public/beaches.json' with { type: 'json' };
@@ -31,7 +31,8 @@ export async function load({ fetch, url, setHeaders }) {
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: getConditions(forecastData, hourIndex),
         url: url.href,
-        imageUrl
+        imageUrl,
+        imageDetails: getBeachSocialImageDetails(selectedLocation)
     });
 
     return {

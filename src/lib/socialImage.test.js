@@ -15,7 +15,7 @@ test('social image endpoint converts copy to vector paths for production renderi
 test('social image endpoint renders selected photography at Open Graph dimensions', async () => {
     let requestedUrl = '';
     const response = await GET({
-        url: new URL('https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay'),
+        url: new URL('https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&goodFor=Snorkel+%C2%B7+Beginner+friendly&goodWinds=N+%C2%B7+NE&sanctuary=1&v=3'),
         fetch: async (url) => {
             requestedUrl = String(url);
             return new Response(sourceImage, { status: 200, headers: { 'content-type': 'image/jpeg' } });

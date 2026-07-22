@@ -187,13 +187,14 @@ test('share buttons show visible copy feedback', () => {
 });
 
 test('social meta follows selected location time recommendations and conditions', () => {
-    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount \} from '\.\/lib\/socialMeta\.js';/);
+    assert.match(app, /import \{ buildSocialMeta,\s*getBeachSocialImageDetails,\s*getRecommendedBeachCount \} from '\.\/lib\/socialMeta\.js';/);
     assert.match(app, /const selectedSocialLocationName = \$derived/);
     assert.match(app, /const selectedSocialImage = \$derived/);
     assert.match(app, /getPrimaryPlaceImage\(selectedMapPlace\)/);
     assert.match(app, /getBeachImages\(selectedRecommendation\?\.beach\?\.name\)\[0\]/);
     assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl/);
     assert.match(app, /imageUrl:\s*selectedSocialImage\?\.src/);
+    assert.match(app, /imageDetails:\s*getBeachSocialImageDetails\(selectedMapPlace \? null : selectedRecommendation\?\.beach\)/);
     assert.match(app, /<svelte:head>[\s\S]*currentSocialMeta\.title/);
     assert.doesNotMatch(app, /updateDocumentSocialMeta\(document/);
 });

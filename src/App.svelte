@@ -15,7 +15,7 @@
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import { getBeachImages } from './lib/beachMedia.js';
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
-    import { buildSocialMeta, getRecommendedBeachCount } from './lib/socialMeta.js';
+    import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from './lib/socialMeta.js';
     import {
         buildGoogleMapsCoordinateUrl,
         buildGoogleMapsRouteUrl,
@@ -559,7 +559,8 @@
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: currentConditions,
         url: currentShareUrl,
-        imageUrl: selectedSocialImage?.src
+        imageUrl: selectedSocialImage?.src,
+        imageDetails: getBeachSocialImageDetails(selectedMapPlace ? null : selectedRecommendation?.beach)
     }));
 
     $effect(() => {
