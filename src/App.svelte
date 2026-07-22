@@ -15,7 +15,7 @@
     import { getBeachSelectionMapTarget, getMapLayout, getMapLayoutChangeTarget } from './lib/mapFocus.js';
     import { getBeachImages } from './lib/beachMedia.js';
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
-    import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
+    import { buildSocialMeta, getRecommendedBeachCount } from './lib/socialMeta.js';
     import {
         buildGoogleMapsCoordinateUrl,
         buildGoogleMapsRouteUrl,
@@ -35,12 +35,18 @@
     import { formatCompactTime } from './lib/timeFormat.js';
     import './app.css';
 
-    let beaches = $state([]);
-    let landmarks = $state([]);
-    let facilities = $state([]);
-    let forecastData = $state(null);
-    let hourIndex = $state(0);
-    let loading = $state(true);
+    let {
+        initialData = {},
+        initialUrlState = { locationKey: '', time: '', panelMode: '' },
+        initialUrl = ''
+    } = $props();
+
+    let beaches = $state(getInitialData('beaches', []));
+    let landmarks = $state(getInitialData('landmarks', []));
+    let facilities = $state(getInitialData('facilities', []));
+    let forecastData = $state(getInitialData('forecastData', null));
+    let hourIndex = $state(getInitialData('hourIndex', 0));
+    let loading = $state(!getInitialData('forecastData', null)?.time?.length);
     let loadError = $state('');
     let mapZoom = $state(12);
     let selectedBeachName = $state('');
@@ -51,11 +57,11 @@
     let selectedMapPlace = $state(null);
     let userLocation = $state(null);
     let routeMode = $state('off');
-    let routePoints = $state([]);
-    let routeName = $state('');
-    let droppedPin = $state(null);
-    let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
-    let currentShareUrl = $state('');
+    let routePoints = $state(getInitialUrlState().route || []);
+    let routeName = $state(getInitialUrlState().routeName || '');
+    let droppedPin = $state(getInitialUrlState().pin || null);
+    let sharedLocationState = $state(getInitialUrlState());
+    let currentShareUrl = $state(getInitialUrl());
     let shareStatus = $state('');
     let shareStatusTimer = null;
     let mapNavigationSequence = 0;
@@ -75,6 +81,18 @@
         minimumScore: 0,
         includeLeastBad: false
     });
+
+    function getInitialData(key, fallback) {
+        return initialData[key] ?? fallback;
+    }
+
+    function getInitialUrlState() {
+        return initialUrlState;
+    }
+
+    function getInitialUrl() {
+        return initialUrl;
+    }
 
     function updateStateFilter(state, value) {
         filters = {
@@ -252,9 +270,10 @@
         if (Number.isInteger(sharedHourIndex)) {
             hourIndex = sharedHourIndex;
             didApplySharedLocationState = true;
-        } else if (sharedLocationState.time) {
+        } else if (sharedLocationState.time && appData.forecastData?.time?.length) {
+            // A loaded forecast cannot satisfy this URL. Release reactive URL updates,
+            // but continue applying the location so SSR still renders useful content.
             didApplySharedLocationState = true;
-            return;
         } else {
             didApplySharedLocationState = true;
         }
@@ -327,7 +346,7 @@
         window.clearTimeout(shareStatusTimer);
         shareStatusTimer = window.setTimeout(() => {
             shareStatus = '';
-        }, 2200);
+        }, 5000);
     }
 
     function selectSearchBeach(name) {
@@ -336,8 +355,10 @@
 
     function revealBeachInPanel(name) {
         selectBeach(name, 'open');
+        panelMode = 'open';
         panelOpenRequest += 1;
         panelScrollRequest += 1;
+        updateShareUrl();
     }
 
     function getNearestForecastHourIndex(nextForecastData, now = new Date()) {
@@ -387,6 +408,7 @@
     }
 
     onMount(() => {
+        didApplySharedLocationState = false;
         sharedLocationState = getSharedLocationFromUrl(window.location.href);
         droppedPin = sharedLocationState.pin;
         routePoints = sharedLocationState.route;
@@ -423,7 +445,7 @@
                 const nextLandmarks = await landmarksRes.json();
                 const nextFacilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
-                const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth');
+                const weatherRes = await window.fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth');
                 if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
                 const weatherJson = await weatherRes.json();
 
@@ -432,7 +454,7 @@
                 };
 
                 try {
-                    const marineRes = await fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth');
+                    const marineRes = await window.fetch('https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth');
                     if (marineRes.ok) {
                         const marineJson = await marineRes.json();
                         nextForecastData = {
@@ -464,7 +486,7 @@
         }
 
         const cachedAppData = readForecastCache(localStorage);
-        applyCachedAppData(cachedAppData);
+        if (!forecastData?.time?.length) applyCachedAppData(cachedAppData);
 
         loadAppData();
 
@@ -473,6 +495,14 @@
             window.removeEventListener('orientationchange', updateMapLayout);
         };
     });
+
+    applyInitialSharedState();
+
+    function applyInitialSharedState() {
+        if (beaches.length || landmarks.length || facilities.length) {
+            applySharedLocationState({ beaches, landmarks, facilities, forecastData });
+        }
+    }
 
     const currentConditions = $derived(getConditions(forecastData, hourIndex));
     const selectedForecastTime = $derived(formatCompactTime(forecastData?.time?.[hourIndex], { weekday: true }));
@@ -552,11 +582,21 @@
         updateShareUrl();
     });
 
-    $effect(() => {
-        updateDocumentSocialMeta(document, currentSocialMeta);
-    });
-
 </script>
+
+<svelte:head>
+    <title>{currentSocialMeta.title}</title>
+    <meta name="description" content={currentSocialMeta.description} />
+    <meta property="og:title" content={currentSocialMeta.title} />
+    <meta property="og:description" content={currentSocialMeta.description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={currentSocialMeta.url} />
+    <meta property="og:image" content={currentSocialMeta.image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={currentSocialMeta.title} />
+    <meta name="twitter:description" content={currentSocialMeta.description} />
+    <meta name="twitter:image" content={currentSocialMeta.image} />
+</svelte:head>
 
 <Header
     windDirDeg={currentConditions.windDirectionDegrees}

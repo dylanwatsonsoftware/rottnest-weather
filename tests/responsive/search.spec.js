@@ -41,7 +41,9 @@ test('clicking a non-beach map marker opens the selected place card', async ({ p
 test('zooming out keeps the selected map place anchored on screen', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
+    const forecastRefresh = page.waitForResponse((response) => response.url().includes('api.open-meteo.com'));
     await page.goto('/');
+    await forecastRefresh;
 
     await page.locator('.landmark-icon.landmark', { hasText: '🗼' }).first().click({ force: true });
     await expect(page.locator('.selected-map-place-card')).toBeVisible();
@@ -216,7 +218,9 @@ test('time-only shared URLs preserve future forecast dates', async ({ page }) =>
 test('forecast slider changes update the shared URL time', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await mockForecastApis(page);
+    const forecastRefresh = page.waitForResponse((response) => response.url().includes('api.open-meteo.com'));
     await page.goto('/?panel=semi');
+    await forecastRefresh;
 
     await expect(page.locator('#collapsed-time-slider')).toBeVisible();
     const initialTimeParam = new URL(page.url()).searchParams.get('time');
@@ -306,7 +310,7 @@ test('map search autocomplete shows distance when browser location is available'
     });
     const page = await context.newPage();
     await mockForecastApis(page);
-    await page.goto('http://127.0.0.1:4173/');
+    await page.goto('http://127.0.0.1:4273/');
 
     await page.getByRole('button', { name: 'Open map search' }).click();
     await page.locator('.map-search input').fill('pink');

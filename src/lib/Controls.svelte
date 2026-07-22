@@ -1,11 +1,8 @@
 <script>
     import { onMount } from 'svelte';
-    import { Chart, registerables } from 'chart.js';
-    import ChartDataLabels from 'chartjs-plugin-datalabels';
-    import annotationPlugin from 'chartjs-plugin-annotation';
     import { getForecastChartDensity, getForecastChartLabels } from './panelState.js';
 
-    Chart.register(...registerables, ChartDataLabels, annotationPlugin);
+    let Chart;
 
     let {
         forecastData,
@@ -30,10 +27,20 @@
     }
 
     onMount(() => {
-        if (forecastData) {
-            initChart();
-        }
+        let disposed = false;
+        void (async () => {
+            const [{ Chart: ChartClass, registerables }, { default: ChartDataLabels }, { default: annotationPlugin }] = await Promise.all([
+                import('chart.js'),
+                import('chartjs-plugin-datalabels'),
+                import('chartjs-plugin-annotation')
+            ]);
+            if (disposed) return;
+            Chart = ChartClass;
+            Chart.register(...registerables, ChartDataLabels, annotationPlugin);
+            if (forecastData) initChart();
+        })();
         return () => {
+            disposed = true;
             if (chart) chart.destroy();
         };
     });
@@ -216,7 +223,7 @@
     });
 
     $effect(() => {
-        if (!chart && forecastData && canvasElement) {
+        if (Chart && !chart && forecastData && canvasElement) {
             initChart();
         }
     });

@@ -72,7 +72,8 @@ test('app skips cached data that cannot satisfy an incoming shared forecast time
 });
 
 test('app releases URL updates when fresh data cannot resolve a shared time', () => {
-    assert.match(app, /else if \(sharedLocationState\.time\) \{\s*didApplySharedLocationState = true;\s*return;\s*\}/);
+    assert.match(app, /else if \(sharedLocationState\.time && appData\.forecastData\?\.time\?\.length\) \{[\s\S]*?didApplySharedLocationState = true;\s*\}/);
+    assert.doesNotMatch(app, /else if \(sharedLocationState\.time[^}]*didApplySharedLocationState = true;\s*return;/);
 });
 
 test('app preserves the selected forecast time when fresh data replaces cached data', () => {
@@ -85,8 +86,13 @@ test('app preserves the selected forecast time when fresh data replaces cached d
 });
 
 test('forecast API requests use Rottnest local time for shared URL hour matching', () => {
-    assert.match(app, /api\.open-meteo\.com\/v1\/forecast\?[^'"]*timezone=Australia%2FPerth/);
-    assert.match(app, /marine-api\.open-meteo\.com\/v1\/marine\?[^'"]*timezone=Australia%2FPerth/);
+    assert.match(app, /window\.fetch\('https:\/\/api\.open-meteo\.com\/v1\/forecast\?[^'"]*timezone=Australia%2FPerth/);
+    assert.match(app, /window\.fetch\('https:\/\/marine-api\.open-meteo\.com\/v1\/marine\?[^'"]*timezone=Australia%2FPerth/);
+});
+
+test('chart initialization waits for the browser-only Chart.js import', () => {
+    const controls = readFileSync(new URL('./Controls.svelte', import.meta.url), 'utf8');
+    assert.match(controls, /if \(Chart && !chart && forecastData && canvasElement\)/);
 });
 
 test('recommendation panel waits until forecast data is ready', () => {
@@ -140,7 +146,7 @@ test('selected map places request a close zoom level', () => {
 test('map and search beach selections request the panel detail scroll', () => {
     assert.match(app, /let panelScrollRequest = \$state\(0\)/);
     assert.match(app, /function revealBeachInPanel\(name\)/);
-    assert.match(app, /panelOpenRequest \+= 1;\s+panelScrollRequest \+= 1;/);
+    assert.match(app, /panelMode = 'open';\s+panelOpenRequest \+= 1;\s+panelScrollRequest \+= 1;/);
     assert.match(app, /onSelectBeach=\{revealBeachInPanel\}/);
     assert.match(app, /\{panelScrollRequest\}/);
 });
@@ -158,7 +164,7 @@ test('selected beach details receive user location for distance labels', () => {
 test('selected beach and place state is encoded in the address bar for sharing', () => {
     assert.match(app, /import \{[\s\S]*buildShareUrl[\s\S]*getSharedLocationFromUrl[\s\S]*getLocationKey[\s\S]*findNearestSharedHourIndex[\s\S]*parseSharedLocationKey[\s\S]*slugifyLocationName[\s\S]*\} from '\.\/lib\/urlState\.js';/);
     assert.match(app, /let sharedLocationState = \$state/);
-    assert.match(app, /let currentShareUrl = \$state\(''\)/);
+    assert.match(app, /let currentShareUrl = \$state\(getInitialUrl\(\)\)/);
     assert.match(app, /function updateShareUrl\(\)/);
     assert.match(app, /time:\s*forecastData\.time\[hourIndex\]/);
     assert.match(app, /panelMode/);
@@ -181,13 +187,14 @@ test('share buttons show visible copy feedback', () => {
 });
 
 test('social meta follows selected location time recommendations conditions and image', () => {
-    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount,\s*updateDocumentSocialMeta \} from '\.\/lib\/socialMeta\.js';/);
+    assert.match(app, /import \{ buildSocialMeta,\s*getRecommendedBeachCount \} from '\.\/lib\/socialMeta\.js';/);
     assert.match(app, /const selectedSocialLocationName = \$derived/);
     assert.match(app, /const selectedSocialImage = \$derived/);
     assert.match(app, /getPrimaryPlaceImage\(selectedMapPlace\)/);
     assert.match(app, /getBeachImages\(selectedRecommendation\?\.beach\?\.name\)\[0\]/);
     assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl[\s\S]*imageUrl:\s*selectedSocialImage\?\.src/);
-    assert.match(app, /updateDocumentSocialMeta\(document,\s*currentSocialMeta\)/);
+    assert.match(app, /<svelte:head>[\s\S]*currentSocialMeta\.title/);
+    assert.doesNotMatch(app, /updateDocumentSocialMeta\(document/);
 });
 
 test('incoming shared beach and place links are restored after app data loads', () => {
@@ -197,6 +204,10 @@ test('incoming shared beach and place links are restored after app data loads', 
     assert.match(app, /parseSharedLocationKey\(sharedLocationState\.locationKey\)/);
     assert.match(app, /selectedBeachName = beach\.name/);
     assert.match(app, /selectedMapPlace = getSharedMapPlaceTarget\(place\)/);
+});
+
+test('client hydration re-resolves shared time against the refreshed forecast', () => {
+    assert.match(app, /onMount\(\(\) => \{\s*didApplySharedLocationState = false;\s*sharedLocationState = getSharedLocationFromUrl\(window\.location\.href\)/);
 });
 
 test('incoming shared beach links restore the beach panel fully open', () => {
@@ -247,12 +258,13 @@ test('app wires route planning and dropped pin sharing into the map', () => {
 
     assert.match(app, /import \{[\s\S]*buildGoogleMapsCoordinateUrl[\s\S]*buildGoogleMapsRouteUrl[\s\S]*formatCoordinateLabel[\s\S]*getRouteDistanceKm[\s\S]*getRouteDistanceLabel[\s\S]*\} from '\.\/lib\/routePlanning\.js';/);
     assert.match(app, /let routeMode = \$state\('off'\)/);
-    assert.match(app, /let routePoints = \$state\(\[\]\)/);
-    assert.match(app, /let routeName = \$state\(''\)/);
-    assert.match(app, /let droppedPin = \$state\(null\)/);
+    assert.match(app, /let routePoints = \$state\(getInitialUrlState\(\)\.route \|\| \[\]\)/);
+    assert.match(app, /let routeName = \$state\(getInitialUrlState\(\)\.routeName \|\| ''\)/);
+    assert.match(app, /let droppedPin = \$state\(getInitialUrlState\(\)\.pin \|\| null\)/);
     assert.match(app, /function handleMapPlanningPoint\(point\)/);
     assert.match(app, /function navigateToDroppedPin\(pin\)/);
     assert.match(app, /navigateToDroppedPin\(sharedLocationState\.pin\)/);
+    assert.match(map, /initLandmarks\(\);\s*updatePlanningLayers\(\);\s*fitInitialFocus\(\);/);
     assert.match(app, /routeMode === 'route'/);
     assert.match(app, /routeMode === 'pin'/);
     assert.match(app, /class="route-planner"/);

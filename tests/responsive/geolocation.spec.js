@@ -10,7 +10,7 @@ test('user location appears only after moving inside Rottnest bounds', async ({ 
     const page = await context.newPage();
     await mockForecastApis(page);
 
-    await page.goto('http://127.0.0.1:4173/');
+    await page.goto('/');
 
     await expect(page.locator('.user-location-marker')).toHaveCount(0);
 
