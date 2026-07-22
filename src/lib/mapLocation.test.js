@@ -60,6 +60,14 @@ test('manual zoom recenters the selected navigation request at the new zoom leve
     assert.match(mapSource, /map\.setView\(center,\s*zoom,\s*options\)/);
 });
 
+test('selected place navigation never zooms out from the current map zoom', () => {
+    assert.match(mapSource, /function getSelectionNavigationZoom\(request\)/);
+    assert.match(mapSource, /const requestedZoom = Number\.isFinite\(request\?\.zoom\) \? request\.zoom : 15/);
+    assert.match(mapSource, /const currentMapZoom = map\?\.getZoom\(\)/);
+    assert.match(mapSource, /return Math\.max\(currentMapZoom,\s*requestedZoom\)/);
+    assert.match(mapSource, /const zoom = getSelectionNavigationZoom\(request\)/);
+});
+
 test('manual map dragging disables selected navigation zoom anchoring', () => {
     assert.match(mapSource, /let shouldRecenterSelectedNavigation = false/);
     assert.match(mapSource, /map\.on\('dragstart',\s*handleManualMapMove\)/);

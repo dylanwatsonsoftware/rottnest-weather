@@ -533,7 +533,7 @@
 
             requestAnimationFrame(() => {
                 if (!map || request.requestId !== lastNavigationRequestId) return;
-                const zoom = request.zoom || 15;
+                const zoom = getSelectionNavigationZoom(request);
                 const center = getOffsetCenter(request, zoom);
                 flyToProgrammatically(center, zoom, {
                     animate: true,
@@ -548,6 +548,13 @@
     function cancelSelectedNavigationTracking() {
         lastNavigationRequestId = null;
         shouldRecenterSelectedNavigation = false;
+    }
+
+    function getSelectionNavigationZoom(request) {
+        const requestedZoom = Number.isFinite(request?.zoom) ? request.zoom : 15;
+        const currentMapZoom = map?.getZoom();
+        if (!Number.isFinite(currentMapZoom)) return requestedZoom;
+        return Math.max(currentMapZoom, requestedZoom);
     }
 
     function getSelectedPlaceVisibleAnchor() {
