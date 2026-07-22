@@ -7,8 +7,9 @@ import { GET } from '../routes/social-image/+server.js';
 const sourceImage = readFileSync(new URL('../../public/beach-images/little-salmon-bay-01.jpg', import.meta.url));
 const endpointSource = readFileSync(new URL('../routes/social-image/+server.js', import.meta.url), 'utf8');
 
-test('social image endpoint embeds its font for production rendering', () => {
-    assert.match(endpointSource, /data:font\/woff2;base64/);
+test('social image endpoint converts copy to vector paths for production rendering', () => {
+    assert.match(endpointSource, /getPath\(/);
+    assert.doesNotMatch(endpointSource, /<text\b/);
 });
 
 test('social image endpoint renders selected photography at Open Graph dimensions', async () => {

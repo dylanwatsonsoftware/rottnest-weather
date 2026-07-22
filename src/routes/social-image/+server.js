@@ -1,7 +1,12 @@
 import INTER_BOLD from '../../lib/assets/interBold.js';
+import opentype from 'opentype.js';
 import sharp from 'sharp';
 
 const SOURCE_PATTERN = /^\/(?:beach|place)-images\/[a-z0-9-]+\.jpg$/;
+const FONT_BYTES = Buffer.from(INTER_BOLD, 'base64');
+const FONT = opentype.parse(
+    FONT_BYTES.buffer.slice(FONT_BYTES.byteOffset, FONT_BYTES.byteOffset + FONT_BYTES.byteLength)
+);
 
 export async function GET({ url, fetch }) {
     const source = url.searchParams.get('src') || '';
@@ -41,9 +46,10 @@ function buildOverlay(title) {
     const lines = wrapTitle(title);
     const fontSize = lines.length > 1 ? 72 : title.length > 22 ? 68 : 84;
     const titleMarkup = lines.map((line, index) => (
-        `<text x="64" y="${238 + (index * 82)}" class="title">${escapeXml(line)}</text>`
+        pathMarkup(line, 64, 238 + (index * 82), fontSize)
     )).join('');
     const ctaY = 238 + (lines.length * 82) + 46;
+    const ctaMarkup = pathMarkup('Find your best beach today', 64, ctaY, 39);
 
     return Buffer.from(`
         <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
@@ -54,20 +60,10 @@ function buildOverlay(title) {
                     <stop offset="0.82" stop-color="#031a3d" stop-opacity="0.08" />
                     <stop offset="1" stop-color="#031a3d" stop-opacity="0" />
                 </linearGradient>
-                <style>
-                    @font-face {
-                        font-family: 'Inter Embedded';
-                        font-style: normal;
-                        font-weight: 700;
-                        src: url(data:font/woff2;base64,${INTER_BOLD}) format('woff2');
-                    }
-                    .title { fill: #fff; font: 700 ${fontSize}px 'Inter Embedded'; }
-                    .cta { fill: #fff; font: 700 39px 'Inter Embedded'; }
-                </style>
             </defs>
             <rect width="1200" height="630" fill="url(#shade)" />
             ${titleMarkup}
-            <text x="64" y="${ctaY}" class="cta">Find your best beach today</text>
+            ${ctaMarkup}
         </svg>
     `);
 }
@@ -87,11 +83,17 @@ function wrapTitle(title) {
     return [words.slice(0, splitAt).join(' '), words.slice(splitAt).join(' ')].filter(Boolean);
 }
 
-function escapeXml(value) {
-    return value
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&apos;');
+function pathMarkup(text, x, y, fontSize) {
+    const glyphs = [...text].map((character) => FONT.charToGlyph(character));
+    const scale = fontSize / FONT.unitsPerEm;
+    let cursor = x;
+    const paths = glyphs.map((glyph, index) => {
+        const path = glyph.getPath(cursor, y, fontSize);
+        cursor += (glyph.advanceWidth || 0) * scale;
+        if (index < glyphs.length - 1) {
+            cursor += FONT.getKerningValue(glyph, glyphs[index + 1]) * scale;
+        }
+        return `<path d="${path.toPathData(2)}" />`;
+    }).join('');
+    return `<g fill="#fff">${paths}</g>`;
 }

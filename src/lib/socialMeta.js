@@ -138,6 +138,6 @@ function toAbsoluteUrl(value, baseUrl) {
 }
 
 function buildLocationImageUrl(imageUrl, locationName, baseUrl) {
-    const params = new URLSearchParams({ src: imageUrl, title: locationName });
+    const params = new URLSearchParams({ src: imageUrl, title: locationName, v: '2' });
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

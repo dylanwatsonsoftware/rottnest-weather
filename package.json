@@ -25,6 +25,7 @@
     "chartjs-plugin-annotation": "^3.1.0",
     "chartjs-plugin-datalabels": "^2.2.0",
     "leaflet": "^1.9.4",
+    "opentype.js": "2.0.0",
     "sharp": "0.35.3"
   }
 }

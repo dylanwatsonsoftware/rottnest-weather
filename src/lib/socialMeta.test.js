@@ -31,7 +31,7 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
     assert.equal(meta.url, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
     assert.equal(
         meta.image,
-        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay'
+        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay&v=2'
     );
     assert.equal(meta.imageAlt, 'Little Salmon Bay — Find your best beach today');
 });
