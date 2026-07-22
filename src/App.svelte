@@ -18,6 +18,7 @@
     import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from './lib/socialMeta.js';
     import { getPlanningSocialImage } from './lib/socialMedia.js';
     import {
+        activateRouteNameInput,
         buildGoogleMapsCoordinateUrl,
         buildGoogleMapsRouteUrl,
         formatCoordinateLabel,
@@ -704,10 +705,16 @@
                     onclick={() => routePlannerExpanded = true}
                 >
                     <span>
-                        <strong>{routePlannerStatus}</strong>
-                        <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                        <strong class="route-planner-summary-name">{routeName.trim() || routePlannerStatus}</strong>
+                        <small>
+                            {routeName.trim() ? `${routePlannerStatus} · ` : ''}{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}
+                        </small>
                     </span>
-                    <span class="route-planner-summary-chevron" aria-hidden="true">⌄</span>
+                    <span class="route-planner-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 16 16" focusable="false">
+                            <path d="M3 6l5 5 5-5" />
+                        </svg>
+                    </span>
                 </button>
             {:else}
             <div class="route-planner-card">
@@ -722,7 +729,13 @@
                             class="route-planner-collapse"
                             aria-label="Collapse route details"
                             onclick={() => routePlannerExpanded = false}
-                        >⌃</button>
+                        >
+                            <span class="route-planner-chevron" aria-hidden="true">
+                                <svg viewBox="0 0 16 16" focusable="false">
+                                    <path d="M3 10l5-5 5 5" />
+                                </svg>
+                            </span>
+                        </button>
                     {/if}
                 </div>
                 <label class="route-name-field">
@@ -731,6 +744,8 @@
                         type="text"
                         placeholder="Name this route"
                         maxlength="80"
+                        inputmode="text"
+                        onclick={(event) => activateRouteNameInput(event.currentTarget)}
                         bind:value={routeName}
                     />
                 </label>

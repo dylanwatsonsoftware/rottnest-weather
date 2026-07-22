@@ -1,12 +1,23 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+    activateRouteNameInput,
     buildGoogleMapsCoordinateUrl,
     buildGoogleMapsRouteUrl,
     formatCoordinateLabel,
     getRouteDistanceKm,
     getRouteDistanceLabel
 } from './routePlanning.js';
+
+test('activateRouteNameInput focuses the field and requests the Android virtual keyboard', () => {
+    const calls = [];
+    activateRouteNameInput(
+        { focus: () => calls.push('focus') },
+        { show: () => calls.push('show') }
+    );
+    assert.deepEqual(calls, ['focus', 'show']);
+    assert.doesNotThrow(() => activateRouteNameInput({ focus() {} }, null));
+});
 
 test('getRouteDistanceKm sums waypoint segments', () => {
     const route = [

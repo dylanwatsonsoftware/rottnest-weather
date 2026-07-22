@@ -297,6 +297,11 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /routeName/);
     assert.match(app, /placeholder="Name this route"/);
     assert.match(app, /bind:value=\{routeName\}/);
+    assert.match(app, /onclick=\{\(event\) => activateRouteNameInput\(event\.currentTarget\)\}/);
+    assert.match(app, /inputmode="text"/);
+    assert.match(app, /class="route-planner-summary-name"/);
+    assert.doesNotMatch(app, /[⌄⌃]/);
+    assert.match(app, /class="route-planner-chevron"[\s\S]*<svg[\s\S]*<path/);
     assert.match(app, /routeMode=\{routeMode\}/);
     assert.match(app, /routePoints=\{\$state\.snapshot\(routePoints\)\}/);
     assert.match(app, /\{droppedPin\}/);

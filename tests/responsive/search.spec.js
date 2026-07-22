@@ -139,6 +139,7 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
     await page.goto('/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride');
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Show route details' })).toContainText('West End snorkel ride');
     await expect(page.getByPlaceholder('Name this route')).toBeHidden();
     await page.getByRole('button', { name: 'Show route details' }).click();
     await expect(page.locator('.route-planner-card')).toBeVisible();
