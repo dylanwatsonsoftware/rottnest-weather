@@ -60,6 +60,7 @@
     let routeMode = $state('off');
     let routePoints = $state(getInitialUrlState().route || []);
     let routeName = $state(getInitialUrlState().routeName || '');
+    let routePlannerExpanded = $state(!(getInitialUrlState().route || []).length);
     let droppedPin = $state(getInitialUrlState().pin || null);
     let sharedLocationState = $state(getInitialUrlState());
     let currentShareUrl = $state(getInitialUrl());
@@ -116,6 +117,7 @@
         if (!Number.isFinite(point?.lat) || !Number.isFinite(point?.lon)) return;
 
         if (routeMode === 'route') {
+            routePlannerExpanded = true;
             routePoints = [...routePoints, point];
             droppedPin = null;
             selectedBeachName = '';
@@ -135,6 +137,7 @@
     function startRoutePlanning() {
         routeMode = routeMode === 'route' ? 'off' : 'route';
         if (routeMode === 'route') {
+            routePlannerExpanded = true;
             droppedPin = null;
             panelMode = 'closed';
         }
@@ -414,6 +417,7 @@
         droppedPin = sharedLocationState.pin;
         routePoints = sharedLocationState.route;
         routeName = sharedLocationState.routeName;
+        routePlannerExpanded = !sharedLocationState.route.length;
         navigateToDroppedPin(sharedLocationState.pin);
 
         function updateMapLayout() {
@@ -691,6 +695,21 @@
             </button>
         </div>
         {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
+            {#if !routePlannerExpanded && routeMode === 'off'}
+                <button
+                    type="button"
+                    class="route-planner-summary"
+                    aria-label="Show route details"
+                    aria-expanded="false"
+                    onclick={() => routePlannerExpanded = true}
+                >
+                    <span>
+                        <strong>{routePlannerStatus}</strong>
+                        <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                    </span>
+                    <span class="route-planner-summary-chevron" aria-hidden="true">⌄</span>
+                </button>
+            {:else}
             <div class="route-planner-card">
                 <strong>{routePlannerStatus}</strong>
                 <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
@@ -717,6 +736,7 @@
                     </button>
                 </div>
             </div>
+            {/if}
         {/if}
     </section>
     {#if droppedPin}

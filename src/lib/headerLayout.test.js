@@ -107,6 +107,9 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.doesNotMatch(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*none/s);
     assert.match(css, /\.route-planner-card a:hover/s);
     assert.match(css, /\.route-name-field input[\s\S]*pointer-events:\s*auto/);
+    assert.match(css, /\.route-planner\s*{[^}]*width:\s*max-content[^}]*pointer-events:\s*auto/s);
+    assert.doesNotMatch(css, /\.route-planner\s*{[^}]*pointer-events:\s*none/s);
+    assert.match(css, /\.route-name-field input\s*{[^}]*font-size:\s*1rem/s);
 });
 
 test('app buttons have subtle hover and focus feedback outside map planning controls', () => {

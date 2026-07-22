@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
     getInitialFitSettings,
     getInitialPlanningFocus,
+    getInitialPlanningFitSettings,
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
     getPanelModeSelectionMapTarget,
@@ -50,6 +51,20 @@ test('initial planning focus zooms to a shared pin when no route is loaded', () 
         zoom: 16
     });
     assert.equal(getInitialPlanningFocus({ routePoints: [], pin: null }), null);
+});
+
+test('shared route fit uses the visible map and clears a compact right-side card', () => {
+    assert.deepEqual(getInitialPlanningFitSettings({
+        mapWidth: 390,
+        mapHeight: 844,
+        visibleTop: 106,
+        visibleBottom: 756,
+        obstruction: { left: 248, right: 380 }
+    }), {
+        paddingTopLeft: [24, 122],
+        paddingBottomRight: [158, 104],
+        maxZoom: 16
+    });
 });
 
 test('getLandmarkFitPoints uses every known landmark coordinate for initial load', () => {

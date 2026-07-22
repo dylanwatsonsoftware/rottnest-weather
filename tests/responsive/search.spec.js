@@ -121,6 +121,7 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await expect.poll(() => page.url()).toContain('routeName=West+End+snorkel+ride');
     await expect.poll(() => page.locator('meta[property="og:title"]').getAttribute('content')).toContain('West End snorkel ride route');
 
+    await page.getByRole('button', { name: 'Clear' }).click();
     await page.getByRole('button', { name: 'Drop a pin' }).click();
     await page.locator('#map').click({ position: { x: 180, y: 360 } });
 
@@ -137,8 +138,15 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
 
     await page.goto('/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride');
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
+    await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
+    await expect(page.getByPlaceholder('Name this route')).toBeHidden();
+    await page.getByRole('button', { name: 'Show route details' }).click();
     await expect(page.locator('.route-planner-card')).toBeVisible();
     await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End snorkel ride');
+    await page.getByPlaceholder('Name this route').click();
+    await expect(page.getByPlaceholder('Name this route')).toBeFocused();
+    await page.getByPlaceholder('Name this route').fill('West End morning loop');
+    await expect(page.getByPlaceholder('Name this route')).toHaveValue('West End morning loop');
     await expect(page.locator('.planned-route-line')).toBeVisible();
 
     await page.goto('/?pin=-32.00641%2C115.50999');

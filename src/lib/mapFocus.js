@@ -21,6 +21,26 @@ export function getInitialPlanningFocus({ routePoints = [], pin = null } = {}) {
     return null;
 }
 
+export function getInitialPlanningFitSettings({
+    mapWidth = 0,
+    mapHeight = 0,
+    visibleTop = 0,
+    visibleBottom = mapHeight,
+    obstruction = null
+} = {}) {
+    const gutter = 16;
+    const edgePadding = 24;
+    const obstructionRightPadding = obstruction?.left > mapWidth / 2
+        ? Math.max(mapWidth - obstruction.left + gutter, edgePadding)
+        : edgePadding;
+
+    return {
+        paddingTopLeft: [edgePadding, Math.max(visibleTop + gutter, edgePadding)],
+        paddingBottomRight: [obstructionRightPadding, Math.max(mapHeight - visibleBottom + gutter, edgePadding)],
+        maxZoom: 16
+    };
+}
+
 export function getLandmarkFitPoints(landmarks = []) {
     return landmarks
         .filter((landmark) => Number.isFinite(landmark.lat) && Number.isFinite(landmark.lon))

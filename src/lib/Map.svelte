@@ -4,6 +4,7 @@
     import {
         getInitialFitSettings,
         getInitialPlanningFocus,
+        getInitialPlanningFitSettings,
         getLandmarkFitPoints,
         getMapNavigationTarget,
         getNavigationSettleDelay,
@@ -473,11 +474,21 @@
         didFocusInitialPlanning = true;
         didFitInitialFocus = true;
         if (focus.type === 'route') {
-            const fitSettings = getInitialFitSettings();
-            map.fitBounds(L.latLngBounds(focus.points), {
-                ...fitSettings.fitBoundsOptions,
-                maxZoom: 15
+            const mapRect = mapElement.getBoundingClientRect();
+            const visibleBounds = getVisibleMapBounds();
+            const plannerElement = document.querySelector('.route-planner-summary, .route-planner-card');
+            const plannerRect = plannerElement?.getBoundingClientRect();
+            const fitSettings = getInitialPlanningFitSettings({
+                mapWidth: mapRect.width,
+                mapHeight: mapRect.height,
+                visibleTop: visibleBounds.visibleTop,
+                visibleBottom: visibleBounds.visibleBottom,
+                obstruction: plannerRect ? {
+                    left: plannerRect.left - mapRect.left,
+                    right: plannerRect.right - mapRect.left
+                } : null
             });
+            map.fitBounds(L.latLngBounds(focus.points), fitSettings);
         } else {
             map.setView(focus.point, focus.zoom, { animate: false });
         }
