@@ -308,6 +308,9 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.doesNotMatch(app, /activateRouteNameInput/);
     assert.match(app, /<Pencil/);
     assert.match(app, /class="route-planner-summary-name"/);
+    assert.match(app, /class="route-planner-summary"[\s\S]*aria-label="Show route details"/);
+    assert.match(app, /routeName\.trim\(\) \|\| 'Route'/);
+    assert.match(app, /class="route-planner-summary-distance">\{routeDistanceLabel\}/);
     assert.doesNotMatch(app, /[⌄⌃]/);
     assert.match(app, /<ChevronDown/);
     assert.match(app, /<ChevronUp/);

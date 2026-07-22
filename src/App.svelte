@@ -715,23 +715,20 @@
         </div>
         {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
             {#if !routePlannerExpanded}
-                <div class="route-planner-summary">
-                    <span>
-                        <strong class="route-planner-summary-name">{routeName.trim() || routePlannerStatus}</strong>
-                        <small>
-                            {routeName.trim() ? `${routePlannerStatus} · ` : ''}{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}
-                        </small>
+                <button
+                    type="button"
+                    class="route-planner-summary"
+                    aria-label="Show route details"
+                    aria-expanded="false"
+                    onclick={() => routePlannerExpanded = true}
+                >
+                    <span class="route-planner-summary-copy">
+                        <strong class="route-planner-summary-name">{routeName.trim() || 'Route'}</strong>
+                        <span class="route-planner-summary-separator" aria-hidden="true">·</span>
+                        <small class="route-planner-summary-distance">{routeDistanceLabel}</small>
                     </span>
-                    <button
-                        type="button"
-                        class="route-planner-toggle"
-                        aria-label="Show route details"
-                        aria-expanded="false"
-                        onclick={() => routePlannerExpanded = true}
-                    >
-                        <ChevronDown class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
-                    </button>
-                </div>
+                    <ChevronDown class="route-planner-chevron route-planner-summary-chevron" size={16} strokeWidth={2} aria-hidden="true" />
+                </button>
             {:else}
             <div class="route-planner-card">
                 <div class="route-planner-card-header">

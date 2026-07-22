@@ -148,6 +148,8 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.getByRole('button', { name: 'Show route details' })).toBeVisible();
     await expect(page.locator('.route-planner-summary')).toContainText('West End snorkel ride');
+    await expect(page.locator('.route-planner-summary')).toContainText(/m|km/);
+    await expect(page.locator('.route-planner-summary')).toHaveCSS('min-height', '48px');
     await expect(page.getByRole('button', { name: 'Rename route' })).toBeHidden();
     await page.getByRole('button', { name: 'Show route details' }).click();
     await expect(page.locator('.route-planner-card')).toBeVisible();
