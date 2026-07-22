@@ -171,6 +171,10 @@ test('selected beach and place state is encoded in the address bar for sharing',
     assert.match(app, /let sharedLocationState = \$state/);
     assert.match(app, /let currentShareUrl = \$state\(getInitialUrl\(\)\)/);
     assert.match(app, /function updateShareUrl\(\)/);
+    assert.match(app, /function buildScopedShareUrl\(scope\)/);
+    assert.match(app, /shareCurrentLocation\('route'\)/);
+    assert.match(app, /shareCurrentLocation\('pin'\)/);
+    assert.match(app, /shareCurrentLocation\('location'\)/);
     assert.match(app, /time:\s*forecastData\.time\[hourIndex\]/);
     assert.match(app, /panelMode/);
     assert.doesNotMatch(app, /time:\s*locationKey \? forecastData\.time\[hourIndex\] : ''/);
@@ -189,7 +193,7 @@ test('share buttons show visible copy feedback', () => {
     assert.match(app, /class:copied=\{shareSucceeded\}/);
     assert.match(app, /\{shareSucceeded \? 'Copied' : 'Share'\}/);
     assert.match(app, /shareSucceeded=\{shareSucceeded\}/);
-    assert.match(app, /const url = updateShareUrl\(\) \|\| currentShareUrl \|\| window\.location\.href/);
+    assert.match(app, /updateShareUrl\(\);\s*const url = buildScopedShareUrl\(scope\)/);
 });
 
 test('social meta follows selected location time recommendations and conditions', () => {
@@ -259,7 +263,7 @@ test('selected map place card hides source chips and shows bundled image and rat
 test('selected map place card has a share link button', () => {
     assert.match(app, /class="selected-map-place-share"/);
     assert.match(app, /aria-label="Share \{selectedMapPlace\.name\}"/);
-    assert.match(app, /onclick=\{\(\) => shareCurrentLocation\(\)\}/);
+    assert.match(app, /onclick=\{\(\) => shareCurrentLocation\('location'\)\}/);
     assert.match(app, /class:copied=\{shareSucceeded\}/);
     assert.match(app, /\{shareSucceeded \? '✓' : '🔗'\}/);
 });

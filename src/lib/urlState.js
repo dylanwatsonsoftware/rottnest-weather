@@ -46,16 +46,15 @@ export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode 
     }
 
     const routeParam = serializeRoute(route);
+    const pinParam = serializeCoordinate(pin);
+    if (pinParam) {
+        url.searchParams.set(PIN_PARAM, pinParam);
+    }
     if (routeParam) {
         url.searchParams.set(ROUTE_PARAM, routeParam);
         const cleanRouteName = sanitizeRouteName(routeName);
         if (cleanRouteName) {
             url.searchParams.set(ROUTE_NAME_PARAM, cleanRouteName);
-        }
-    } else {
-        const pinParam = serializeCoordinate(pin);
-        if (pinParam) {
-            url.searchParams.set(PIN_PARAM, pinParam);
         }
     }
 

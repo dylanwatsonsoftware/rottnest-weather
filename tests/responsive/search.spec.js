@@ -169,6 +169,44 @@ test('shared route and pin URLs restore map planning overlays', async ({ page })
     await expect(page.locator('.dropped-pin-card')).toContainText('32.00641°S');
 });
 
+test('address bar preserves location route and pin while share buttons stay scoped', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async (value) => window.__lastCopiedShareUrl = value },
+            configurable: true
+        });
+    });
+    await mockForecastApis(page);
+    await page.goto('/?location=beach%3Alittle-salmon-bay&panel=closed&pin=-32.00641%2C115.50999&route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=Island+walk');
+
+    await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
+    await expect.poll(() => page.url()).toContain('pin=-32.00641%2C115.50999');
+    await expect.poll(() => page.url()).toContain('route=-32.00640%2C115.50990');
+
+    await page.getByRole('button', { name: 'Show route details' }).click();
+    await page.locator('.route-planner-card').getByRole('button', { name: 'Share' }).click();
+    const routeShareUrl = await page.evaluate(() => window.__lastCopiedShareUrl);
+    expect(routeShareUrl).toContain('route=');
+    expect(routeShareUrl).toContain('routeName=Island+walk');
+    expect(routeShareUrl).not.toContain('pin=');
+    expect(routeShareUrl).not.toContain('location=');
+
+    await page.locator('.dropped-pin-card').getByRole('button', { name: 'Share' }).click();
+    const pinShareUrl = await page.evaluate(() => window.__lastCopiedShareUrl);
+    expect(pinShareUrl).toContain('pin=');
+    expect(pinShareUrl).not.toContain('route=');
+    expect(pinShareUrl).not.toContain('location=');
+
+    await page.locator('.beach-panel-title').click();
+    await page.locator('.beach-panel-title').click();
+    await page.getByRole('button', { name: 'Share Little Salmon Bay' }).first().click();
+    const beachShareUrl = await page.evaluate(() => window.__lastCopiedShareUrl);
+    expect(beachShareUrl).toContain('location=beach%3Alittle-salmon-bay');
+    expect(beachShareUrl).not.toContain('route=');
+    expect(beachShareUrl).not.toContain('pin=');
+});
+
 async function getSelectedMarkerCenter(page) {
     return page.locator('.landmark-icon.selected').first().evaluate((marker) => {
         const rect = marker.getBoundingClientRect();

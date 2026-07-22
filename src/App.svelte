@@ -119,17 +119,12 @@
 
         if (routeMode === 'route') {
             routePoints = [...routePoints, point];
-            droppedPin = null;
-            selectedBeachName = '';
-            selectedMapPlace = null;
             mapNavigationRequest = null;
         }
 
         if (routeMode === 'pin') {
             droppedPin = point;
             routeMode = 'off';
-            selectedBeachName = '';
-            selectedMapPlace = null;
             mapNavigationRequest = null;
         }
     }
@@ -138,7 +133,6 @@
         routeMode = routeMode === 'route' ? 'off' : 'route';
         if (routeMode === 'route') {
             routePlannerExpanded = true;
-            droppedPin = null;
             panelMode = 'closed';
         }
     }
@@ -321,17 +315,7 @@
         if (typeof window === 'undefined' || !forecastData?.time?.length) return '';
         if (hasPendingSharedTime()) return '';
 
-        const locationKey = selectedMapPlace
-            ? getLocationKey(selectedMapPlace)
-            : getLocationKey({ type: 'beach', name: selectedBeachName });
-        const nextUrl = buildShareUrl(window.location.href, {
-            locationKey,
-            time: forecastData.time[hourIndex],
-            panelMode,
-            pin: droppedPin,
-            route: routePoints,
-            routeName
-        });
+        const nextUrl = buildShareUrl(window.location.href, getCurrentUrlState());
 
         currentShareUrl = nextUrl;
         if (window.location.href !== nextUrl) {
@@ -340,8 +324,41 @@
         return nextUrl;
     }
 
-    async function shareCurrentLocation() {
-        const url = updateShareUrl() || currentShareUrl || window.location.href;
+    function getCurrentUrlState() {
+        return {
+            locationKey: selectedMapPlace
+                ? getLocationKey(selectedMapPlace)
+                : getLocationKey({ type: 'beach', name: selectedBeachName }),
+            time: forecastData.time[hourIndex],
+            panelMode,
+            pin: droppedPin,
+            route: routePoints,
+            routeName
+        };
+    }
+
+    function buildScopedShareUrl(scope) {
+        const state = getCurrentUrlState();
+        if (scope === 'route') {
+            return buildShareUrl(window.location.href, {
+                time: state.time,
+                route: state.route,
+                routeName: state.routeName
+            });
+        }
+        if (scope === 'pin') {
+            return buildShareUrl(window.location.href, { time: state.time, pin: state.pin });
+        }
+        return buildShareUrl(window.location.href, {
+            locationKey: state.locationKey,
+            time: state.time,
+            panelMode: state.panelMode
+        });
+    }
+
+    async function shareCurrentLocation(scope = 'location') {
+        updateShareUrl();
+        const url = buildScopedShareUrl(scope);
         try {
             if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
             await navigator.clipboard.writeText(url);
@@ -758,7 +775,7 @@
                             Open route
                         </a>
                     {/if}
-                    <button type="button" class="route-share-action" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>
+                    <button type="button" class="route-share-action" class:copied={shareSucceeded} onclick={() => shareCurrentLocation('route')} disabled={routePoints.length < 2}>
                         <Share2 size={14} strokeWidth={2.2} aria-hidden="true" />
                         {shareSucceeded ? 'Copied' : 'Share'}
                     </button>
@@ -778,7 +795,7 @@
                         <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
                         Open in Google Maps
                     </a>
-                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()}>
+                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation('pin')}>
                         {shareSucceeded ? 'Copied' : 'Share'}
                     </button>
                 </span>
@@ -804,7 +821,7 @@
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>
                     {selectedMapPlace.name}
-                    <button class="selected-map-place-share" class:copied={shareSucceeded} type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>
+                    <button class="selected-map-place-share" class:copied={shareSucceeded} type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation('location')}>
                         {shareSucceeded ? '✓' : '🔗'}
                     </button>
                 </strong>
@@ -842,7 +859,7 @@
             onCloseBeach={clearSelectedBeach}
             shareUrl={currentShareUrl}
             shareSucceeded={shareSucceeded}
-            onShareLocation={shareCurrentLocation}
+            onShareLocation={() => shareCurrentLocation('location')}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}
             onNavigateToMap={navigateToMapTarget}

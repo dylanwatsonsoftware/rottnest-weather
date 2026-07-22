@@ -36,8 +36,9 @@ test('buildShareUrl can encode a selected forecast time without a location', () 
     assert.equal(url, 'https://example.test/?time=2026-07-30T06%3A00&panel=semi');
 });
 
-test('buildShareUrl gives a valid route precedence over a stale dropped pin', () => {
+test('buildShareUrl preserves a selected location route and pin together', () => {
     const url = buildShareUrl('https://example.test/?old=value', {
+        locationKey: 'beach:little-salmon-bay',
         time: '2026-07-21T08:00',
         pin: { lat: -32.0064123, lon: 115.5099876 },
         route: [
@@ -47,7 +48,7 @@ test('buildShareUrl gives a valid route precedence over a stale dropped pin', ()
         ]
     });
 
-    assert.equal(url, 'https://example.test/?time=2026-07-21T08%3A00&route=-32.00640%2C115.50990%3B-32.01010%2C115.51520%3B-32.01330%2C115.51940');
+    assert.equal(url, 'https://example.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00&pin=-32.00641%2C115.50999&route=-32.00640%2C115.50990%3B-32.01010%2C115.51520%3B-32.01330%2C115.51940');
 });
 
 test('buildShareUrl can encode a route name with shared waypoints', () => {
