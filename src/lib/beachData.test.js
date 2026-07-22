@@ -78,3 +78,17 @@ test('surf and wildlife-sensitive beaches carry safety tags', () => {
         assert.ok(beach.caution_notes?.length, `${name} should expose caution notes`);
     }
 });
+
+test('problem bay markers use shoreline-focused app coordinates', () => {
+    const littleArmstrong = beachNamed('Little Armstrong Bay');
+    assert.equal(littleArmstrong.lat, -31.99159);
+    assert.equal(littleArmstrong.lon, 115.50578);
+    assert.equal(littleArmstrong.coordinate_source, 'wikimedia_commons_geotagged_beach_photo');
+    assert.match(littleArmstrong.coordinate_note, /shoreline/i);
+
+    const strickland = beachNamed('Strickland Bay');
+    assert.equal(strickland.lat, -32.01947);
+    assert.equal(strickland.lon, 115.47801);
+    assert.equal(strickland.coordinate_source, 'shoreline_place_listing_checked_against_osm_bay_point');
+    assert.match(strickland.coordinate_note, /shoreline/i);
+});

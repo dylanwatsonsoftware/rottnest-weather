@@ -169,8 +169,10 @@
             "NE",
             "NW"
         ],
-        "lat": -32.01817,
-        "lon": 115.47707,
+        "lat": -32.01947,
+        "lon": 115.47801,
+        "coordinate_source": "shoreline_place_listing_checked_against_osm_bay_point",
+        "coordinate_note": "App marker moved from the OSM natural=bay centroid to a shoreline-focused Strickland Bay position so the marker sits on the accessible beach/surf area rather than offshore.",
         "difficulty": "Advanced water users",
         "access": "Bike, Island Explorer bus stop 10, or Wardan Nara Bidi",
         "exposure_note": "Expansive southern bay and one of WA's most consistent surf breaks",
@@ -368,8 +370,10 @@
             "S",
             "SW"
         ],
-        "lat": -31.9918106,
-        "lon": 115.5074396,
+        "lat": -31.99159,
+        "lon": 115.50578,
+        "coordinate_source": "wikimedia_commons_geotagged_beach_photo",
+        "coordinate_note": "App marker moved to a geotagged shoreline/photo point for Little Armstrong Bay rather than a road/centroid-style point.",
         "access": "Island Explorer bus stop 17 or Karlinyah Bidi",
         "exposure_note": "Small protected north-coast bay with rocky outcrops",
         "activity_tags": [
