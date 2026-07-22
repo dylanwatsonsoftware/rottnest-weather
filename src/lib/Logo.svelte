@@ -16,8 +16,8 @@
             <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#04343d" flood-opacity="0.28"/>
         </filter>
     </defs>
-    <ellipse class="rottnest-logo-badge" cx="125" cy="134" rx="96" ry="58" fill="#f0c66b" filter="url(#rottnest-logo-shadow)"/>
-    <ellipse cx="125" cy="134" rx="86" ry="49" fill="none" stroke="rgba(255,255,255,0.46)" stroke-width="7"/>
+    <ellipse class="rottnest-logo-badge" cx="125" cy="118" rx="78" ry="39" fill="#b8e5e2" filter="url(#rottnest-logo-shadow)"/>
+    <ellipse cx="125" cy="118" rx="69" ry="31" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="6"/>
     <g transform="translate(15 72) scale(0.44)">
         <path
             class="rottnest-silhouette"
