@@ -1,3 +1,4 @@
+import INTER_BOLD from '../../lib/assets/interBold.js';
 import sharp from 'sharp';
 
 const SOURCE_PATTERN = /^\/(?:beach|place)-images\/[a-z0-9-]+\.jpg$/;
@@ -54,8 +55,14 @@ function buildOverlay(title) {
                     <stop offset="1" stop-color="#031a3d" stop-opacity="0" />
                 </linearGradient>
                 <style>
-                    .title { fill: #fff; font: 700 ${fontSize}px Arial, Helvetica, sans-serif; }
-                    .cta { fill: #fff; font: 700 39px Arial, Helvetica, sans-serif; }
+                    @font-face {
+                        font-family: 'Inter Embedded';
+                        font-style: normal;
+                        font-weight: 700;
+                        src: url(data:font/woff2;base64,${INTER_BOLD}) format('woff2');
+                    }
+                    .title { fill: #fff; font: 700 ${fontSize}px 'Inter Embedded'; }
+                    .cta { fill: #fff; font: 700 39px 'Inter Embedded'; }
                 </style>
             </defs>
             <rect width="1200" height="630" fill="url(#shade)" />
