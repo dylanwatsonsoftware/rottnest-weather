@@ -251,8 +251,9 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /googleMapsRouteUrl/);
     assert.match(app, /href=\{googleMapsRouteUrl\}/);
     assert.match(app, /class="google-maps-action"/);
-    assert.match(app, /class="google-maps-icon"/);
-    assert.match(app, /aria-label="Google Maps"/);
+    assert.match(app, /src="\/google-maps-icon\.png"/);
+    assert.match(app, /alt="Google Maps"/);
+    assert.doesNotMatch(app, /google-maps-icon-green/);
     assert.match(app, /Open route/);
     assert.match(app, /Open in Google Maps/);
     assert.match(app, /routeDistanceLabel/);

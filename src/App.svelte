@@ -627,14 +627,7 @@
                     <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>
                     {#if googleMapsRouteUrl}
                         <a class="google-maps-action" href={googleMapsRouteUrl} target="_blank" rel="noreferrer">
-                            <span class="google-maps-icon" role="img" aria-label="Google Maps">
-                                <svg viewBox="0 0 18 18" focusable="false">
-                                    <path class="google-maps-icon-green" d="M9 1.4 14.7 4.7 9 17 3.3 4.7 9 1.4z" />
-                                    <path class="google-maps-icon-yellow" d="M9 1.4v15.6L14.7 4.7 9 1.4z" />
-                                    <path class="google-maps-icon-blue" d="M3.3 4.7 9 8.8 14.7 4.7 9 17 3.3 4.7z" />
-                                    <circle class="google-maps-icon-red" cx="9" cy="7" r="2.3" />
-                                </svg>
-                            </span>
+                            <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
                             Open route
                         </a>
                     {/if}
@@ -653,14 +646,7 @@
                 <strong>{pinCoordinateLabel}</strong>
                 <span>
                     <a class="google-maps-action" href={googleMapsPinUrl} target="_blank" rel="noreferrer">
-                        <span class="google-maps-icon" role="img" aria-label="Google Maps">
-                            <svg viewBox="0 0 18 18" focusable="false">
-                                <path class="google-maps-icon-green" d="M9 1.4 14.7 4.7 9 17 3.3 4.7 9 1.4z" />
-                                <path class="google-maps-icon-yellow" d="M9 1.4v15.6L14.7 4.7 9 1.4z" />
-                                <path class="google-maps-icon-blue" d="M3.3 4.7 9 8.8 14.7 4.7 9 17 3.3 4.7z" />
-                                <circle class="google-maps-icon-red" cx="9" cy="7" r="2.3" />
-                            </svg>
-                        </span>
+                        <img class="google-maps-icon" src="/google-maps-icon.png" alt="Google Maps" loading="lazy" />
                         Open in Google Maps
                     </a>
                     <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()}>
