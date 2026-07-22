@@ -18,7 +18,7 @@
     </defs>
     <path
         class="rottnest-logo-badge"
-        fill="#b8e5e2"
+        fill="#2fb8b1"
         filter="url(#rottnest-logo-shadow)"
         d="
             M 45,132
@@ -29,7 +29,7 @@
         "
     />
     <path
-        fill="#ecfbfa"
+        fill="#9fe3df"
         opacity="0.82"
         d="
             M 54,128
@@ -42,7 +42,7 @@
     <g transform="translate(15 72) scale(0.44)">
         <path
             class="rottnest-silhouette"
-            fill="#063f49"
+            fill="#f8fbfb"
             d="
                 M 32,168
                 C 28,164 25,155 30,148
