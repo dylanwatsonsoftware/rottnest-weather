@@ -78,8 +78,9 @@ test('app releases URL updates when fresh data cannot resolve a shared time', ()
 test('app preserves the selected forecast time when fresh data replaces cached data', () => {
     assert.match(app, /function getAppDataHourIndex\(nextForecastData,\s*currentSelectedTime\)/);
     assert.match(app, /const preservedHourIndex = findNearestSharedHourIndex\(nextForecastData,\s*currentSelectedTime\)/);
-    assert.match(app, /const currentSelectedTime = forecastData\?\.time\?\.\[hourIndex\]/);
-    assert.match(app, /hourIndex = getAppDataHourIndex\(nextAppData\.forecastData,\s*currentSelectedTime\)/);
+    assert.match(app, /const currentSelectedTime = hasPendingSharedTime\(\)[\s\S]*\? sharedLocationState\.time[\s\S]*: forecastData\?\.time\?\.\[hourIndex\]/);
+    assert.match(app, /const nextHourIndex = getAppDataHourIndex\(nextAppData\.forecastData,\s*currentSelectedTime\)/);
+    assert.match(app, /hourIndex = nextHourIndex/);
     assert.doesNotMatch(app, /hourIndex = getNearestForecastHourIndex\(nextAppData\.forecastData\);/);
 });
 

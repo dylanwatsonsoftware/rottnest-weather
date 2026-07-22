@@ -365,12 +365,15 @@
     }
 
     function applyAppData(nextAppData) {
-        const currentSelectedTime = forecastData?.time?.[hourIndex];
+        const currentSelectedTime = hasPendingSharedTime()
+            ? sharedLocationState.time
+            : forecastData?.time?.[hourIndex];
+        const nextHourIndex = getAppDataHourIndex(nextAppData.forecastData, currentSelectedTime);
         beaches = nextAppData.beaches;
         landmarks = nextAppData.landmarks;
         facilities = nextAppData.facilities;
         forecastData = nextAppData.forecastData;
-        hourIndex = getAppDataHourIndex(nextAppData.forecastData, currentSelectedTime);
+        hourIndex = nextHourIndex;
         applySharedLocationState(nextAppData);
     }
 

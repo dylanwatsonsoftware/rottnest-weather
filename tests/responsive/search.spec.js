@@ -205,11 +205,12 @@ test('time-only shared URLs preserve future forecast dates', async ({ page }) =>
     sharedTime.setHours(sharedTime.getHours() + 216);
     const sharedTimeValue = sharedTime.toISOString().slice(0, 16);
 
-    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}`);
+    await page.goto(`/?time=${encodeURIComponent(sharedTimeValue)}&panel=semi`);
 
     await expect(page.locator('.recommendation-panel')).toBeVisible();
     await expect.poll(() => page.url()).toContain(`time=${encodeURIComponent(sharedTimeValue)}`);
     await expect.poll(() => page.url()).not.toContain('location=');
+    await expect.poll(() => page.locator('#collapsed-time-slider').inputValue()).toBe('216');
 });
 
 test('forecast slider changes update the shared URL time', async ({ page }) => {

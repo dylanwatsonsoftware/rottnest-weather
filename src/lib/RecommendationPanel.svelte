@@ -80,7 +80,8 @@
     const isSemi = $derived(panelMode === 'semi');
     const isClosed = $derived(panelMode === 'closed');
     const isCollapsed = $derived(!isOpen);
-    const forecastRange = $derived(getForecastRange(forecastData, rangeMode));
+    const effectiveRangeMode = $derived(getEffectiveRangeMode(forecastData, rangeMode, hourIndex));
+    const forecastRange = $derived(getForecastRange(forecastData, effectiveRangeMode));
     const selectedTime = $derived(forecastData ? formatTime(forecastData.time[hourIndex]) : 'Now');
     const recommendationHeading = $derived(getRecommendationHeading(forecastData, hourIndex));
     const bestBeachTimeline = $derived(buildBestBeachTimeline(beaches, forecastData, forecastRange));
@@ -90,6 +91,15 @@
     const beachDetailNotes = $derived(getBeachDetailNotes(selectedRecommendation?.beach));
     const selectedBeachImages = $derived(getBeachImages(selectedRecommendation?.beach.name));
     const selectedBeachDistanceLabel = $derived(getSelectedBeachDistanceLabel(selectedRecommendation?.beach, userLocation));
+
+    function getEffectiveRangeMode(currentForecastData, currentRangeMode, selectedHourIndex) {
+        const range = getForecastRange(currentForecastData, currentRangeMode);
+        if (selectedHourIndex < range.min || selectedHourIndex > range.max) {
+            return getRangeModeForHourIndex(currentForecastData, selectedHourIndex);
+        }
+
+        return currentRangeMode;
+    }
 
     function getListedRecommendations(allRecommendations, currentFilters) {
         const states = currentFilters?.states || {};
@@ -160,6 +170,36 @@
         const nextSelection = getRangeModeSelection(forecastData, mode, hourIndex);
         rangeMode = nextSelection.rangeMode;
         hourIndex = nextSelection.hourIndex;
+    }
+
+    function updateHourIndex(event) {
+        hourIndex = Number(event.currentTarget.value);
+    }
+
+    function syncRangeValue(node, selectedHourIndex) {
+        const setValue = (nextHourIndex) => {
+            const value = String(nextHourIndex);
+            if (node.value !== value) node.value = value;
+        };
+
+        setValue(selectedHourIndex);
+
+        return {
+            update: setValue
+        };
+    }
+
+    function syncRenderedTimeSliders(value) {
+        [
+            'beach-mode-semi-time-slider',
+            'beach-mode-time-slider',
+            'collapsed-time-slider',
+            'expanded-time-slider',
+            'detail-time-slider'
+        ].forEach((id) => {
+            const slider = document.getElementById(id);
+            if (slider && slider.value !== value) slider.value = value;
+        });
     }
 
     function getRecommendationWindowSummary(recommendation) {
@@ -261,6 +301,15 @@
     });
 
     $effect(() => {
+        const selectedValue = String(hourIndex);
+        forecastRange.min;
+        forecastRange.max;
+        tick().then(() => {
+            requestAnimationFrame(() => syncRenderedTimeSliders(selectedValue));
+        });
+    });
+
+    $effect(() => {
         const currentHourIndex = hourIndex;
         if (betterTimeStatus) {
             window.setTimeout(() => {
@@ -304,14 +353,18 @@
                     Forecast time
                     <strong>{selectedTime}</strong>
                 </label>
-                <input
-                    type="range"
-                    id="beach-mode-semi-time-slider"
-                    style:--slider-heat={beachDetailHeatGradient}
-                    min={forecastRange.min}
-                    max={forecastRange.max}
-                    bind:value={hourIndex}
-                />
+                {#key `beach-semi-${forecastRange.min}-${forecastRange.max}-${hourIndex}`}
+                    <input
+                        type="range"
+                        id="beach-mode-semi-time-slider"
+                        use:syncRangeValue={hourIndex}
+                        style:--slider-heat={beachDetailHeatGradient}
+                        min={forecastRange.min}
+                        max={forecastRange.max}
+                        value={hourIndex}
+                        oninput={updateHourIndex}
+                    />
+                {/key}
             </div>
         {/if}
 
@@ -350,14 +403,18 @@
                                     Forecast time
                                     <strong>{selectedTime}</strong>
                                 </label>
-                                <input
-                                    type="range"
-                                    id="beach-mode-time-slider"
-                                    style:--slider-heat={beachDetailHeatGradient}
-                                    min={forecastRange.min}
-                                    max={forecastRange.max}
-                                    bind:value={hourIndex}
-                                />
+                                {#key `beach-open-${forecastRange.min}-${forecastRange.max}-${hourIndex}`}
+                                    <input
+                                        type="range"
+                                        id="beach-mode-time-slider"
+                                        use:syncRangeValue={hourIndex}
+                                        style:--slider-heat={beachDetailHeatGradient}
+                                        min={forecastRange.min}
+                                        max={forecastRange.max}
+                                        value={hourIndex}
+                                        oninput={updateHourIndex}
+                                    />
+                                {/key}
                             </div>
                             <div class="timeline-labels">
                                 <span>{beachTimeline[0].label}</span>
@@ -467,7 +524,7 @@
                     <Controls
                         {forecastData}
                         {forecastRange}
-                        {rangeMode}
+                        rangeMode={effectiveRangeMode}
                         {sliderHeatGradient}
                         onRangeModeChange={selectRangeMode}
                         bind:hourIndex
@@ -502,7 +559,7 @@
                 {#each RANGE_MODES as mode}
                     <button
                         type="button"
-                        class:active={rangeMode === mode}
+                        class:active={effectiveRangeMode === mode}
                         onclick={() => selectRangeMode(mode)}
                     >
                         {getRangeModeLabel(mode)}
@@ -510,16 +567,20 @@
                 {/each}
             </div>
             <label for="collapsed-time-slider">{selectedTime}</label>
-            <input
-                type="range"
-                id="collapsed-time-slider"
-                style:--slider-heat={sliderHeatGradient}
-                min={forecastRange.min}
-                aria-valuemin={forecastRange.min}
-                aria-valuemax={forecastRange.max}
-                max={forecastRange.max}
-                bind:value={hourIndex}
-            />
+            {#key `collapsed-${forecastRange.min}-${forecastRange.max}-${hourIndex}`}
+                <input
+                    type="range"
+                    id="collapsed-time-slider"
+                    use:syncRangeValue={hourIndex}
+                    style:--slider-heat={sliderHeatGradient}
+                    min={forecastRange.min}
+                    aria-valuemin={forecastRange.min}
+                    aria-valuemax={forecastRange.max}
+                    max={forecastRange.max}
+                    value={hourIndex}
+                    oninput={updateHourIndex}
+                />
+            {/key}
             <button class="collapsed-better-time-button" type="button" onclick={findBetterTime}>Better time</button>
         </div>
     {/if}
@@ -551,7 +612,7 @@
                 {#each RANGE_MODES as mode}
                     <button
                         type="button"
-                        class:active={rangeMode === mode}
+                        class:active={effectiveRangeMode === mode}
                         onclick={() => selectRangeMode(mode)}
                     >
                         {getRangeModeLabel(mode)}
@@ -559,16 +620,20 @@
                 {/each}
             </div>
             <label for="expanded-time-slider">{selectedTime}</label>
-            <input
-                type="range"
-                id="expanded-time-slider"
-                style:--slider-heat={sliderHeatGradient}
-                min={forecastRange.min}
-                aria-valuemin={forecastRange.min}
-                aria-valuemax={forecastRange.max}
-                max={forecastRange.max}
-                bind:value={hourIndex}
-            />
+            {#key `expanded-${forecastRange.min}-${forecastRange.max}-${hourIndex}`}
+                <input
+                    type="range"
+                    id="expanded-time-slider"
+                    use:syncRangeValue={hourIndex}
+                    style:--slider-heat={sliderHeatGradient}
+                    min={forecastRange.min}
+                    aria-valuemin={forecastRange.min}
+                    aria-valuemax={forecastRange.max}
+                    max={forecastRange.max}
+                    value={hourIndex}
+                    oninput={updateHourIndex}
+                />
+            {/key}
         </div>
     {/if}
 
@@ -641,14 +706,18 @@
                                 Forecast time
                                 <strong>{selectedTime}</strong>
                             </label>
-                            <input
-                                type="range"
-                                id="detail-time-slider"
-                                style:--slider-heat={beachDetailHeatGradient}
-                                min={forecastRange.min}
-                                max={forecastRange.max}
-                                bind:value={hourIndex}
-                            />
+                            {#key `detail-${forecastRange.min}-${forecastRange.max}-${hourIndex}`}
+                                <input
+                                    type="range"
+                                    id="detail-time-slider"
+                                    use:syncRangeValue={hourIndex}
+                                    style:--slider-heat={beachDetailHeatGradient}
+                                    min={forecastRange.min}
+                                    max={forecastRange.max}
+                                    value={hourIndex}
+                                    oninput={updateHourIndex}
+                                />
+                            {/key}
                         </div>
                         <div class="timeline-labels">
                             <span>{beachTimeline[0].label}</span>
@@ -753,7 +822,7 @@
             <Controls
                 {forecastData}
                 {forecastRange}
-                {rangeMode}
+                rangeMode={effectiveRangeMode}
                 {sliderHeatGradient}
                 onRangeModeChange={selectRangeMode}
                 bind:hourIndex
