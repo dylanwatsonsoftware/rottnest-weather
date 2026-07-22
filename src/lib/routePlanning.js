@@ -14,6 +14,22 @@ export function getRouteDistanceLabel(distanceKm) {
     return formatDistanceLabel(distanceKm);
 }
 
+export function getRouteLegs(route = []) {
+    if (!Array.isArray(route) || route.length < 2) return [];
+
+    return route.slice(1).flatMap((point, index) => {
+        const previous = route[index];
+        if (!isValidPoint(previous) || !isValidPoint(point)) return [];
+        return [{
+            midpoint: {
+                lat: (previous.lat + point.lat) / 2,
+                lon: (previous.lon + point.lon) / 2
+            },
+            distanceLabel: formatDistanceLabel(getDistanceKm(previous.lat, previous.lon, point.lat, point.lon))
+        }];
+    });
+}
+
 export function formatCoordinateLabel(point) {
     if (!isValidPoint(point)) return '';
     return `${formatCoordinatePart(point.lat, 'N', 'S')}, ${formatCoordinatePart(point.lon, 'E', 'W')}`;

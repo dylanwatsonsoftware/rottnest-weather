@@ -325,6 +325,7 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(map, /onPlanningPoint\(\{ lat: latlng\.lat,\s*lon: latlng\.lng \}\)/);
     assert.match(map, /L\.polyline/);
     assert.match(map, /route-waypoint-marker/);
+    assert.match(map, /route-leg-distance-marker/);
     assert.match(map, /dropped-pin-marker/);
     assert.match(css, /\.route-waypoint-marker\s*{[^}]*background:\s*#6f4bc2 !important/s);
     assert.doesNotMatch(css, /\.route-waypoint-marker\s*{[^}]*background:\s*#0b7182 !important/s);

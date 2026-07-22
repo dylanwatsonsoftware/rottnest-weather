@@ -2047,6 +2047,25 @@ main {
     filter: drop-shadow(0 2px 4px rgba(13, 34, 38, 0.36));
 }
 
+.route-leg-distance-marker {
+    pointer-events: none !important;
+}
+
+.route-leg-distance-marker span {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 2px 5px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    background: rgba(32, 49, 51, 0.82);
+    color: white;
+    box-shadow: 0 2px 5px rgba(13, 34, 38, 0.3);
+    font-size: 0.62rem;
+    font-weight: 850;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
 .route-waypoint-marker,
 .dropped-pin-marker {
     display: grid !important;

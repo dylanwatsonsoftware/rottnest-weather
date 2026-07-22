@@ -4,6 +4,7 @@ import {
     buildGoogleMapsCoordinateUrl,
     buildGoogleMapsRouteUrl,
     formatCoordinateLabel,
+    getRouteLegs,
     getRouteDistanceKm,
     getRouteDistanceLabel
 } from './routePlanning.js';
@@ -22,6 +23,20 @@ test('getRouteDistanceKm sums waypoint segments', () => {
 test('getRouteDistanceLabel formats short and longer planned paths', () => {
     assert.equal(getRouteDistanceLabel(0.42), '420 m');
     assert.equal(getRouteDistanceLabel(2.35), '2.4 km');
+});
+
+test('getRouteLegs labels each segment at its midpoint', () => {
+    const legs = getRouteLegs([
+        { lat: -32.0064, lon: 115.5099 },
+        { lat: -32.0101, lon: 115.5152 },
+        { lat: -32.0133, lon: 115.5194 }
+    ]);
+
+    assert.equal(legs.length, 2);
+    assert.ok(Math.abs(legs[0].midpoint.lat - -32.00825) < 1e-10);
+    assert.ok(Math.abs(legs[0].midpoint.lon - 115.51255) < 1e-10);
+    assert.match(legs[0].distanceLabel, /^\d+ m$/);
+    assert.equal(getRouteLegs([{ lat: -32, lon: 115 }]).length, 0);
 });
 
 test('formatCoordinateLabel and buildGoogleMapsCoordinateUrl expose dropped pins clearly', () => {

@@ -23,6 +23,7 @@
     } from './mapFocus.js';
     import { formatDistanceLabel, getFacilityRatingLabel, getFacilityTypeLabel } from './facilities.js';
     import { isWithinRottnestBounds, shouldShowRecommendationScore } from './recommendations.js';
+    import { getRouteLegs } from './routePlanning.js';
 
     let {
         recommendations = [],
@@ -54,6 +55,7 @@
     let userLocationCircle = null;
     let routeLine = null;
     let routeWaypointMarkers = [];
+    let routeLegDistanceMarkers = [];
     let droppedPinMarker = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
@@ -401,6 +403,8 @@
         }
         routeWaypointMarkers.forEach((marker) => marker.remove());
         routeWaypointMarkers = [];
+        routeLegDistanceMarkers.forEach((marker) => marker.remove());
+        routeLegDistanceMarkers = [];
 
         const routeLatLngs = routePoints
             .filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon))
@@ -413,6 +417,20 @@
                 weight: 5,
                 opacity: 0.95
             }).addTo(map);
+
+            routeLegDistanceMarkers = getRouteLegs(routePoints).map((leg) => {
+                const icon = L.divIcon({
+                    className: 'route-leg-distance-marker',
+                    html: `<span>${leg.distanceLabel}</span>`,
+                    iconSize: [1, 1],
+                    iconAnchor: [0, 0]
+                });
+                return L.marker([leg.midpoint.lat, leg.midpoint.lon], {
+                    icon,
+                    interactive: false,
+                    keyboard: false
+                }).addTo(map);
+            });
         }
 
         routeLatLngs.forEach((latlng, index) => {
