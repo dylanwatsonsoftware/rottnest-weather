@@ -105,7 +105,7 @@ test('route planning and dropped pins can be shared from the map', async ({ page
 
     await expect(page.locator('.dropped-pin-card')).toBeVisible();
     await expect(page.locator('.dropped-pin-card')).toContainText(/°S/);
-    await expect(page.locator('.dropped-pin-card a', { hasText: 'Open in Google Maps' })).toHaveAttribute('href', /google\.com\/maps\/search/);
+    await expect(page.locator('.dropped-pin-card a', { hasText: 'Open in Google Maps' })).toHaveAttribute('href', /google\.com\/maps\?q=.*&t=k&z=17/);
     await expect(page.locator('.dropped-pin-marker')).toBeVisible();
     await expect.poll(() => page.url()).toContain('pin=');
 });

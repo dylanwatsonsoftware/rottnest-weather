@@ -22,7 +22,7 @@ export function formatCoordinateLabel(point) {
 export function buildGoogleMapsCoordinateUrl(point) {
     if (!isValidPoint(point)) return '';
     const query = `${point.lat.toFixed(5)},${point.lon.toFixed(5)}`;
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    return `https://www.google.com/maps?q=${encodeURIComponent(query)}&t=k&z=17`;
 }
 
 function formatCoordinatePart(value, positiveSuffix, negativeSuffix) {

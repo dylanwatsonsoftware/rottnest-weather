@@ -27,7 +27,7 @@ test('formatCoordinateLabel and buildGoogleMapsCoordinateUrl expose dropped pins
     const pin = { lat: -32.0064123, lon: 115.5099876 };
 
     assert.equal(formatCoordinateLabel(pin), '32.00641°S, 115.50999°E');
-    assert.equal(buildGoogleMapsCoordinateUrl(pin), 'https://www.google.com/maps/search/?api=1&query=-32.00641%2C115.50999');
+    assert.equal(buildGoogleMapsCoordinateUrl(pin), 'https://www.google.com/maps?q=-32.00641%2C115.50999&t=k&z=17');
     assert.equal(formatCoordinateLabel(null), '');
     assert.equal(buildGoogleMapsCoordinateUrl(null), '');
 });
