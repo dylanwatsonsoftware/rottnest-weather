@@ -25,6 +25,25 @@ export function buildGoogleMapsCoordinateUrl(point) {
     return `https://www.google.com/maps?q=${encodeURIComponent(query)}&t=k&z=17`;
 }
 
+export function buildGoogleMapsRouteUrl(route = []) {
+    if (!Array.isArray(route) || route.length < 2 || route.some((point) => !isValidPoint(point))) return '';
+
+    const origin = formatRoutePoint(route[0]);
+    const destination = formatRoutePoint(route[route.length - 1]);
+    const waypoints = route.slice(1, -1).map(formatRoutePoint).join('|');
+    const url = new URL('https://www.google.com/maps/dir/');
+    url.searchParams.set('api', '1');
+    url.searchParams.set('origin', origin);
+    url.searchParams.set('destination', destination);
+    if (waypoints) url.searchParams.set('waypoints', waypoints);
+    url.searchParams.set('travelmode', 'walking');
+    return url.toString();
+}
+
+function formatRoutePoint(point) {
+    return `${point.lat.toFixed(5)},${point.lon.toFixed(5)}`;
+}
+
 function formatCoordinatePart(value, positiveSuffix, negativeSuffix) {
     const suffix = value >= 0 ? positiveSuffix : negativeSuffix;
     return `${Math.abs(value).toFixed(5)}°${suffix}`;

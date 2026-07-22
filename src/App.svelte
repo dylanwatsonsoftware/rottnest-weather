@@ -18,6 +18,7 @@
     import { buildSocialMeta, getRecommendedBeachCount, updateDocumentSocialMeta } from './lib/socialMeta.js';
     import {
         buildGoogleMapsCoordinateUrl,
+        buildGoogleMapsRouteUrl,
         formatCoordinateLabel,
         getRouteDistanceKm,
         getRouteDistanceLabel
@@ -488,6 +489,7 @@
     );
     const pinCoordinateLabel = $derived(formatCoordinateLabel(droppedPin));
     const googleMapsPinUrl = $derived(buildGoogleMapsCoordinateUrl(droppedPin));
+    const googleMapsRouteUrl = $derived(buildGoogleMapsRouteUrl(routePoints));
     const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
     const selectedSocialImage = $derived(
         selectedMapPlace
@@ -597,6 +599,9 @@
                 <div class="route-planner-card-actions">
                     <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
                     <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>
+                    {#if googleMapsRouteUrl}
+                        <a href={googleMapsRouteUrl} target="_blank" rel="noreferrer">Open route</a>
+                    {/if}
                     <button type="button" onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>Share</button>
                 </div>
             </div>

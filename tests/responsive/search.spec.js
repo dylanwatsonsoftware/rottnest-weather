@@ -97,6 +97,7 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.locator('.planned-route-line')).toBeVisible();
     await expect(page.locator('.route-planner-card')).toContainText(/m|km/);
+    await expect(page.locator('.route-planner-card a', { hasText: 'Open route' })).toHaveAttribute('href', /google\.com\/maps\/dir\/\?api=1.*travelmode=walking/);
     await expect(page.getByRole('button', { name: 'Share' }).first()).toBeEnabled();
     await expect.poll(() => page.url()).toContain('route=');
 

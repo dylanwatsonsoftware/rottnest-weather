@@ -281,7 +281,8 @@ main {
 }
 
 .route-planner-actions,
-.route-planner-card-actions button {
+.route-planner-card-actions button,
+.route-planner-card-actions a {
     pointer-events: auto;
 }
 
@@ -302,6 +303,7 @@ main {
 
 .route-planner-actions button,
 .route-planner-card button,
+.route-planner-card a,
 .dropped-pin-card button {
     border: 0;
     border-radius: 8px;
@@ -310,6 +312,10 @@ main {
     padding: 7px 9px;
     font-size: 0.74rem;
     font-weight: 850;
+}
+
+.route-planner-card a {
+    text-decoration: none;
 }
 
 .route-planner-actions button {
@@ -328,6 +334,7 @@ main {
 }
 
 .route-planner-actions button.active,
+.route-planner-card a,
 .route-planner-card button:not(:disabled):last-child,
 .dropped-pin-card button:not(.dropped-pin-close) {
     background: #0b7182;

@@ -220,7 +220,7 @@ test('selected map place card has a share link button', () => {
 test('app wires route planning and dropped pin sharing into the map', () => {
     const map = readFileSync(new URL('./Map.svelte', import.meta.url), 'utf8');
 
-    assert.match(app, /import \{[\s\S]*buildGoogleMapsCoordinateUrl[\s\S]*formatCoordinateLabel[\s\S]*getRouteDistanceKm[\s\S]*getRouteDistanceLabel[\s\S]*\} from '\.\/lib\/routePlanning\.js';/);
+    assert.match(app, /import \{[\s\S]*buildGoogleMapsCoordinateUrl[\s\S]*buildGoogleMapsRouteUrl[\s\S]*formatCoordinateLabel[\s\S]*getRouteDistanceKm[\s\S]*getRouteDistanceLabel[\s\S]*\} from '\.\/lib\/routePlanning\.js';/);
     assert.match(app, /let routeMode = \$state\('off'\)/);
     assert.match(app, /let routePoints = \$state\(\[\]\)/);
     assert.match(app, /let droppedPin = \$state\(null\)/);
@@ -232,6 +232,9 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /class="route-planner"/);
     assert.match(app, /class="dropped-pin-card"/);
     assert.match(app, /googleMapsPinUrl/);
+    assert.match(app, /googleMapsRouteUrl/);
+    assert.match(app, /href=\{googleMapsRouteUrl\}/);
+    assert.match(app, />Open route<\/a>/);
     assert.match(app, /routeDistanceLabel/);
     assert.match(app, /pinCoordinateLabel/);
     assert.match(app, /pin:\s*droppedPin/);
