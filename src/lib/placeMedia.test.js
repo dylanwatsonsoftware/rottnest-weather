@@ -13,9 +13,17 @@ const FOOD_NAMES = new Set(
         .map((place) => place.name)
 );
 const REQUIRED_PLACE_NAMES = new Set([...LANDMARK_NAMES, ...FOOD_NAMES]);
+const REQUIRED_PRACTICAL_PLACE_NAMES = new Set([
+    'Visitor Centre',
+    'Settlement Bike Parking',
+    'Parker Point Facilities',
+    'Army Jetty Water Refill',
+    'Kingstown Barracks Water Refill',
+    'Vlamingh Lookout Water Refill'
+]);
 
 test('place media covers every known landmark and food venue with local image files', () => {
-    for (const placeName of REQUIRED_PLACE_NAMES) {
+    for (const placeName of new Set([...REQUIRED_PLACE_NAMES, ...REQUIRED_PRACTICAL_PLACE_NAMES])) {
         assert.ok(PLACE_MEDIA[placeName]?.length, `${placeName} should have place media`);
     }
 
