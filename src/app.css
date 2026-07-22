@@ -571,6 +571,40 @@ main {
     font-weight: 750;
 }
 
+.route-name-field {
+    display: grid;
+    gap: 3px;
+}
+
+.route-name-field span {
+    color: #5d6d6f;
+    font-size: 0.66rem;
+    font-weight: 850;
+}
+
+.route-name-field input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #d7e4e4;
+    border-radius: 8px;
+    background: #f6fafa;
+    color: #203133;
+    padding: 7px 8px;
+    font-size: 0.76rem;
+    font-weight: 750;
+}
+
+.route-name-field input::placeholder {
+    color: #7d8f91;
+}
+
+.route-name-field input:focus {
+    border-color: #9dc5c4;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
 .route-planner-card-actions,
 .dropped-pin-card span {
     display: flex;

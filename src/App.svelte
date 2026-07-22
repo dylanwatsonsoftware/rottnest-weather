@@ -52,6 +52,7 @@
     let userLocation = $state(null);
     let routeMode = $state('off');
     let routePoints = $state([]);
+    let routeName = $state('');
     let droppedPin = $state(null);
     let sharedLocationState = $state({ locationKey: '', time: '', panelMode: '' });
     let currentShareUrl = $state('');
@@ -133,6 +134,7 @@
 
     function clearRoute() {
         routePoints = [];
+        routeName = '';
         if (routeMode === 'route') routeMode = 'off';
     }
 
@@ -296,7 +298,8 @@
             time: forecastData.time[hourIndex],
             panelMode,
             pin: droppedPin,
-            route: routePoints
+            route: routePoints,
+            routeName
         });
 
         currentShareUrl = nextUrl;
@@ -383,6 +386,7 @@
         sharedLocationState = getSharedLocationFromUrl(window.location.href);
         droppedPin = sharedLocationState.pin;
         routePoints = sharedLocationState.route;
+        routeName = sharedLocationState.routeName;
         navigateToDroppedPin(sharedLocationState.pin);
 
         function updateMapLayout() {
@@ -496,6 +500,7 @@
     const selectedMapPlaceImage = $derived(selectedMapPlaceImages[0] ?? null);
     const routeDistanceKm = $derived(getRouteDistanceKm(routePoints));
     const routeDistanceLabel = $derived(getRouteDistanceLabel(routeDistanceKm));
+    const routeSocialName = $derived(routePoints.length >= 2 ? routeName.trim() : '');
     const routePlannerStatus = $derived(
         routePoints.length > 1
             ? routeDistanceLabel
@@ -515,6 +520,8 @@
     );
     const currentSocialMeta = $derived(buildSocialMeta({
         locationName: selectedSocialLocationName,
+        routeName: routeSocialName,
+        routeDistanceLabel,
         selectedTime: selectedForecastTime,
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: currentConditions,
@@ -536,6 +543,7 @@
         const selectedName = selectedBeachName || selectedMapPlace?.name || '';
         const selectedHour = hourIndex;
         const plannedRoute = routePoints.length;
+        const plannedRouteName = routeName;
         const plannedPin = droppedPin?.lat;
         updateShareUrl();
     });
@@ -622,6 +630,15 @@
             <div class="route-planner-card">
                 <strong>{routePlannerStatus}</strong>
                 <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>
+                <label class="route-name-field">
+                    <span>Route name</span>
+                    <input
+                        type="text"
+                        placeholder="Name this route"
+                        maxlength="80"
+                        bind:value={routeName}
+                    />
+                </label>
                 <div class="route-planner-card-actions">
                     <button type="button" onclick={undoRoutePoint} disabled={!routePoints.length}>Undo</button>
                     <button type="button" onclick={clearRoute} disabled={!routePoints.length && routeMode !== 'route'}>Clear</button>

@@ -9,14 +9,16 @@ export function getRecommendedBeachCount(recommendations = []) {
 
 export function buildSocialMeta({
     locationName = '',
+    routeName = '',
+    routeDistanceLabel = '',
     selectedTime = '',
     recommendedBeachCount = 0,
     conditions = {},
     url = '',
     imageUrl = DEFAULT_IMAGE
 } = {}) {
-    const title = buildTitle(locationName, selectedTime);
-    const description = buildDescription(recommendedBeachCount, conditions);
+    const title = buildTitle(locationName, selectedTime, routeName);
+    const description = buildDescription(recommendedBeachCount, conditions, routeName, routeDistanceLabel);
     const absoluteUrl = url || '';
 
     return {
@@ -48,21 +50,35 @@ export function updateDocumentSocialMeta(documentRef, meta = {}) {
     setMeta(documentRef, 'name', 'twitter:image', image);
 }
 
-function buildTitle(locationName, selectedTime) {
+function buildTitle(locationName, selectedTime, routeName) {
+    const cleanRouteName = cleanText(routeName);
+    if (cleanRouteName && selectedTime) return `${cleanRouteName} route at ${selectedTime} | Rottnest`;
+    if (cleanRouteName) return `${cleanRouteName} route | Rottnest`;
     if (locationName && selectedTime) return `${locationName} at ${selectedTime} | Rottnest`;
     if (locationName) return `${locationName} | Rottnest`;
     if (selectedTime) return `Rottnest forecast at ${selectedTime}`;
     return DEFAULT_TITLE;
 }
 
-function buildDescription(recommendedBeachCount, conditions = {}) {
-    const parts = [DESCRIPTION_PROMISE, formatRecommendationCount(recommendedBeachCount)];
+function buildDescription(recommendedBeachCount, conditions = {}, routeName = '', routeDistanceLabel = '') {
+    const cleanRouteName = cleanText(routeName);
+    const cleanRouteDistance = cleanText(routeDistanceLabel);
+    const parts = cleanRouteName
+        ? [`Plan the ${cleanRouteName} route on Rottnest.`]
+        : [DESCRIPTION_PROMISE];
+
+    if (cleanRouteDistance) parts.push(`${cleanRouteDistance}.`);
+    parts.push(formatRecommendationCount(recommendedBeachCount));
     const wind = formatWind(conditions);
     const swell = formatSwell(conditions);
 
     if (wind) parts.push(wind);
     if (swell) parts.push(swell);
     return parts.join(' ');
+}
+
+function cleanText(value = '') {
+    return String(value).replace(/\s+/g, ' ').trim();
 }
 
 function formatRecommendationCount(count) {

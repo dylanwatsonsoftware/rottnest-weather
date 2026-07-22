@@ -50,6 +50,27 @@ test('buildSocialMeta falls back to a general forecast title without a selected 
     );
 });
 
+test('buildSocialMeta uses named routes in social title and description', () => {
+    const meta = buildSocialMeta({
+        routeName: 'West End snorkel ride',
+        routeDistanceLabel: '7.4 km',
+        selectedTime: '27 Jul Mon 8am',
+        recommendedBeachCount: 2,
+        conditions: {
+            windSpeed: 18,
+            windDirection: 'SW',
+            swellHeight: 0.8
+        },
+        url: 'https://rottnest.test/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride'
+    });
+
+    assert.equal(meta.title, 'West End snorkel ride route at 27 Jul Mon 8am | Rottnest');
+    assert.equal(
+        meta.description,
+        'Plan the West End snorkel ride route on Rottnest. 7.4 km. 2 recommended beaches. Wind 18 km/h SW. Swell 0.8 m.'
+    );
+});
+
 test('getRecommendedBeachCount counts best and good beach recommendations', () => {
     assert.equal(getRecommendedBeachCount([
         { state: 'best' },

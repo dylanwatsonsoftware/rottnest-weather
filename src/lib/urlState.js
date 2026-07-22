@@ -3,6 +3,7 @@ const TIME_PARAM = 'time';
 const PANEL_PARAM = 'panel';
 const PIN_PARAM = 'pin';
 const ROUTE_PARAM = 'route';
+const ROUTE_NAME_PARAM = 'routeName';
 const VALID_LOCATION_KINDS = new Set(['beach', 'facility', 'business', 'landmark']);
 const VALID_PANEL_MODES = new Set(['open', 'semi', 'closed']);
 
@@ -29,7 +30,7 @@ export function parseSharedLocationKey(locationKey = '') {
     return { kind, slug };
 }
 
-export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode = '', pin = null, route = [] } = {}) {
+export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode = '', pin = null, route = [], routeName = '' } = {}) {
     const url = new URL(baseUrl);
     url.search = '';
     if (locationKey) {
@@ -52,6 +53,10 @@ export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode 
     const routeParam = serializeRoute(route);
     if (routeParam) {
         url.searchParams.set(ROUTE_PARAM, routeParam);
+        const cleanRouteName = sanitizeRouteName(routeName);
+        if (cleanRouteName) {
+            url.searchParams.set(ROUTE_NAME_PARAM, cleanRouteName);
+        }
     }
 
     return url.toString();
@@ -64,7 +69,8 @@ export function getSharedLocationFromUrl(urlValue) {
     const panelMode = getSharedPanelMode(url.searchParams.get(PANEL_PARAM));
     const pin = parseSharedPin(url.searchParams.get(PIN_PARAM));
     const route = parseSharedRoute(url.searchParams.get(ROUTE_PARAM));
-    return { locationKey, time, panelMode, pin, route };
+    const routeName = route.length ? sanitizeRouteName(url.searchParams.get(ROUTE_NAME_PARAM) || '') : '';
+    return { locationKey, time, panelMode, pin, route, routeName };
 }
 
 function getSharedPanelMode(panelMode) {
@@ -92,6 +98,13 @@ function serializeRoute(route = []) {
         .filter(Boolean);
 
     return coordinates.length >= 2 ? coordinates.join(';') : '';
+}
+
+function sanitizeRouteName(value = '') {
+    return String(value)
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 80);
 }
 
 function serializeCoordinate(coordinate) {

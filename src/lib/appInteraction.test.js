@@ -238,6 +238,7 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /import \{[\s\S]*buildGoogleMapsCoordinateUrl[\s\S]*buildGoogleMapsRouteUrl[\s\S]*formatCoordinateLabel[\s\S]*getRouteDistanceKm[\s\S]*getRouteDistanceLabel[\s\S]*\} from '\.\/lib\/routePlanning\.js';/);
     assert.match(app, /let routeMode = \$state\('off'\)/);
     assert.match(app, /let routePoints = \$state\(\[\]\)/);
+    assert.match(app, /let routeName = \$state\(''\)/);
     assert.match(app, /let droppedPin = \$state\(null\)/);
     assert.match(app, /function handleMapPlanningPoint\(point\)/);
     assert.match(app, /function navigateToDroppedPin\(pin\)/);
@@ -260,6 +261,9 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /pinCoordinateLabel/);
     assert.match(app, /pin:\s*droppedPin/);
     assert.match(app, /route:\s*routePoints/);
+    assert.match(app, /routeName/);
+    assert.match(app, /placeholder="Name this route"/);
+    assert.match(app, /bind:value=\{routeName\}/);
     assert.match(app, /routeMode=\{routeMode\}/);
     assert.match(app, /routePoints=\{\$state\.snapshot\(routePoints\)\}/);
     assert.match(app, /\{droppedPin\}/);
