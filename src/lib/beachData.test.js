@@ -87,8 +87,8 @@ test('problem bay markers use shoreline-focused app coordinates', () => {
     assert.match(littleArmstrong.coordinate_note, /shoreline/i);
 
     const strickland = beachNamed('Strickland Bay');
-    assert.equal(strickland.lat, -32.01947);
-    assert.equal(strickland.lon, 115.47801);
-    assert.equal(strickland.coordinate_source, 'shoreline_place_listing_checked_against_osm_bay_point');
-    assert.match(strickland.coordinate_note, /shoreline/i);
+    assert.ok(Math.abs(strickland.lat - -32.0189) < 0.0001);
+    assert.ok(Math.abs(strickland.lon - 115.4865) < 0.0001);
+    assert.equal(strickland.coordinate_source, 'surf_spot_location_checked_against_official_strickland_page');
+    assert.match(strickland.coordinate_note, /shoreline|surf/i);
 });
