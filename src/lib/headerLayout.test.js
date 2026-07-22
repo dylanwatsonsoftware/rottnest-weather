@@ -87,8 +87,8 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner\s*{[^}]*right:\s*var\(--map-control-right\)/s);
     assert.doesNotMatch(css, /\.route-planner\s*{[^}]*left:\s*14px/s);
     assert.match(css, /\.route-planner-actions\s*{[^}]*padding:\s*3px/s);
-    assert.match(css, /\.route-planner-actions button\s*{[^}]*width:\s*34px/s);
-    assert.match(css, /\.route-planner-actions button\s*{[^}]*height:\s*34px/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*width:\s*32px/s);
+    assert.match(css, /\.route-planner-actions button\s*{[^}]*height:\s*32px/s);
     assert.match(css, /\.route-planner-actions\s*{[^}]*display:\s*grid/s);
     assert.match(css, /\.route-planner-card\s*{[^}]*width:\s*max-content/s);
     assert.match(css, /\.route-planner-card\s*{[^}]*max-width:\s*min\(190px,\s*calc\(100vw - 110px\)\)/s);
