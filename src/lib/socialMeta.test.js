@@ -85,6 +85,10 @@ test('buildSocialMeta uses named routes in social title and description', () => 
             windDirection: 'SW',
             swellHeight: 0.8
         },
+        routePoints: [
+            { lat: -32.0064, lon: 115.5099 },
+            { lat: -32.0101, lon: 115.5152 }
+        ],
         url: 'https://rottnest.test/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride'
     });
 
@@ -93,6 +97,25 @@ test('buildSocialMeta uses named routes in social title and description', () => 
         meta.description,
         'Plan the West End snorkel ride route on Rottnest. 7.4 km. 2 recommended beaches. Wind 18 km/h SW. Swell 0.8 m.'
     );
+    assert.match(meta.image, /\/social-image\?mode=route/);
+    assert.match(meta.image, /title=West\+End\+snorkel\+ride/);
+    assert.match(meta.image, /waypoints=2/);
+    assert.equal(meta.imageAlt, 'West End snorkel ride — Shared Rottnest route');
+});
+
+test('buildSocialMeta creates a dedicated card for shared pins', () => {
+    const meta = buildSocialMeta({
+        pin: { lat: -32.0064, lon: 115.5099 },
+        pinCoordinateLabel: '-32.00640, 115.50990',
+        selectedTime: 'Tue 10pm',
+        url: 'https://rottnest.test/?pin=-32.00640%2C115.50990'
+    });
+
+    assert.equal(meta.title, 'Pinned location at Tue 10pm | Rottnest');
+    assert.match(meta.description, /Open a shared pin on Rottnest/);
+    assert.match(meta.image, /\/social-image\?mode=pin/);
+    assert.match(meta.image, /coordinates=-32.00640%2C\+115.50990/);
+    assert.equal(meta.imageAlt, 'Pinned location on Rottnest Island');
 });
 
 test('getRecommendedBeachCount counts best and good beach recommendations', () => {

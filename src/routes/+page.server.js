@@ -2,6 +2,7 @@ import { mergeFacilityEnrichment } from '$lib/facilities.js';
 import { getBeachImages } from '$lib/beachMedia.js';
 import { getPrimaryPlaceImage } from '$lib/placeMedia.js';
 import { buildRecommendations, getConditions } from '$lib/recommendations.js';
+import { formatCoordinateLabel, getRouteDistanceKm, getRouteDistanceLabel } from '$lib/routePlanning.js';
 import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from '$lib/socialMeta.js';
 import { formatCompactTime } from '$lib/timeFormat.js';
 import { findNearestSharedHourIndex, getSharedLocationFromUrl, parseSharedLocationKey, slugifyLocationName } from '$lib/urlState.js';
@@ -25,8 +26,15 @@ export async function load({ fetch, url, setHeaders }) {
     const selectedLocation = findSelectedLocation(urlState.locationKey, { beaches, landmarks, facilities });
     const recommendations = buildRecommendations(beaches, forecastData, hourIndex);
     const imageUrl = getLocationImage(selectedLocation);
+    const routeDistanceLabel = getRouteDistanceLabel(getRouteDistanceKm(urlState.route));
+    const pinCoordinateLabel = formatCoordinateLabel(urlState.pin);
     const socialMeta = buildSocialMeta({
         locationName: selectedLocation?.name || '',
+        routeName: urlState.routeName,
+        routeDistanceLabel,
+        routePoints: urlState.route,
+        pin: urlState.pin,
+        pinCoordinateLabel,
         selectedTime: formatCompactTime(forecastData?.time?.[hourIndex], { weekday: true }),
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: getConditions(forecastData, hourIndex),

@@ -195,6 +195,9 @@ test('social meta follows selected location time recommendations and conditions'
     assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl/);
     assert.match(app, /imageUrl:\s*selectedSocialImage\?\.src/);
     assert.match(app, /imageDetails:\s*getBeachSocialImageDetails\(selectedMapPlace \? null : selectedRecommendation\?\.beach\)/);
+    assert.match(app, /routePoints/);
+    assert.match(app, /pin:\s*droppedPin/);
+    assert.match(app, /pinCoordinateLabel/);
     assert.match(app, /<svelte:head>[\s\S]*currentSocialMeta\.title/);
     assert.doesNotMatch(app, /updateDocumentSocialMeta\(document/);
 });

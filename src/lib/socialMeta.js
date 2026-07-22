@@ -40,6 +40,9 @@ export function buildSocialMeta({
     locationName = '',
     routeName = '',
     routeDistanceLabel = '',
+    routePoints = [],
+    pin = null,
+    pinCoordinateLabel = '',
     selectedTime = '',
     recommendedBeachCount = 0,
     conditions = {},
@@ -47,21 +50,48 @@ export function buildSocialMeta({
     imageUrl = '',
     imageDetails = {}
 } = {}) {
-    const title = buildTitle(locationName, selectedTime, routeName);
-    const description = buildDescription(recommendedBeachCount, conditions, routeName, routeDistanceLabel);
+    const hasRoute = Array.isArray(routePoints) && routePoints.length >= 2;
+    const hasPin = !hasRoute && Number.isFinite(pin?.lat) && Number.isFinite(pin?.lon);
+    const socialRouteName = hasRoute ? cleanText(routeName) || 'Shared Rottnest' : '';
+    const title = hasPin
+        ? `Pinned location${selectedTime ? ` at ${selectedTime}` : ''} | Rottnest`
+        : buildTitle(locationName, selectedTime, socialRouteName);
+    const description = hasPin
+        ? buildPinDescription(pinCoordinateLabel, recommendedBeachCount, conditions)
+        : buildDescription(recommendedBeachCount, conditions, socialRouteName, routeDistanceLabel);
     const absoluteUrl = url || '';
     const cleanLocationName = cleanText(locationName);
-    const image = cleanLocationName && imageUrl
-        ? buildLocationImageUrl(imageUrl, cleanLocationName, imageDetails, absoluteUrl)
-        : toAbsoluteUrl(DEFAULT_IMAGE, absoluteUrl);
+    const image = hasRoute
+        ? buildRouteImageUrl(socialRouteName, routeDistanceLabel, routePoints, absoluteUrl)
+        : hasPin
+            ? buildPinImageUrl(pin, pinCoordinateLabel, absoluteUrl)
+            : cleanLocationName && imageUrl
+                ? buildLocationImageUrl(imageUrl, cleanLocationName, imageDetails, absoluteUrl)
+                : toAbsoluteUrl(DEFAULT_IMAGE, absoluteUrl);
 
     return {
         title,
         description,
         url: absoluteUrl,
         image,
-        imageAlt: cleanLocationName ? `${cleanLocationName} — Find the best beach for today` : IMAGE_ALT
+        imageAlt: hasRoute
+            ? `${socialRouteName} — Shared Rottnest route`
+            : hasPin
+                ? 'Pinned location on Rottnest Island'
+                : cleanLocationName ? `${cleanLocationName} — Find the best beach for today` : IMAGE_ALT
     };
+}
+
+function buildPinDescription(pinCoordinateLabel, recommendedBeachCount, conditions) {
+    const parts = ['Open a shared pin on Rottnest.'];
+    const coordinates = cleanText(pinCoordinateLabel);
+    if (coordinates) parts.push(`${coordinates}.`);
+    parts.push(formatRecommendationCount(recommendedBeachCount));
+    const wind = formatWind(conditions);
+    const swell = formatSwell(conditions);
+    if (wind) parts.push(wind);
+    if (swell) parts.push(swell);
+    return parts.join(' ');
 }
 
 export function updateDocumentSocialMeta(documentRef, meta = {}) {
@@ -175,5 +205,29 @@ function buildLocationImageUrl(imageUrl, locationName, imageDetails, baseUrl) {
     if (imageDetails.goodWinds) params.set('goodWinds', imageDetails.goodWinds);
     if (imageDetails.sanctuary) params.set('sanctuary', '1');
     params.set('v', '4');
+    return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
+}
+
+function buildRouteImageUrl(routeName, routeDistanceLabel, routePoints, baseUrl) {
+    const params = new URLSearchParams({
+        mode: 'route',
+        title: routeName,
+        waypoints: String(routePoints.length),
+        path: routePoints.slice(0, 20).map(({ lat, lon }) => `${lat},${lon}`).join(';'),
+        v: '5'
+    });
+    if (routeDistanceLabel) params.set('distance', routeDistanceLabel);
+    return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
+}
+
+function buildPinImageUrl(pin, pinCoordinateLabel, baseUrl) {
+    const coordinates = cleanText(pinCoordinateLabel) || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`;
+    const params = new URLSearchParams({
+        mode: 'pin',
+        coordinates,
+        lat: String(pin.lat),
+        lon: String(pin.lon),
+        v: '5'
+    });
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

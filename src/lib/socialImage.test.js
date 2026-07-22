@@ -47,3 +47,25 @@ test('social image endpoint rejects sources outside local location-image folders
     assert.equal(response.status, 400);
     assert.equal(didFetch, false);
 });
+
+for (const scenario of [
+    'mode=route&title=West+End+ride&distance=7.4+km&waypoints=3&path=-32.0064%2C115.5099%3B-32.0101%2C115.5152&v=5',
+    'mode=pin&coordinates=-32.00640%2C+115.50990&lat=-32.0064&lon=115.5099&v=5'
+]) {
+    test(`social image endpoint renders ${new URLSearchParams(scenario).get('mode')} cards without a photo`, async () => {
+        let didFetch = false;
+        const response = await GET({
+            url: new URL(`https://rottnest.test/social-image?${scenario}`),
+            fetch: async () => {
+                didFetch = true;
+                return new Response();
+            }
+        });
+
+        assert.equal(response.status, 200);
+        assert.equal(didFetch, false);
+        const metadata = await sharp(Buffer.from(await response.arrayBuffer())).metadata();
+        assert.equal(metadata.width, 1200);
+        assert.equal(metadata.height, 630);
+    });
+}

@@ -34,6 +34,8 @@ test('SSR selects location photography for social metadata', () => {
     const server = readFileSync(new URL('src/routes/+page.server.js', root), 'utf8');
     assert.match(server, /getLocationImage\(selectedLocation\)/);
     assert.match(server, /imageUrl/);
+    assert.match(server, /routePoints:\s*urlState\.route/);
+    assert.match(server, /pin:\s*urlState\.pin/);
 });
 
 test('SvelteKit exposes a dynamic social image endpoint', () => {
