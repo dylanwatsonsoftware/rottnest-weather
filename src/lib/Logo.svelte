@@ -16,8 +16,8 @@
             <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#04343d" flood-opacity="0.28"/>
         </filter>
     </defs>
-    <circle class="rottnest-logo-badge" cx="125" cy="125" r="112" fill="#0b7583" filter="url(#rottnest-logo-shadow)"/>
-    <circle cx="125" cy="125" r="104" fill="none" stroke="rgba(255,255,255,0.32)" stroke-width="8"/>
+    <circle class="rottnest-logo-badge" cx="125" cy="132" r="72" fill="#0b7583" filter="url(#rottnest-logo-shadow)"/>
+    <circle cx="125" cy="132" r="65" fill="none" stroke="rgba(255,255,255,0.34)" stroke-width="7"/>
     <g transform="translate(15 72) scale(0.44)">
         <path
             class="rottnest-silhouette"
