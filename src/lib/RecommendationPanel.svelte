@@ -45,6 +45,7 @@
         onSelectBeach = () => {},
         onCloseBeach = () => {},
         shareUrl = '',
+        shareSucceeded = false,
         onShareLocation = () => {},
         onStateFilterChange = () => {},
         onToggleFilter = () => {},
@@ -323,12 +324,13 @@
                             {selectedRecommendation.beach.name}
                             <button
                                 class="beach-share-button"
+                                class:copied={shareSucceeded}
                                 type="button"
                                 aria-label="Share {selectedRecommendation.beach.name}"
                                 title="Copy share link"
                                 onclick={() => onShareLocation()}
                             >
-                                🔗
+                                {shareSucceeded ? '✓' : '🔗'}
                             </button>
                         </h2>
                         <button
@@ -613,12 +615,13 @@
                         {selectedRecommendation.beach.name}
                         <button
                             class="beach-share-button"
+                            class:copied={shareSucceeded}
                             type="button"
                             aria-label="Share {selectedRecommendation.beach.name}"
                             title="Copy share link"
                             onclick={() => onShareLocation()}
                         >
-                            🔗
+                            {shareSucceeded ? '✓' : '🔗'}
                         </button>
                     </h2>
                     <button

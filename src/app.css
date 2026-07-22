@@ -387,6 +387,16 @@ main {
     color: white;
 }
 
+.route-planner-card button.copied:not(:disabled),
+.dropped-pin-card button.copied,
+.beach-share-button.copied,
+.selected-map-place-share.copied {
+    border-color: #167a52;
+    background: #167a52;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(22, 122, 82, 0.18);
+}
+
 .route-planner-card {
     margin-top: 6px;
     width: max-content;

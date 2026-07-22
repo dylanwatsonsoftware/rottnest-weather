@@ -159,10 +159,14 @@ test('selected beach and place state is encoded in the address bar for sharing',
 
 test('share buttons show visible copy feedback', () => {
     assert.match(app, /let shareStatus = \$state\(''\)/);
+    assert.match(app, /const shareSucceeded = \$derived\(shareStatus === 'Link copied'\)/);
     assert.match(app, /function showShareStatus\(message\)/);
     assert.match(app, /showShareStatus\('Link copied'\)/);
     assert.match(app, /class="share-toast"/);
     assert.match(app, /aria-live="polite"/);
+    assert.match(app, /class:copied=\{shareSucceeded\}/);
+    assert.match(app, /\{shareSucceeded \? 'Copied' : 'Share'\}/);
+    assert.match(app, /shareSucceeded=\{shareSucceeded\}/);
 });
 
 test('social meta follows selected location time recommendations conditions and image', () => {
@@ -223,6 +227,8 @@ test('selected map place card has a share link button', () => {
     assert.match(app, /class="selected-map-place-share"/);
     assert.match(app, /aria-label="Share \{selectedMapPlace\.name\}"/);
     assert.match(app, /onclick=\{\(\) => shareCurrentLocation\(\)\}/);
+    assert.match(app, /class:copied=\{shareSucceeded\}/);
+    assert.match(app, /\{shareSucceeded \? '✓' : '🔗'\}/);
 });
 
 test('app wires route planning and dropped pin sharing into the map', () => {

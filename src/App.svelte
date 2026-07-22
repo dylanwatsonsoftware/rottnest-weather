@@ -506,6 +506,7 @@
     const pinCoordinateLabel = $derived(formatCoordinateLabel(droppedPin));
     const googleMapsPinUrl = $derived(buildGoogleMapsCoordinateUrl(droppedPin));
     const googleMapsRouteUrl = $derived(buildGoogleMapsRouteUrl(routePoints));
+    const shareSucceeded = $derived(shareStatus === 'Link copied');
     const selectedSocialLocationName = $derived(selectedRecommendation?.beach?.name || selectedMapPlace?.name || '');
     const selectedSocialImage = $derived(
         selectedMapPlace
@@ -627,7 +628,9 @@
                     {#if googleMapsRouteUrl}
                         <a href={googleMapsRouteUrl} target="_blank" rel="noreferrer">Open route</a>
                     {/if}
-                    <button type="button" onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>Share</button>
+                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()} disabled={routePoints.length < 2}>
+                        {shareSucceeded ? 'Copied' : 'Share'}
+                    </button>
                 </div>
             </div>
         {/if}
@@ -640,7 +643,9 @@
                 <strong>{pinCoordinateLabel}</strong>
                 <span>
                     <a href={googleMapsPinUrl} target="_blank" rel="noreferrer">Open in Google Maps</a>
-                    <button type="button" onclick={() => shareCurrentLocation()}>Share</button>
+                    <button type="button" class:copied={shareSucceeded} onclick={() => shareCurrentLocation()}>
+                        {shareSucceeded ? 'Copied' : 'Share'}
+                    </button>
                 </span>
             </div>
         </aside>
@@ -664,7 +669,9 @@
                 <small>{selectedMapPlace.label || selectedMapPlace.type || 'Place'}</small>
                 <strong>
                     {selectedMapPlace.name}
-                    <button class="selected-map-place-share" type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>🔗</button>
+                    <button class="selected-map-place-share" class:copied={shareSucceeded} type="button" aria-label="Share {selectedMapPlace.name}" onclick={() => shareCurrentLocation()}>
+                        {shareSucceeded ? '✓' : '🔗'}
+                    </button>
                 </strong>
                 {#if selectedMapPlace.ratingLabel || selectedMapPlaceDistanceLabel}
                     <span class="selected-map-place-meta">
@@ -699,6 +706,7 @@
             isBeachView={isBeachView}
             onCloseBeach={clearSelectedBeach}
             shareUrl={currentShareUrl}
+            shareSucceeded={shareSucceeded}
             onShareLocation={shareCurrentLocation}
             onStateFilterChange={updateStateFilter}
             onToggleFilter={updateLayerFilter}

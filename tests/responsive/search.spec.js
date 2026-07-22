@@ -79,6 +79,8 @@ test('selected locations and forecast time are encoded in the URL for sharing', 
     await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Share Little Salmon Bay' }).first().click();
     await expect(page.locator('.share-toast')).toHaveText('Link copied');
+    await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toHaveClass(/copied/);
+    await expect(page.getByRole('button', { name: 'Share Little Salmon Bay' }).first()).toHaveText('✓');
     await expect.poll(() => page.evaluate(() => window.__lastCopiedShareUrl)).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('location=beach%3Alittle-salmon-bay');
     await expect.poll(() => page.url()).toContain('time=');
