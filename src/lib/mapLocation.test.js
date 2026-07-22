@@ -84,7 +84,7 @@ test('beach marker icons use rank-aware sizes', () => {
     assert.match(mapSource, /icon:\s*getBeachIcon\(recommendation,\s*index\)/);
     assert.match(mapSource, /marker\.setIcon\(getBeachIcon\(recommendation,\s*rank\)\)/);
     assert.match(mapSource, /getBeachMarkerSize\(recommendation,\s*currentZoom,\s*selectedBeachName,\s*rank\)/);
-    assert.match(mapSource, /const scoreBadge = shouldShowRecommendationScore\(recommendation\)/);
+    assert.match(mapSource, /const scoreBadge = shouldShowRecommendationScore\(recommendation,\s*\{\s*selected:\s*selected === 'selected'\s*\}\)/);
     assert.match(mapSource, /iconSize:\s*\[markerSize\.size,\s*markerSize\.size\]/);
 });
 

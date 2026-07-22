@@ -88,6 +88,8 @@ test('shouldShowRecommendationScore only shows scores for green beach states', (
     assert.equal(shouldShowRecommendationScore({ state: 'good', score: 76 }), true);
     assert.equal(shouldShowRecommendationScore({ state: 'watch', score: 52 }), false);
     assert.equal(shouldShowRecommendationScore({ state: 'avoid', score: 30 }), false);
+    assert.equal(shouldShowRecommendationScore({ state: 'watch', score: 52 }, { selected: true }), true);
+    assert.equal(shouldShowRecommendationScore({ state: 'avoid', score: 30 }, { selected: true }), true);
     assert.equal(shouldShowRecommendationScore({ state: 'good', score: Number.NaN }), false);
 });
 

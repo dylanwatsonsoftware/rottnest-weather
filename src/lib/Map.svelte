@@ -279,7 +279,7 @@
         const selected = recommendation.beach.name === selectedBeachName ? 'selected' : '';
         const markerSize = getBeachMarkerSize(recommendation, currentZoom, selectedBeachName, rank);
         const sizeClass = markerSize.size < 24 ? 'tiny' : markerSize.size < 28 ? 'compact' : markerSize.size < 34 ? 'small' : markerSize.size > 34 ? 'prominent' : '';
-        const scoreBadge = shouldShowRecommendationScore(recommendation)
+        const scoreBadge = shouldShowRecommendationScore(recommendation, { selected: selected === 'selected' })
             ? `<small>${recommendation.score}</small>`
             : '';
         return L.divIcon({

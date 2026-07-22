@@ -348,9 +348,9 @@ export function formatTime(time, options = {}) {
     return formatCompactTime(time, { weekday: true, ...options });
 }
 
-export function shouldShowRecommendationScore(recommendation = {}) {
+export function shouldShowRecommendationScore(recommendation = {}, options = {}) {
     return Number.isFinite(recommendation.score)
-        && (recommendation.state === 'best' || recommendation.state === 'good');
+        && (options.selected || recommendation.state === 'best' || recommendation.state === 'good');
 }
 
 function getState(score, directionMatches, flexibility) {
