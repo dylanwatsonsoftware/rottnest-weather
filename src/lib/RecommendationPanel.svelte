@@ -487,7 +487,7 @@
     >
         <span class="sheet-handle" aria-hidden="true"></span>
         <span class="panel-toggle-title">
-            <span>{isOpen ? 'Hide recommendations' : 'Show recommendations'}</span>
+            <span>{isOpen ? 'Hide recommendations' : 'Show beach recommendations'}</span>
             {#if !isOpen}
                 <span class="recommendation-count-badge" aria-label="{listedRecommendations.length} recommendations">
                     {listedRecommendations.length}
