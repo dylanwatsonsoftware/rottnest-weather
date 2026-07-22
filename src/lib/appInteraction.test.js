@@ -193,7 +193,7 @@ test('social meta follows selected location time recommendations and conditions'
     assert.match(app, /getPrimaryPlaceImage\(selectedMapPlace\)/);
     assert.match(app, /getBeachImages\(selectedRecommendation\?\.beach\?\.name\)\[0\]/);
     assert.match(app, /buildSocialMeta\(\{[\s\S]*locationName:\s*selectedSocialLocationName[\s\S]*selectedTime:\s*selectedForecastTime[\s\S]*recommendedBeachCount:\s*getRecommendedBeachCount\(recommendations\)[\s\S]*conditions:\s*currentConditions[\s\S]*url:\s*currentShareUrl/);
-    assert.match(app, /imageUrl:\s*selectedSocialImage\?\.src/);
+    assert.match(app, /imageUrl:\s*planningSocialImage \|\| selectedSocialImage\?\.src/);
     assert.match(app, /imageDetails:\s*getBeachSocialImageDetails\(selectedMapPlace \? null : selectedRecommendation\?\.beach\)/);
     assert.match(app, /routePoints/);
     assert.match(app, /pin:\s*droppedPin/);

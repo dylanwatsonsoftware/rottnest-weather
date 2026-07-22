@@ -11,7 +11,7 @@ const FONT = opentype.parse(
 export async function GET({ url, fetch }) {
     const mode = url.searchParams.get('mode');
     if (mode === 'route' || mode === 'pin') {
-        return renderPlanningCard(mode, url);
+        return renderPlanningCard(mode, url, fetch);
     }
 
     const source = url.searchParams.get('src') || '';
@@ -43,10 +43,19 @@ export async function GET({ url, fetch }) {
     }
 }
 
-async function renderPlanningCard(mode, url) {
+async function renderPlanningCard(mode, url, fetch) {
     try {
-        const overlay = mode === 'route' ? buildRouteCard(url) : buildPinCard(url);
-        const image = await sharp(overlay)
+        const source = url.searchParams.get('src') || '';
+        let sourceBuffer = null;
+        if (SOURCE_PATTERN.test(source)) {
+            const response = await fetch(new URL(source, url.origin));
+            if (response.ok) sourceBuffer = Buffer.from(await response.arrayBuffer());
+        }
+        const overlay = mode === 'route' ? buildRouteCard(url, Boolean(sourceBuffer)) : buildPinCard(url, Boolean(sourceBuffer));
+        const pipeline = sourceBuffer
+            ? sharp(sourceBuffer).resize(1200, 630, { fit: 'cover', position: 'attention' }).composite([{ input: overlay }])
+            : sharp(overlay);
+        const image = await pipeline
             .jpeg({ quality: 88, progressive: true })
             .toBuffer();
         return imageResponse(image);
@@ -111,7 +120,7 @@ function buildOverlay(title, details) {
     `);
 }
 
-function buildRouteCard(url) {
+function buildRouteCard(url, hasPhoto) {
     const title = cleanTitle(url.searchParams.get('title')) || 'Shared Rottnest route';
     const distance = cleanLabel(url.searchParams.get('distance'));
     const waypoints = Math.max(2, Math.min(20, Number.parseInt(url.searchParams.get('waypoints'), 10) || 2));
@@ -122,7 +131,7 @@ function buildRouteCard(url) {
     const details = [distance, `${waypoints} waypoints`].filter(Boolean).join('  ·  ');
     const detailsY = 210 + (lines.length * 68);
 
-    return Buffer.from(`${planningSvgStart('route-gradient')}
+    return Buffer.from(`${planningSvgStart('route-gradient', hasPhoto)}
         ${pathMarkup('SHARED ROTTNEST ROUTE', 64, 92, 24)}
         ${titleMarkup}
         ${pathMarkup(details, 64, detailsY, 29)}
@@ -131,9 +140,9 @@ function buildRouteCard(url) {
         </svg>`);
 }
 
-function buildPinCard(url) {
+function buildPinCard(url, hasPhoto) {
     const coordinates = cleanLabel(url.searchParams.get('coordinates')) || 'Rottnest Island';
-    return Buffer.from(`${planningSvgStart('pin-gradient')}
+    return Buffer.from(`${planningSvgStart('pin-gradient', hasPhoto)}
         ${pathMarkup('SHARED LOCATION', 64, 92, 24)}
         ${pathMarkup('Pinned location', 64, 205, 74)}
         ${pathMarkup(coordinates, 64, 278, 31)}
@@ -142,7 +151,7 @@ function buildPinCard(url) {
         </svg>`);
 }
 
-function planningSvgStart(gradientId) {
+function planningSvgStart(gradientId, hasPhoto) {
     return `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="${gradientId}" x1="0" y1="0" x2="1" y2="1">
@@ -154,7 +163,7 @@ function planningSvgStart(gradientId) {
                 <path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity="0.07" />
             </pattern>
         </defs>
-        <rect width="1200" height="630" fill="url(#${gradientId})" />
+        <rect width="1200" height="630" fill="url(#${gradientId})"${hasPhoto ? ' opacity="0.84"' : ''} />
         <rect x="630" width="570" height="630" fill="url(#grid)" />
         <circle cx="1000" cy="76" r="170" fill="#53e1d0" opacity="0.08" />
         <circle cx="760" cy="590" r="210" fill="#fff" opacity="0.04" />`;

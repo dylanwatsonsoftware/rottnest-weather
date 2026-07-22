@@ -4,6 +4,7 @@ import { getPrimaryPlaceImage } from '$lib/placeMedia.js';
 import { buildRecommendations, getConditions } from '$lib/recommendations.js';
 import { formatCoordinateLabel, getRouteDistanceKm, getRouteDistanceLabel } from '$lib/routePlanning.js';
 import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from '$lib/socialMeta.js';
+import { getPlanningSocialImage } from '$lib/socialMedia.js';
 import { formatCompactTime } from '$lib/timeFormat.js';
 import { findNearestSharedHourIndex, getSharedLocationFromUrl, parseSharedLocationKey, slugifyLocationName } from '$lib/urlState.js';
 import beaches from '../../public/beaches.json' with { type: 'json' };
@@ -26,6 +27,15 @@ export async function load({ fetch, url, setHeaders }) {
     const selectedLocation = findSelectedLocation(urlState.locationKey, { beaches, landmarks, facilities });
     const recommendations = buildRecommendations(beaches, forecastData, hourIndex);
     const imageUrl = getLocationImage(selectedLocation);
+    const planningImageUrl = getPlanningSocialImage({
+        routePoints: urlState.route,
+        pin: urlState.pin,
+        beaches,
+        places: [...landmarks, ...facilities],
+        getImageUrl: (location) => beaches.includes(location)
+            ? getBeachImages(location.name)[0]?.src || ''
+            : getPrimaryPlaceImage(location)?.src || ''
+    });
     const routeDistanceLabel = getRouteDistanceLabel(getRouteDistanceKm(urlState.route));
     const pinCoordinateLabel = formatCoordinateLabel(urlState.pin);
     const socialMeta = buildSocialMeta({
@@ -39,7 +49,7 @@ export async function load({ fetch, url, setHeaders }) {
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: getConditions(forecastData, hourIndex),
         url: url.href,
-        imageUrl,
+        imageUrl: planningImageUrl || imageUrl,
         imageDetails: getBeachSocialImageDetails(selectedLocation)
     });
 

@@ -16,6 +16,7 @@
     import { getBeachImages } from './lib/beachMedia.js';
     import { getPlaceImages, getPrimaryPlaceImage } from './lib/placeMedia.js';
     import { buildSocialMeta, getBeachSocialImageDetails, getRecommendedBeachCount } from './lib/socialMeta.js';
+    import { getPlanningSocialImage } from './lib/socialMedia.js';
     import {
         buildGoogleMapsCoordinateUrl,
         buildGoogleMapsRouteUrl,
@@ -551,6 +552,15 @@
             ? getPrimaryPlaceImage(selectedMapPlace)
             : getBeachImages(selectedRecommendation?.beach?.name)[0]
     );
+    const planningSocialImage = $derived(getPlanningSocialImage({
+        routePoints,
+        pin: droppedPin,
+        beaches,
+        places: [...landmarks, ...facilities],
+        getImageUrl: (location) => beaches.includes(location)
+            ? getBeachImages(location.name)[0]?.src
+            : getPrimaryPlaceImage(location)?.src
+    }));
     const currentSocialMeta = $derived(buildSocialMeta({
         locationName: selectedSocialLocationName,
         routeName: routeSocialName,
@@ -562,7 +572,7 @@
         recommendedBeachCount: getRecommendedBeachCount(recommendations),
         conditions: currentConditions,
         url: currentShareUrl,
-        imageUrl: selectedSocialImage?.src,
+        imageUrl: planningSocialImage || selectedSocialImage?.src,
         imageDetails: getBeachSocialImageDetails(selectedMapPlace ? null : selectedRecommendation?.beach)
     }));
 

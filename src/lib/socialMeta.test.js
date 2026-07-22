@@ -89,6 +89,7 @@ test('buildSocialMeta uses named routes in social title and description', () => 
             { lat: -32.0064, lon: 115.5099 },
             { lat: -32.0101, lon: 115.5152 }
         ],
+        imageUrl: '/beach-images/little-salmon-bay-01.jpg',
         url: 'https://rottnest.test/?route=-32.00640%2C115.50990%3B-32.01010%2C115.51520&routeName=West+End+snorkel+ride'
     });
 
@@ -100,6 +101,7 @@ test('buildSocialMeta uses named routes in social title and description', () => 
     assert.match(meta.image, /\/social-image\?mode=route/);
     assert.match(meta.image, /title=West\+End\+snorkel\+ride/);
     assert.match(meta.image, /waypoints=2/);
+    assert.match(meta.image, /src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg/);
     assert.equal(meta.imageAlt, 'West End snorkel ride — Shared Rottnest route');
 });
 
@@ -107,6 +109,7 @@ test('buildSocialMeta creates a dedicated card for shared pins', () => {
     const meta = buildSocialMeta({
         pin: { lat: -32.0064, lon: 115.5099 },
         pinCoordinateLabel: '-32.00640, 115.50990',
+        imageUrl: '/place-images/thomson-bay-settlement-01.jpg',
         selectedTime: 'Tue 10pm',
         url: 'https://rottnest.test/?pin=-32.00640%2C115.50990'
     });
@@ -115,6 +118,7 @@ test('buildSocialMeta creates a dedicated card for shared pins', () => {
     assert.match(meta.description, /Open a shared pin on Rottnest/);
     assert.match(meta.image, /\/social-image\?mode=pin/);
     assert.match(meta.image, /coordinates=-32.00640%2C\+115.50990/);
+    assert.match(meta.image, /src=%2Fplace-images%2Fthomson-bay-settlement-01.jpg/);
     assert.equal(meta.imageAlt, 'Pinned location on Rottnest Island');
 });
 

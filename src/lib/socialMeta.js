@@ -62,9 +62,9 @@ export function buildSocialMeta({
     const absoluteUrl = url || '';
     const cleanLocationName = cleanText(locationName);
     const image = hasRoute
-        ? buildRouteImageUrl(socialRouteName, routeDistanceLabel, routePoints, absoluteUrl)
+        ? buildRouteImageUrl(socialRouteName, routeDistanceLabel, routePoints, imageUrl, absoluteUrl)
         : hasPin
-            ? buildPinImageUrl(pin, pinCoordinateLabel, absoluteUrl)
+            ? buildPinImageUrl(pin, pinCoordinateLabel, imageUrl, absoluteUrl)
             : cleanLocationName && imageUrl
                 ? buildLocationImageUrl(imageUrl, cleanLocationName, imageDetails, absoluteUrl)
                 : toAbsoluteUrl(DEFAULT_IMAGE, absoluteUrl);
@@ -208,7 +208,7 @@ function buildLocationImageUrl(imageUrl, locationName, imageDetails, baseUrl) {
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }
 
-function buildRouteImageUrl(routeName, routeDistanceLabel, routePoints, baseUrl) {
+function buildRouteImageUrl(routeName, routeDistanceLabel, routePoints, imageUrl, baseUrl) {
     const params = new URLSearchParams({
         mode: 'route',
         title: routeName,
@@ -217,10 +217,11 @@ function buildRouteImageUrl(routeName, routeDistanceLabel, routePoints, baseUrl)
         v: '5'
     });
     if (routeDistanceLabel) params.set('distance', routeDistanceLabel);
+    if (imageUrl) params.set('src', imageUrl);
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }
 
-function buildPinImageUrl(pin, pinCoordinateLabel, baseUrl) {
+function buildPinImageUrl(pin, pinCoordinateLabel, imageUrl, baseUrl) {
     const coordinates = cleanText(pinCoordinateLabel) || `${pin.lat.toFixed(5)}, ${pin.lon.toFixed(5)}`;
     const params = new URLSearchParams({
         mode: 'pin',
@@ -229,5 +230,6 @@ function buildPinImageUrl(pin, pinCoordinateLabel, baseUrl) {
         lon: String(pin.lon),
         v: '5'
     });
+    if (imageUrl) params.set('src', imageUrl);
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

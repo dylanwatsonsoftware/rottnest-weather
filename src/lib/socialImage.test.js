@@ -69,3 +69,17 @@ for (const scenario of [
         assert.equal(metadata.height, 630);
     });
 }
+
+test('route social cards render over their nearest location photo', async () => {
+    let requestedUrl = '';
+    const response = await GET({
+        url: new URL('https://rottnest.test/social-image?mode=route&title=West+End+ride&waypoints=2&path=-32.0064%2C115.5099%3B-32.0101%2C115.5152&src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg'),
+        fetch: async (url) => {
+            requestedUrl = String(url);
+            return new Response(sourceImage, { status: 200 });
+        }
+    });
+
+    assert.equal(response.status, 200);
+    assert.equal(requestedUrl, 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg');
+});
