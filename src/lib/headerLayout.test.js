@@ -36,6 +36,14 @@ test('navbar uses compact Rottnest title', () => {
     assert.doesNotMatch(header, /<h1>Rottnest Snorkelling<\/h1>/);
 });
 
+test('header and forecast chart expose hourly rainfall', () => {
+    assert.match(header, /rainAmount/);
+    assert.match(header, /<strong>Rain:<\/strong>/);
+    assert.match(controls, /label:\s*'Rainfall \(mm\)'/);
+    assert.match(controls, /forecastData\.precipitation/);
+    assert.match(recommendationPanel, /conditions\.precipitation[^}]*\}\s*mm rain/);
+});
+
 test('app icon uses a stylised Rottnest outline in the header and favicon', () => {
     assert.match(header, /<Logo size=\{40\} class="header-logo" \/>/);
     assert.match(logo, /aria-label="Stylised Rottnest Island outline"/);

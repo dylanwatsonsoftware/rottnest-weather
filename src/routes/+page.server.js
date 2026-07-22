@@ -12,7 +12,7 @@ import rawFacilities from '../../public/facilities.json' with { type: 'json' };
 import landmarks from '../../public/landmarks.json' with { type: 'json' };
 import enrichment from '../../public/place-enrichment.json' with { type: 'json' };
 
-const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth';
+const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m,precipitation&forecast_days=10&timezone=Australia%2FPerth';
 const MARINE_URL = 'https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth';
 
 export async function load({ fetch, url, setHeaders }) {

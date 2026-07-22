@@ -436,6 +436,7 @@
                     <div class="detail-metrics">
                         <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                         <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
+                        <span>{selectedRecommendation.conditions.precipitation ?? 'N/A'} mm rain</span>
                         {#if selectedBeachDistanceLabel}
                             <span class="distance-metric">{selectedBeachDistanceLabel} away</span>
                         {/if}
@@ -739,6 +740,7 @@
                 <div class="detail-metrics">
                     <span>{selectedRecommendation.conditions.windSpeed ?? 'N/A'} km/h {selectedRecommendation.conditions.windDirection}</span>
                     <span>{selectedRecommendation.conditions.swellHeight ?? 'N/A'}m swell</span>
+                    <span>{selectedRecommendation.conditions.precipitation ?? 'N/A'} mm rain</span>
                     {#if selectedBeachDistanceLabel}
                         <span class="distance-metric">{selectedBeachDistanceLabel} away</span>
                     {/if}

@@ -163,7 +163,7 @@ function planningSvgStart(gradientId, hasPhoto) {
                 <path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity="0.07" />
             </pattern>
         </defs>
-        <rect width="1200" height="630" fill="url(#${gradientId})"${hasPhoto ? ' opacity="0.84"' : ''} />
+        <rect width="1200" height="630" fill="url(#${gradientId})"${hasPhoto ? ' opacity="0.45"' : ''} />
         <rect x="630" width="570" height="630" fill="url(#grid)" />
         <circle cx="1000" cy="76" r="170" fill="#53e1d0" opacity="0.08" />
         <circle cx="760" cy="590" r="210" fill="#fff" opacity="0.04" />`;

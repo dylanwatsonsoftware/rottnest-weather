@@ -18,7 +18,8 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
         conditions: {
             windSpeed: 16,
             windDirection: 'SW',
-            swellHeight: 1.2
+            swellHeight: 1.2,
+            precipitation: 2.3
         },
         url: 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00',
         imageUrl: '/beach-images/little-salmon-bay-01.jpg',
@@ -32,7 +33,7 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
     assert.equal(meta.title, 'Little Salmon Bay at Tue 8am | Rottnest');
     assert.equal(
         meta.description,
-        'Find the best Rottnest beach for this weather. 3 recommended beaches. Wind 16 km/h SW. Swell 1.2 m.'
+        'Find the best Rottnest beach for this weather. 3 recommended beaches. Wind 16 km/h SW. Swell 1.2 m. Rain 2.3 mm.'
     );
     assert.equal(meta.url, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
     assert.equal(

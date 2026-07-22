@@ -92,6 +92,19 @@
                         datalabels: {
                             display: false
                         }
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Rainfall (mm)',
+                        data: chartData.precipitation,
+                        backgroundColor: 'rgba(74, 144, 226, 0.42)',
+                        borderColor: 'rgba(44, 104, 180, 0.72)',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        yAxisID: 'y2',
+                        datalabels: {
+                            display: false
+                        }
                     }
                 ]
             },
@@ -134,6 +147,22 @@
                         ticks: {
                             color: '#28a745'
                         }
+                    },
+                    y2: {
+                        beginAtZero: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Rain (mm)',
+                            font: { size: 10 },
+                            color: '#2c68b4'
+                        },
+                        ticks: {
+                            color: '#2c68b4'
+                        }
                     }
                 },
                 plugins: {
@@ -154,8 +183,10 @@
                                         const dir = getDirection(forecastData.winddirection_10m[absoluteIndex]);
                                         const arrow = getWindArrow(forecastData.winddirection_10m[absoluteIndex]);
                                         label += ' km/h ' + dir + ' ' + arrow;
-                                    } else {
+                                    } else if (context.datasetIndex === 1) {
                                         label += 'm';
+                                    } else {
+                                        label += ' mm';
                                     }
                                 }
                                 return label;
@@ -190,6 +221,7 @@
             windSpeed: forecastData.windspeed_10m?.slice(start, end) || [],
             windDirection: forecastData.winddirection_10m?.slice(start, end) || [],
             swellHeight: forecastData.swell_wave_height?.slice(start, end) || [],
+            precipitation: forecastData.precipitation?.slice(start, end) || [],
             density: getForecastChartDensity(rangeMode, forecastRange)
         };
     }
@@ -204,6 +236,7 @@
         chart.data.labels = chartData.labels;
         chart.data.datasets[0].data = chartData.windSpeed;
         chart.data.datasets[1].data = chartData.swellHeight;
+        chart.data.datasets[2].data = chartData.precipitation;
         chart.data.datasets[0].pointRadius = chartData.density.pointRadius;
         chart.data.datasets[0].pointHoverRadius = Math.max(chartData.density.pointRadius + 2, 4);
         chart.data.datasets[0].datalabels.display = function(context) {

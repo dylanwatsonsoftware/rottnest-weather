@@ -89,8 +89,10 @@ function buildPinDescription(pinCoordinateLabel, recommendedBeachCount, conditio
     parts.push(formatRecommendationCount(recommendedBeachCount));
     const wind = formatWind(conditions);
     const swell = formatSwell(conditions);
+    const rain = formatRain(conditions);
     if (wind) parts.push(wind);
     if (swell) parts.push(swell);
+    if (rain) parts.push(rain);
     return parts.join(' ');
 }
 
@@ -141,9 +143,11 @@ function buildDescription(recommendedBeachCount, conditions = {}, routeName = ''
     parts.push(formatRecommendationCount(recommendedBeachCount));
     const wind = formatWind(conditions);
     const swell = formatSwell(conditions);
+    const rain = formatRain(conditions);
 
     if (wind) parts.push(wind);
     if (swell) parts.push(swell);
+    if (rain) parts.push(rain);
     return parts.join(' ');
 }
 
@@ -171,6 +175,11 @@ function formatWind(conditions = {}) {
 function formatSwell(conditions = {}) {
     if (!Number.isFinite(conditions.swellHeight)) return '';
     return `Swell ${formatNumber(conditions.swellHeight)} m.`;
+}
+
+function formatRain(conditions = {}) {
+    if (!Number.isFinite(conditions.precipitation) || conditions.precipitation <= 0) return '';
+    return `Rain ${formatNumber(conditions.precipitation)} mm.`;
 }
 
 function formatNumber(value) {
@@ -214,7 +223,7 @@ function buildRouteImageUrl(routeName, routeDistanceLabel, routePoints, imageUrl
         title: routeName,
         waypoints: String(routePoints.length),
         path: routePoints.slice(0, 20).map(({ lat, lon }) => `${lat},${lon}`).join(';'),
-        v: '5'
+        v: '7'
     });
     if (routeDistanceLabel) params.set('distance', routeDistanceLabel);
     if (imageUrl) params.set('src', imageUrl);
@@ -228,7 +237,7 @@ function buildPinImageUrl(pin, pinCoordinateLabel, imageUrl, baseUrl) {
         coordinates,
         lat: String(pin.lat),
         lon: String(pin.lon),
-        v: '5'
+        v: '7'
     });
     if (imageUrl) params.set('src', imageUrl);
     return toAbsoluteUrl(`/social-image?${params}`, baseUrl);

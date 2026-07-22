@@ -45,17 +45,17 @@ export function buildShareUrl(baseUrl, { locationKey = '', time = '', panelMode 
         url.searchParams.set(PANEL_PARAM, panelMode);
     }
 
-    const pinParam = serializeCoordinate(pin);
-    if (pinParam) {
-        url.searchParams.set(PIN_PARAM, pinParam);
-    }
-
     const routeParam = serializeRoute(route);
     if (routeParam) {
         url.searchParams.set(ROUTE_PARAM, routeParam);
         const cleanRouteName = sanitizeRouteName(routeName);
         if (cleanRouteName) {
             url.searchParams.set(ROUTE_NAME_PARAM, cleanRouteName);
+        }
+    } else {
+        const pinParam = serializeCoordinate(pin);
+        if (pinParam) {
+            url.searchParams.set(PIN_PARAM, pinParam);
         }
     }
 

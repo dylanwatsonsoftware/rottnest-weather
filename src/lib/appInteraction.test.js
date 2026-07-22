@@ -90,6 +90,11 @@ test('forecast API requests use Rottnest local time for shared URL hour matching
     assert.match(app, /window\.fetch\('https:\/\/marine-api\.open-meteo\.com\/v1\/marine\?[^'"]*timezone=Australia%2FPerth/);
 });
 
+test('forecast API and header include hourly rainfall', () => {
+    assert.match(app, /hourly=temperature_2m,windspeed_10m,winddirection_10m,precipitation/);
+    assert.match(app, /rainAmount=\{currentConditions\.precipitation\}/);
+});
+
 test('chart initialization waits for the browser-only Chart.js import', () => {
     const controls = readFileSync(new URL('./Controls.svelte', import.meta.url), 'utf8');
     assert.match(controls, /if \(Chart && !chart && forecastData && canvasElement\)/);
@@ -184,6 +189,7 @@ test('share buttons show visible copy feedback', () => {
     assert.match(app, /class:copied=\{shareSucceeded\}/);
     assert.match(app, /\{shareSucceeded \? 'Copied' : 'Share'\}/);
     assert.match(app, /shareSucceeded=\{shareSucceeded\}/);
+    assert.match(app, /const url = updateShareUrl\(\) \|\| currentShareUrl \|\| window\.location\.href/);
 });
 
 test('social meta follows selected location time recommendations and conditions', () => {

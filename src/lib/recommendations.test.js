@@ -8,7 +8,9 @@ import {
     getDirection,
     getBeachDetailNotes,
     getInitialFocusRecommendations,
+    getConditions,
     getSafetyNotices,
+    scoreBeach,
     formatTime,
     shouldShowRecommendationScore,
     shouldUseUserLocationForFocus
@@ -32,6 +34,17 @@ const forecast = {
     temperature_2m: [21, 22, 22, 23],
     swell_wave_height: [0.5, 0.7, 1.6, 0.8]
 };
+
+test('getConditions includes hourly rainfall', () => {
+    assert.equal(getConditions({ ...forecast, precipitation: [0, 0.4, 3.2, 6] }, 2).precipitation, 3.2);
+});
+
+test('meaningful rainfall tempers beach scores without penalising dry weather', () => {
+    const dry = scoreBeach(beaches[0], { windDirection: 'SW', windSpeed: 12, swellHeight: 0.5, precipitation: 0, hasForecast: true, hasSwell: true });
+    const wet = scoreBeach(beaches[0], { windDirection: 'SW', windSpeed: 12, swellHeight: 0.5, precipitation: 4, hasForecast: true, hasSwell: true });
+    assert.ok(wet.score < dry.score);
+    assert.ok(wet.reasons.some((reason) => /rain/i.test(reason)));
+});
 
 test('getDirection converts degrees into compass points', () => {
     assert.equal(getDirection(0), 'N');
@@ -266,6 +279,11 @@ test('getInitialFocusRecommendations prefers nearby beaches suitable in the next
     ]);
     assert.ok(focus[0].focus.distanceKm < focus[1].focus.distanceKm);
     assert.ok(focus.every((item) => item.focus.bestWithinHours <= 6));
+});
+
+test('getSafetyNotices surfaces meaningful rainfall', () => {
+    assert.ok(getSafetyNotices({ windSpeed: 10, swellHeight: 0.5, precipitation: 3, forecastData: forecast })
+        .some((notice) => /rain/i.test(notice)));
 });
 
 test('getInitialFocusRecommendations falls back to best upcoming suitability without location', () => {

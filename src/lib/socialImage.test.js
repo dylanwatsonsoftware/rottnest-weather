@@ -83,3 +83,7 @@ test('route social cards render over their nearest location photo', async () => 
     assert.equal(response.status, 200);
     assert.equal(requestedUrl, 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg');
 });
+
+test('planning card photo overlays preserve visible photography', () => {
+    assert.match(endpointSource, /hasPhoto \? ' opacity="0\.45"' : ''/);
+});

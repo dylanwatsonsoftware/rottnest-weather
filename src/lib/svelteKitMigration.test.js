@@ -38,6 +38,11 @@ test('SSR selects location photography for social metadata', () => {
     assert.match(server, /pin:\s*urlState\.pin/);
 });
 
+test('SSR requests hourly rainfall', () => {
+    const server = readFileSync(new URL('src/routes/+page.server.js', root), 'utf8');
+    assert.match(server, /winddirection_10m,precipitation/);
+});
+
 test('SvelteKit exposes a dynamic social image endpoint', () => {
     assert.equal(existsSync(new URL('src/routes/social-image/+server.js', root)), true);
 });

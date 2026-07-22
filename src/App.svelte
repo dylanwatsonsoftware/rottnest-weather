@@ -308,8 +308,8 @@
     }
 
     function updateShareUrl() {
-        if (typeof window === 'undefined' || !forecastData?.time?.length) return;
-        if (hasPendingSharedTime()) return;
+        if (typeof window === 'undefined' || !forecastData?.time?.length) return '';
+        if (hasPendingSharedTime()) return '';
 
         const locationKey = selectedMapPlace
             ? getLocationKey(selectedMapPlace)
@@ -327,11 +327,11 @@
         if (window.location.href !== nextUrl) {
             history.replaceState(history.state, '', nextUrl);
         }
+        return nextUrl;
     }
 
     async function shareCurrentLocation() {
-        if (!currentShareUrl) updateShareUrl();
-        const url = currentShareUrl || window.location.href;
+        const url = updateShareUrl() || currentShareUrl || window.location.href;
         try {
             if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
             await navigator.clipboard.writeText(url);
@@ -446,7 +446,7 @@
                 const nextLandmarks = await landmarksRes.json();
                 const nextFacilities = mergeFacilityEnrichment(await facilitiesRes.json(), await enrichmentRes.json());
 
-                const weatherRes = await window.fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth');
+                const weatherRes = await window.fetch('https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m,precipitation&forecast_days=10&timezone=Australia%2FPerth');
                 if (!weatherRes.ok) throw new Error('Weather forecast unavailable');
                 const weatherJson = await weatherRes.json();
 
@@ -519,6 +519,7 @@
         ...getSafetyNotices({
             windSpeed: currentConditions.windSpeed,
             swellHeight: currentConditions.swellHeight,
+            precipitation: currentConditions.precipitation,
             forecastData
         }),
         ...(loadError ? [loadError] : [])
@@ -622,6 +623,7 @@
     windDir={currentConditions.windDirection}
     temp={currentConditions.temperature}
     swellHeight={currentConditions.swellHeight}
+    rainAmount={currentConditions.precipitation}
     {selectedForecastTime}
     {loading}
 />

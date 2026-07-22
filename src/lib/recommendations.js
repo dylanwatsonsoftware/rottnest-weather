@@ -29,6 +29,7 @@ export function getConditions(forecastData, hourIndex) {
             windDirection: 'N',
             temperature: null,
             swellHeight: null,
+            precipitation: null,
             hasForecast: false,
             hasSwell: false
         };
@@ -45,6 +46,7 @@ export function getConditions(forecastData, hourIndex) {
         windDirection: getDirection(windDirectionDegrees),
         temperature: forecastData.temperature_2m?.[index] ?? null,
         swellHeight: Number.isFinite(swellHeight) ? swellHeight : null,
+        precipitation: forecastData.precipitation?.[index] ?? null,
         hasForecast: true,
         hasSwell: Number.isFinite(swellHeight)
     };
@@ -98,6 +100,19 @@ export function scoreBeach(beach, conditions) {
     } else {
         score -= 8;
         reasons.push('Swell forecast is unavailable, so confidence is lower.');
+    }
+
+    if (Number.isFinite(conditions.precipitation)) {
+        if (conditions.precipitation >= 5) {
+            score -= 22;
+            reasons.push('Heavy rain may reduce comfort and visibility.');
+        } else if (conditions.precipitation >= 2) {
+            score -= 10;
+            reasons.push('Steady rain may make this beach less comfortable.');
+        } else if (conditions.precipitation >= 0.3) {
+            score -= 3;
+            reasons.push('Light rain is possible during this hour.');
+        }
     }
 
     const flexibility = okWinds.length;
@@ -326,7 +341,7 @@ export function getDistanceKm(lat1, lon1, lat2, lon2) {
     return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function getSafetyNotices({ windSpeed, swellHeight, forecastData }) {
+export function getSafetyNotices({ windSpeed, swellHeight, precipitation, forecastData }) {
     const notices = [];
     if (!forecastData) {
         notices.push('Forecast unavailable. Showing beach guidance with low confidence.');
@@ -336,6 +351,9 @@ export function getSafetyNotices({ windSpeed, swellHeight, forecastData }) {
     }
     if (Number.isFinite(swellHeight) && swellHeight >= 1.4) {
         notices.push('Larger swell may reduce visibility and comfort near reefs.');
+    }
+    if (Number.isFinite(precipitation) && precipitation >= 2) {
+        notices.push('Rain may reduce beach comfort and visibility during this hour.');
     }
     if (forecastData && !forecastData.swell_wave_height) {
         notices.push('Marine swell data is unavailable, so recommendations are less certain.');

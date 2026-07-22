@@ -6,6 +6,7 @@
         windDir = 'N',
         temp,
         swellHeight,
+        rainAmount,
         selectedForecastTime = '',
         loading = false,
     } = $props();
@@ -31,6 +32,7 @@
                 <div><strong>Wind:</strong> {windSpeed ?? 'N/A'} km/h {windDir}</div>
                 <div><strong>Temp:</strong> {temp ?? 'N/A'} °C</div>
                 <div><strong>Swell:</strong> {swellHeight ?? 'N/A'}m</div>
+                <div><strong>Rain:</strong> {rainAmount ?? 'N/A'} mm</div>
                 {#if selectedForecastTime}
                     <div class="forecast-time-chip"><strong>Time:</strong> {selectedForecastTime}</div>
                 {/if}
