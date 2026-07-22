@@ -238,6 +238,7 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /routeMode === 'route'/);
     assert.match(app, /routeMode === 'pin'/);
     assert.match(app, /class="route-planner"/);
+    assert.match(app, /routeMode !== 'pin' && \(routeMode === 'route' \|\| routePoints\.length\)/);
     assert.match(app, /class="dropped-pin-card"/);
     assert.match(app, /googleMapsPinUrl/);
     assert.match(app, /googleMapsRouteUrl/);

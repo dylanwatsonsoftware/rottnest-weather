@@ -598,7 +598,13 @@
                 title="Route"
                 onclick={startRoutePlanning}
             >
-                <span class="route-planner-icon" aria-hidden="true">↝</span>
+                <span class="route-planner-icon route-planner-icon-route" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M6 18 C6 13 18 13 18 6" />
+                        <circle cx="6" cy="18" r="2.4" />
+                        <circle cx="18" cy="6" r="2.4" />
+                    </svg>
+                </span>
             </button>
             <button
                 type="button"
@@ -608,10 +614,10 @@
                 title="Pin"
                 onclick={startPinDrop}
             >
-                <span class="route-planner-icon" aria-hidden="true">⌖</span>
+                <span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖</span>
             </button>
         </div>
-        {#if routeMode === 'route' || routePoints.length}
+        {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
             <div class="route-planner-card">
                 <strong>{routePlannerStatus}</strong>
                 <small>{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}</small>

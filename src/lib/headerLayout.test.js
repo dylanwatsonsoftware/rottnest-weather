@@ -78,13 +78,19 @@ test('leaflet map controls sit below the fixed top pane', () => {
 test('route and pin controls are icon buttons below the map zoom controls', () => {
     assert.match(app, /aria-label="Start route planning"/);
     assert.match(app, /aria-label="Drop a pin"/);
-    assert.match(app, /<span class="route-planner-icon" aria-hidden="true">↝<\/span>/);
-    assert.match(app, /<span class="route-planner-icon" aria-hidden="true">⌖<\/span>/);
+    assert.match(app, /<span class="route-planner-icon route-planner-icon-route" aria-hidden="true">/);
+    assert.match(app, /<span class="route-planner-icon route-planner-icon-pin" aria-hidden="true">⌖<\/span>/);
+    assert.doesNotMatch(app, /<span class="route-planner-icon" aria-hidden="true">↝<\/span>/);
     assert.doesNotMatch(app, />\s*Route\s*<\/button>/);
     assert.doesNotMatch(app, />\s*Pin\s*<\/button>/);
     assert.match(css, /\.route-planner\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*92px\)/s);
+    assert.match(css, /\.route-planner\s*{[^}]*right:\s*var\(--map-control-right\)/s);
+    assert.doesNotMatch(css, /\.route-planner\s*{[^}]*left:\s*14px/s);
     assert.match(css, /\.route-planner-actions button\s*{[^}]*width:\s*42px/s);
     assert.match(css, /\.route-planner-actions button\s*{[^}]*height:\s*42px/s);
+    assert.match(css, /\.route-planner-actions\s*{[^}]*display:\s*grid/s);
+    assert.match(css, /\.route-planner-card\s*{[^}]*width:\s*max-content/s);
+    assert.match(css, /\.route-planner-card\s*{[^}]*max-width:\s*min\(190px,\s*calc\(100vw - 110px\)\)/s);
 });
 
 test('floating map search is a compact icon until opened', () => {
@@ -105,7 +111,8 @@ test('floating map search is a compact icon until opened', () => {
     assert.doesNotMatch(mapSearch, /type="search"/);
     assert.match(mapSearch, /placeholder="Search beaches or places"/);
     assert.match(css, /\.map-search\s*{[^}]*top:\s*calc\(var\(--header-offset\)\s*\+\s*8px\)/s);
-    assert.match(css, /\.map-search\s*{[^}]*right:\s*14px/s);
+    assert.match(css, /--map-control-right:\s*14px/);
+    assert.match(css, /\.map-search\s*{[^}]*right:\s*var\(--map-control-right\)/s);
     assert.match(css, /\.map-search\s*{[^}]*width:\s*42px/s);
     assert.match(css, /\.map-search\.open\s*{[^}]*width:\s*min\(420px,\s*calc\(100vw - 110px\)\)/s);
     assert.match(css, /@media \(max-width: 620px\)[\s\S]*\.map-search\.open\s*{[^}]*width:\s*calc\(100vw - 98px\)/s);
