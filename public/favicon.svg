@@ -17,6 +17,29 @@
     </defs>
     <rect id="favicon-rounded-square" x="12" y="12" width="232" height="232" rx="56" fill="url(#favicon-background)" filter="url(#favicon-shadow)"/>
     <rect x="25" y="25" width="206" height="206" rx="46" fill="none" stroke="rgba(255,255,255,0.26)" stroke-width="10"/>
+    <path
+        id="favicon-logo-arc"
+        fill="#2fb8b1"
+        d="
+            M 45,139
+            C 66,156 101,166 139,166
+            C 169,166 193,158 207,146
+            C 194,163 169,174 136,174
+            C 96,173 62,157 45,139 Z
+        "
+    />
+    <path
+        id="favicon-logo-arc-highlight"
+        fill="#9fe3df"
+        opacity="0.82"
+        d="
+            M 55,144
+            C 76,156 105,162 136,162
+            C 160,162 181,156 194,148
+            C 177,158 156,164 132,164
+            C 101,163 74,155 55,144 Z
+        "
+    />
     <g transform="translate(18 72) scale(0.44)">
         <path
             id="rottnest-silhouette"

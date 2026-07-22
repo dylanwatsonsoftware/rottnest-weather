@@ -56,6 +56,9 @@ test('app icon uses a stylised Rottnest outline in the header and favicon', () =
     assert.match(favicon, /id="favicon-rounded-square"/);
     assert.match(favicon, /rx="56"/);
     assert.match(favicon, /id="favicon-shadow"/);
+    assert.match(favicon, /id="favicon-logo-arc"/);
+    assert.match(favicon, /id="favicon-logo-arc"[\s\S]*M 45,139/);
+    assert.match(favicon, /id="favicon-logo-arc-highlight"/);
     assert.match(favicon, /id="rottnest-silhouette"/);
     assert.match(favicon, /d="\s*M 32,168/);
     assert.match(favicon, /C 398,50 415,62 430,72/);
