@@ -333,6 +333,11 @@ main {
     padding: 7px 9px;
     font-size: 0.74rem;
     font-weight: 850;
+    transition:
+        background 0.16s ease,
+        color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.16s ease;
 }
 
 .route-planner-card a {
@@ -385,6 +390,34 @@ main {
 .dropped-pin-card button:not(.dropped-pin-close) {
     background: #0b7182;
     color: white;
+}
+
+.route-planner-actions button:hover,
+.route-planner-actions button:focus-visible,
+.route-planner-card button:not(:disabled):hover,
+.route-planner-card button:not(:disabled):focus-visible,
+.route-planner-card a:hover,
+.route-planner-card a:focus-visible {
+    background: #dceeee;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+    transform: translateY(-1px);
+}
+
+.route-planner-actions button.active:hover,
+.route-planner-actions button.active:focus-visible,
+.route-planner-card a:hover,
+.route-planner-card a:focus-visible,
+.route-planner-card button:not(:disabled):last-child:hover,
+.route-planner-card button:not(:disabled):last-child:focus-visible {
+    background: #095c69;
+    color: white;
+}
+
+.route-planner-actions button:focus-visible,
+.route-planner-card button:focus-visible,
+.route-planner-card a:focus-visible {
+    outline: 0;
 }
 
 .route-planner-card button.copied:not(:disabled),

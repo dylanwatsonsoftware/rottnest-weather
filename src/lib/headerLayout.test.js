@@ -91,6 +91,10 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-actions\s*{[^}]*display:\s*grid/s);
     assert.match(css, /\.route-planner-card\s*{[^}]*width:\s*max-content/s);
     assert.match(css, /\.route-planner-card\s*{[^}]*max-width:\s*min\(190px,\s*calc\(100vw - 110px\)\)/s);
+    assert.match(css, /\.route-planner-actions button:hover/s);
+    assert.match(css, /\.route-planner-actions button:focus-visible/s);
+    assert.match(css, /\.route-planner-card button:not\(:disabled\):hover/s);
+    assert.match(css, /\.route-planner-card a:hover/s);
 });
 
 test('floating map search is a compact icon until opened', () => {
