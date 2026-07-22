@@ -300,7 +300,7 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(app, /onclick=\{editRouteName\}/);
     assert.match(app, /import \{ onMount, untrack \} from 'svelte'/);
     assert.match(app, /untrack\(updateShareUrl\)/);
-    assert.doesNotMatch(app, /const plannedRouteName = routeName/);
+    assert.match(app, /const plannedRouteName = routeName/);
     assert.doesNotMatch(app, /activateRouteNameInput/);
     assert.match(app, /<Pencil/);
     assert.match(app, /class="route-planner-summary-name"/);

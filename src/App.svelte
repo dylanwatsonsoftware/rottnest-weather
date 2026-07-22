@@ -603,6 +603,7 @@
         const selectedHour = hourIndex;
         const selectedPanelMode = panelMode;
         const plannedRoute = routePoints.length;
+        const plannedRouteName = routeName;
         const plannedPin = droppedPin?.lat;
         untrack(updateShareUrl);
     });
