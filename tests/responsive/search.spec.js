@@ -117,6 +117,8 @@ test('route planning and dropped pins can be shared from the map', async ({ page
     await expect(page.locator('.route-waypoint-marker')).toHaveCount(2);
     await expect(page.locator('.route-leg-distance-marker')).toHaveCount(1);
     await expect(page.locator('.route-leg-distance-marker')).toContainText(/m|km/);
+    await expect(page.locator('.route-leg-distance-marker')).toHaveCSS('width', '64px');
+    await expect(page.locator('.route-leg-distance-marker span')).toHaveCSS('color', 'rgb(255, 255, 255)');
     await expect(page.locator('.planned-route-line')).toBeVisible();
     await expect(page.locator('.route-planner-card')).toContainText(/m|km/);
     page.once('dialog', (dialog) => dialog.accept('West End snorkel ride'));

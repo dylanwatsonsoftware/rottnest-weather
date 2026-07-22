@@ -422,8 +422,8 @@
                 const icon = L.divIcon({
                     className: 'route-leg-distance-marker',
                     html: `<span>${leg.distanceLabel}</span>`,
-                    iconSize: [1, 1],
-                    iconAnchor: [0, 0]
+                    iconSize: [64, 20],
+                    iconAnchor: [32, 10]
                 });
                 return L.marker([leg.midpoint.lat, leg.midpoint.lon], {
                     icon,

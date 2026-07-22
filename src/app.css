@@ -2051,12 +2051,14 @@ main {
 }
 
 .route-leg-distance-marker {
+    width: 64px !important;
+    height: 20px !important;
+    display: grid !important;
+    place-items: center;
     pointer-events: none !important;
 }
 
 .route-leg-distance-marker span {
-    position: absolute;
-    transform: translate(-50%, -50%);
     padding: 2px 5px;
     border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 999px;
