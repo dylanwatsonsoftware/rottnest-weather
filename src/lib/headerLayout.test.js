@@ -98,6 +98,24 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-card a:hover/s);
 });
 
+test('app buttons have subtle hover and focus feedback outside map planning controls', () => {
+    assert.match(css, /\.range-mode-toggle button:not\(\.active\):hover/s);
+    assert.match(css, /\.collapsed-better-time-button:hover/s);
+    assert.match(css, /\.better-time-button:hover/s);
+    assert.match(css, /\.settings-icon-button:hover/s);
+    assert.match(css, /\.recommendation-row:hover/s);
+    assert.match(css, /\.nearby-list button:hover/s);
+    assert.match(css, /\.map-jump-button:hover/s);
+    assert.match(css, /\.beach-share-button:hover/s);
+    assert.match(css, /\.selected-map-place-close:hover/s);
+    assert.match(css, /\.beach-photo-button:hover/s);
+    assert.match(css, /\.beach-photo-modal-close:hover/s);
+    assert.match(css, /\.settings-sheet-header button:hover/s);
+    assert.match(css, /\.range-mode-toggle button:focus-visible/s);
+    assert.match(css, /\.recommendation-row:focus-visible/s);
+    assert.match(css, /\.nearby-list button:focus-visible/s);
+});
+
 test('floating map search is a compact icon until opened', () => {
     assert.match(mapSearch, /class="map-search"/);
     assert.match(mapSearch, /class:open=\{isOpen\}/);

@@ -434,6 +434,106 @@ main {
     outline: 0;
 }
 
+.range-mode-toggle button,
+.collapsed-better-time-button,
+.better-time-button,
+.settings-icon-button,
+.recommendation-row,
+.nearby-list button,
+.map-jump-button,
+.beach-share-button,
+.selected-map-place-share,
+.selected-map-place-close,
+.beach-panel-close,
+.settings-sheet-header button,
+.beach-photo-button,
+.beach-photo-modal-close {
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.16s ease,
+        opacity 0.16s ease;
+}
+
+.range-mode-toggle button:not(.active):hover,
+.range-mode-toggle button:not(.active):focus-visible,
+.collapsed-better-time-button:hover,
+.collapsed-better-time-button:focus-visible,
+.settings-icon-button:hover,
+.settings-icon-button:focus-visible,
+.selected-map-place-close:hover,
+.selected-map-place-close:focus-visible,
+.beach-panel-close:hover,
+.beach-panel-close:focus-visible,
+.settings-sheet-header button:hover,
+.settings-sheet-header button:focus-visible {
+    border-color: #b7d2d2;
+    background: #e7f2f2;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
+.better-time-button:hover,
+.better-time-button:focus-visible {
+    border-color: #095c69;
+    background: #095c69;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+}
+
+.recommendation-row:hover,
+.recommendation-row:focus-visible,
+.nearby-list button:hover,
+.nearby-list button:focus-visible {
+    border-color: #b7d2d2;
+    box-shadow: 0 4px 14px rgba(21, 45, 49, 0.12);
+    transform: translateY(-1px);
+}
+
+.map-jump-button:hover,
+.map-jump-button:focus-visible,
+.beach-share-button:hover,
+.beach-share-button:focus-visible,
+.selected-map-place-share:hover,
+.selected-map-place-share:focus-visible {
+    border-color: #b7d2d2;
+    background: #e7f2f2;
+    color: #075665;
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.12);
+}
+
+.beach-photo-button:hover,
+.beach-photo-button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(11, 113, 130, 0.18);
+    transform: translateY(-1px);
+}
+
+.beach-photo-modal-close:hover,
+.beach-photo-modal-close:focus-visible {
+    border-color: rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16);
+}
+
+.range-mode-toggle button:focus-visible,
+.collapsed-better-time-button:focus-visible,
+.better-time-button:focus-visible,
+.settings-icon-button:focus-visible,
+.recommendation-row:focus-visible,
+.nearby-list button:focus-visible,
+.map-jump-button:focus-visible,
+.beach-share-button:focus-visible,
+.selected-map-place-share:focus-visible,
+.selected-map-place-close:focus-visible,
+.beach-panel-close:focus-visible,
+.settings-sheet-header button:focus-visible,
+.beach-photo-button:focus-visible,
+.beach-photo-modal-close:focus-visible {
+    outline: 0;
+}
+
 .route-planner-card button.copied:not(:disabled),
 .dropped-pin-card button.copied,
 .beach-share-button.copied,
