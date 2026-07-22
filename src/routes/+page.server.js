@@ -12,7 +12,6 @@ import enrichment from '../../public/place-enrichment.json' with { type: 'json' 
 
 const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=-32.007&longitude=115.51&hourly=temperature_2m,windspeed_10m,winddirection_10m&forecast_days=10&timezone=Australia%2FPerth';
 const MARINE_URL = 'https://marine-api.open-meteo.com/v1/marine?latitude=-32.007&longitude=115.51&hourly=swell_wave_height&forecast_days=10&timezone=Australia%2FPerth';
-const FALLBACK_IMAGE = '/beach-images/little-salmon-bay-01.jpg';
 
 export async function load({ fetch, url, setHeaders }) {
     setHeaders({
@@ -90,9 +89,9 @@ function findSelectedLocation(locationKey, collections) {
 }
 
 function getLocationImage(location) {
-    if (!location) return FALLBACK_IMAGE;
+    if (!location) return '';
     if (location.type === 'beach' || !location.type) {
-        return getBeachImages(location.name)[0]?.src || FALLBACK_IMAGE;
+        return getBeachImages(location.name)[0]?.src || '';
     }
-    return getPrimaryPlaceImage(location)?.src || FALLBACK_IMAGE;
+    return getPrimaryPlaceImage(location)?.src || '';
 }

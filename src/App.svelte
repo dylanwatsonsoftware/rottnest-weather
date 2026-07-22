@@ -531,7 +531,6 @@
             : selectedMapPlace?.distanceLabel || ''
     );
     const selectedMapPlaceImages = $derived(getPlaceImages(selectedMapPlace?.name));
-    const selectedMapPlaceImage = $derived(selectedMapPlaceImages[0] ?? null);
     const routeDistanceKm = $derived(getRouteDistanceKm(routePoints));
     const routeDistanceLabel = $derived(getRouteDistanceLabel(routeDistanceKm));
     const routeSocialName = $derived(routePoints.length >= 2 ? routeName.trim() : '');
@@ -590,12 +589,17 @@
     <meta property="og:title" content={currentSocialMeta.title} />
     <meta property="og:description" content={currentSocialMeta.description} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rottnest Weather" />
     <meta property="og:url" content={currentSocialMeta.url} />
     <meta property="og:image" content={currentSocialMeta.image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={currentSocialMeta.imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={currentSocialMeta.title} />
     <meta name="twitter:description" content={currentSocialMeta.description} />
     <meta name="twitter:image" content={currentSocialMeta.image} />
+    <meta name="twitter:image:alt" content={currentSocialMeta.imageAlt} />
 </svelte:head>
 
 <Header

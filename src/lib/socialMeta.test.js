@@ -29,7 +29,11 @@ test('buildSocialMeta includes selected beach time recommendations wind and swel
         'Find the best Rottnest beach for this weather. 3 recommended beaches. Wind 16 km/h SW. Swell 1.2 m.'
     );
     assert.equal(meta.url, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay&time=2026-07-21T08%3A00');
-    assert.equal(meta.image, 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg');
+    assert.equal(
+        meta.image,
+        'https://rottnest.test/social-image?src=%2Fbeach-images%2Flittle-salmon-bay-01.jpg&title=Little+Salmon+Bay'
+    );
+    assert.equal(meta.imageAlt, 'Little Salmon Bay — Find your best beach today');
 });
 
 test('buildSocialMeta falls back to a general forecast title without a selected location', () => {
@@ -48,6 +52,8 @@ test('buildSocialMeta falls back to a general forecast title without a selected 
         meta.description,
         'Find the best Rottnest beach for this weather. No recommended beaches at this time. Wind 28 km/h NW.'
     );
+    assert.equal(meta.image, 'https://rottnest.test/social-card.jpg');
+    assert.equal(meta.imageAlt, 'Rottnest Weather — Find your best beach today');
 });
 
 test('buildSocialMeta uses named routes in social title and description', () => {
@@ -113,7 +119,7 @@ test('updateDocumentSocialMeta writes standard Open Graph and Twitter tags', () 
         title: 'Little Salmon Bay at Tue 8am | Rottnest',
         description: 'Find the best Rottnest beach for this weather. 3 recommended beaches. Wind 16 km/h SW. Swell 1.2 m.',
         url: 'https://rottnest.test/?location=beach%3Alittle-salmon-bay',
-        image: 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg'
+        image: 'https://rottnest.test/social-card.jpg'
     });
 
     assert.equal(fakeDocument.title, 'Little Salmon Bay at Tue 8am | Rottnest');
@@ -123,7 +129,12 @@ test('updateDocumentSocialMeta writes standard Open Graph and Twitter tags', () 
         'Find the best Rottnest beach for this weather. 3 recommended beaches. Wind 16 km/h SW. Swell 1.2 m.'
     );
     assert.equal(tags.get('meta[property="og:url"]').content, 'https://rottnest.test/?location=beach%3Alittle-salmon-bay');
-    assert.equal(tags.get('meta[name="twitter:image"]').content, 'https://rottnest.test/beach-images/little-salmon-bay-01.jpg');
+    assert.equal(tags.get('meta[property="og:site_name"]').content, 'Rottnest Weather');
+    assert.equal(tags.get('meta[property="og:image:width"]').content, '1200');
+    assert.equal(tags.get('meta[property="og:image:height"]').content, '630');
+    assert.equal(tags.get('meta[property="og:image:alt"]').content, 'Rottnest Weather — Find your best beach today');
+    assert.equal(tags.get('meta[name="twitter:image"]').content, 'https://rottnest.test/social-card.jpg');
+    assert.equal(tags.get('meta[name="twitter:image:alt"]').content, 'Rottnest Weather — Find your best beach today');
 });
 
 test('SvelteKit page renders social metadata for crawlers that do not run JavaScript', () => {
@@ -133,5 +144,10 @@ test('SvelteKit page renders social metadata for crawlers that do not run JavaSc
     assert.match(page, /<meta property="og:title"/);
     assert.match(page, /<meta property="og:description"/);
     assert.match(page, /<meta property="og:type" content="website"/);
+    assert.match(page, /<meta property="og:site_name" content="Rottnest Weather"/);
+    assert.match(page, /<meta property="og:image:width" content="1200"/);
+    assert.match(page, /<meta property="og:image:height" content="630"/);
+    assert.match(page, /<meta property="og:image:alt" content=\{currentSocialMeta\.imageAlt\}/);
     assert.match(page, /<meta name="twitter:card" content="summary_large_image"/);
+    assert.match(page, /<meta name="twitter:image:alt" content=\{currentSocialMeta\.imageAlt\}/);
 });

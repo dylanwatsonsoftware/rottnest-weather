@@ -1,7 +1,9 @@
 const DEFAULT_TITLE = 'Rottnest Weather';
 const DEFAULT_DESCRIPTION = 'Find the best Rottnest beach for the current weather, with wind, swell, food, and facilities by forecast time.';
 const DESCRIPTION_PROMISE = 'Find the best Rottnest beach for this weather.';
-const DEFAULT_IMAGE = '/beach-images/little-salmon-bay-01.jpg';
+const DEFAULT_IMAGE = '/social-card.jpg';
+const SITE_NAME = 'Rottnest Weather';
+const IMAGE_ALT = 'Rottnest Weather — Find your best beach today';
 
 export function getRecommendedBeachCount(recommendations = []) {
     return recommendations.filter((item) => item.state === 'best' || item.state === 'good').length;
@@ -15,17 +17,22 @@ export function buildSocialMeta({
     recommendedBeachCount = 0,
     conditions = {},
     url = '',
-    imageUrl = DEFAULT_IMAGE
+    imageUrl = ''
 } = {}) {
     const title = buildTitle(locationName, selectedTime, routeName);
     const description = buildDescription(recommendedBeachCount, conditions, routeName, routeDistanceLabel);
     const absoluteUrl = url || '';
+    const cleanLocationName = cleanText(locationName);
+    const image = cleanLocationName && imageUrl
+        ? buildLocationImageUrl(imageUrl, cleanLocationName, absoluteUrl)
+        : toAbsoluteUrl(DEFAULT_IMAGE, absoluteUrl);
 
     return {
         title,
         description,
         url: absoluteUrl,
-        image: toAbsoluteUrl(imageUrl, absoluteUrl)
+        image,
+        imageAlt: cleanLocationName ? `${cleanLocationName} — Find your best beach today` : IMAGE_ALT
     };
 }
 
@@ -42,12 +49,17 @@ export function updateDocumentSocialMeta(documentRef, meta = {}) {
     setMeta(documentRef, 'property', 'og:title', title);
     setMeta(documentRef, 'property', 'og:description', description);
     setMeta(documentRef, 'property', 'og:type', 'website');
+    setMeta(documentRef, 'property', 'og:site_name', SITE_NAME);
     setMeta(documentRef, 'property', 'og:url', url);
     setMeta(documentRef, 'property', 'og:image', image);
+    setMeta(documentRef, 'property', 'og:image:width', '1200');
+    setMeta(documentRef, 'property', 'og:image:height', '630');
+    setMeta(documentRef, 'property', 'og:image:alt', meta.imageAlt || IMAGE_ALT);
     setMeta(documentRef, 'name', 'twitter:card', 'summary_large_image');
     setMeta(documentRef, 'name', 'twitter:title', title);
     setMeta(documentRef, 'name', 'twitter:description', description);
     setMeta(documentRef, 'name', 'twitter:image', image);
+    setMeta(documentRef, 'name', 'twitter:image:alt', meta.imageAlt || IMAGE_ALT);
 }
 
 function buildTitle(locationName, selectedTime, routeName) {
@@ -123,4 +135,9 @@ function toAbsoluteUrl(value, baseUrl) {
     } catch {
         return value;
     }
+}
+
+function buildLocationImageUrl(imageUrl, locationName, baseUrl) {
+    const params = new URLSearchParams({ src: imageUrl, title: locationName });
+    return toAbsoluteUrl(`/social-image?${params}`, baseUrl);
 }

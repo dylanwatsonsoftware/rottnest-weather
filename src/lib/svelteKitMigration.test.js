@@ -29,3 +29,13 @@ test('SvelteKit page metadata is rendered declaratively', () => {
     assert.match(app, /property="og:title"/);
     assert.match(app, /name="twitter:card"/);
 });
+
+test('SSR selects location photography for social metadata', () => {
+    const server = readFileSync(new URL('src/routes/+page.server.js', root), 'utf8');
+    assert.match(server, /getLocationImage\(selectedLocation\)/);
+    assert.match(server, /imageUrl/);
+});
+
+test('SvelteKit exposes a dynamic social image endpoint', () => {
+    assert.equal(existsSync(new URL('src/routes/social-image/+server.js', root)), true);
+});
