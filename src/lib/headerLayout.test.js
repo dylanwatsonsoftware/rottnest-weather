@@ -38,20 +38,22 @@ test('navbar uses compact Rottnest title', () => {
 test('app icon uses a stylised Rottnest outline in the header and favicon', () => {
     assert.match(header, /<Logo size=\{40\} class="header-logo" \/>/);
     assert.match(logo, /aria-label="Stylised Rottnest Island outline"/);
-    assert.match(logo, /class="rottnest-outline"/);
-    assert.match(logo, /class="rottnest-reef"/);
-    assert.match(logo, /class="rottnest-lake"/);
-    assert.match(logo, /class="rottnest-location"/);
-    assert.match(logo, /d="M4\.5 35/);
-    assert.match(logo, /C52\.5 30\.3 53\.7 30\.5 55\.5 29\.9C58\.6 29 61\.1 31\.7 61\.4 34\.1/);
+    assert.match(logo, /viewBox="0 0 500 250"/);
+    assert.match(logo, /class="rottnest-silhouette"/);
+    assert.match(logo, /d="\s*M 32,168/);
+    assert.match(logo, /C 398,50 415,62 430,72/);
+    assert.doesNotMatch(logo, /class="rottnest-reef"/);
+    assert.doesNotMatch(logo, /class="rottnest-lake"/);
+    assert.doesNotMatch(logo, /class="rottnest-location"/);
     assert.doesNotMatch(logo, /Snorkel Mask/);
 
-    assert.match(favicon, /id="rottnest-outline"/);
-    assert.match(favicon, /id="rottnest-reef"/);
-    assert.match(favicon, /id="rottnest-lake"/);
-    assert.match(favicon, /id="rottnest-location"/);
-    assert.match(favicon, /d="M4\.5 35/);
-    assert.match(favicon, /C52\.5 30\.3 53\.7 30\.5 55\.5 29\.9C58\.6 29 61\.1 31\.7 61\.4 34\.1/);
+    assert.match(favicon, /viewBox="0 0 500 250"/);
+    assert.match(favicon, /id="rottnest-silhouette"/);
+    assert.match(favicon, /d="\s*M 32,168/);
+    assert.match(favicon, /C 398,50 415,62 430,72/);
+    assert.doesNotMatch(favicon, /id="rottnest-reef"/);
+    assert.doesNotMatch(favicon, /id="rottnest-lake"/);
+    assert.doesNotMatch(favicon, /id="rottnest-location"/);
     assert.doesNotMatch(favicon, /Snorkel Mask/);
 });
 
