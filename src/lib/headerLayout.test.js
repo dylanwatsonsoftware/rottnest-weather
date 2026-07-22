@@ -109,8 +109,10 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-actions button:hover/s);
     assert.match(css, /\.route-planner-actions button:focus-visible/s);
     assert.match(css, /\.route-planner-card button:not\(:disabled\):hover/s);
-    assert.match(css, /\.route-planner-card \.route-planner-collapse\s*{[^}]*background:\s*#eef5f5[^}]*color:\s*#0b6476/s);
-    assert.match(css, /\.route-planner-collapse \.route-planner-chevron\s*{[^}]*color:\s*currentColor/s);
+    assert.match(css, /\.route-planner-toggle\s*{[^}]*background:\s*#eef5f5[^}]*color:\s*#0b6476/s);
+    assert.match(css, /\.route-planner-toggle \.route-planner-chevron\s*{[^}]*color:\s*currentColor/s);
+    assert.equal((app.match(/class="route-planner-toggle"/g) || []).length, 2);
+    assert.match(css, /\.route-planner-toggle\s*{[^}]*position:\s*absolute[^}]*top:\s*10px[^}]*right:\s*10px/s);
     assert.doesNotMatch(css, /\.route-planner-card button:not\(:disabled\):last-child/);
     assert.match(css, /\.route-share-action/);
     assert.match(css, /\.route-planner-card\s*{[^}]*pointer-events:\s*auto/s);

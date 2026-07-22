@@ -697,21 +697,23 @@
         </div>
         {#if routeMode !== 'pin' && (routeMode === 'route' || routePoints.length)}
             {#if !routePlannerExpanded}
-                <button
-                    type="button"
-                    class="route-planner-summary"
-                    aria-label="Show route details"
-                    aria-expanded="false"
-                    onclick={() => routePlannerExpanded = true}
-                >
+                <div class="route-planner-summary">
                     <span>
                         <strong class="route-planner-summary-name">{routeName.trim() || routePlannerStatus}</strong>
                         <small>
                             {routeName.trim() ? `${routePlannerStatus} · ` : ''}{routePoints.length} waypoint{routePoints.length === 1 ? '' : 's'}
                         </small>
                     </span>
-                    <ChevronDown class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
-                </button>
+                    <button
+                        type="button"
+                        class="route-planner-toggle"
+                        aria-label="Show route details"
+                        aria-expanded="false"
+                        onclick={() => routePlannerExpanded = true}
+                    >
+                        <ChevronDown class="route-planner-chevron" size={16} strokeWidth={2} aria-hidden="true" />
+                    </button>
+                </div>
             {:else}
             <div class="route-planner-card">
                 <div class="route-planner-card-header">
@@ -721,7 +723,7 @@
                     </span>
                     <button
                         type="button"
-                        class="route-planner-collapse"
+                        class="route-planner-toggle"
                         aria-label="Collapse route details"
                         onclick={() => routePlannerExpanded = false}
                     >

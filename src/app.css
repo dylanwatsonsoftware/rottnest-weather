@@ -311,6 +311,7 @@ main {
 }
 
 .route-planner-summary {
+    position: relative;
     width: min(150px, calc(100vw - 110px));
     margin-top: 6px;
     margin-left: auto;
@@ -318,7 +319,7 @@ main {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 9px 10px;
+    padding: 9px 48px 9px 10px;
     border: 1px solid rgba(34, 60, 63, 0.14);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.96);
@@ -568,6 +569,7 @@ main {
 }
 
 .route-planner-card {
+    position: relative;
     margin-top: 6px;
     width: max-content;
     max-width: min(190px, calc(100vw - 110px));
@@ -592,6 +594,7 @@ main {
     align-items: start;
     justify-content: space-between;
     gap: 10px;
+    padding-right: 38px;
 }
 
 .route-planner-card-header span,
@@ -600,7 +603,10 @@ main {
     display: block;
 }
 
-.route-planner-card .route-planner-collapse {
+.route-planner-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     width: 28px;
     height: 28px;
     flex: 0 0 auto;
@@ -613,7 +619,7 @@ main {
     line-height: 1;
 }
 
-.route-planner-collapse .route-planner-chevron {
+.route-planner-toggle .route-planner-chevron {
     color: currentColor;
 }
 
