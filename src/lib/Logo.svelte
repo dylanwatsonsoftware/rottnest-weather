@@ -16,12 +16,12 @@
             <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#04343d" flood-opacity="0.28"/>
         </filter>
     </defs>
-    <circle class="rottnest-logo-badge" cx="125" cy="132" r="72" fill="#0b7583" filter="url(#rottnest-logo-shadow)"/>
-    <circle cx="125" cy="132" r="65" fill="none" stroke="rgba(255,255,255,0.34)" stroke-width="7"/>
+    <ellipse class="rottnest-logo-badge" cx="125" cy="134" rx="96" ry="58" fill="#f0c66b" filter="url(#rottnest-logo-shadow)"/>
+    <ellipse cx="125" cy="134" rx="86" ry="49" fill="none" stroke="rgba(255,255,255,0.46)" stroke-width="7"/>
     <g transform="translate(15 72) scale(0.44)">
         <path
             class="rottnest-silhouette"
-            fill="#f8fbfb"
+            fill="#063f49"
             d="
                 M 32,168
                 C 28,164 25,155 30,148

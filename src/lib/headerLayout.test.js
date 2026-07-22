@@ -42,7 +42,7 @@ test('app icon uses a stylised Rottnest outline in the header and favicon', () =
     assert.match(logo, /height=\{size\}/);
     assert.match(logo, /viewBox="0 0 250 250"/);
     assert.match(logo, /class="rottnest-logo-badge"/);
-    assert.match(logo, /class="rottnest-logo-badge"[^>]*r="72"/);
+    assert.match(logo, /<ellipse class="rottnest-logo-badge"[^>]*rx="96"[^>]*ry="58"/);
     assert.match(logo, /class="rottnest-logo-shadow"/);
     assert.match(logo, /class="rottnest-silhouette"/);
     assert.match(logo, /d="\s*M 32,168/);
