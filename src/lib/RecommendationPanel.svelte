@@ -21,7 +21,7 @@
     import { formatDistanceLabel, getDistanceKm, getFacilityIcon, getFacilityRatingLabel, getNearbyFacilities, sortNearbyPlaces } from './facilities.js';
     import { getBeachImages } from './beachMedia.js';
     import { getPlaceImages } from './placeMedia.js';
-    import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES, shouldShowRecommendationScore } from './recommendations.js';
+    import { buildBeachStatusTimeline, buildBestBeachTimeline, formatTime, getBeachDetailNotes, RECOMMENDATION_STATES } from './recommendations.js';
     import { getMapNavigationTarget, getPanelModeMapOffset } from './mapFocus.js';
 
     const NEARBY_RADIUS_KM = 1;
@@ -583,9 +583,7 @@
             {#each listedRecommendations as item}
                 {@const heatbar = getRecommendationHeatbar(item)}
                 <button class="recommendation-row {item.state}" class:selected={selectedRecommendation?.beach.name === item.beach.name} type="button" onclick={() => selectRecommendationRow(item.beach.name)}>
-                    {#if shouldShowRecommendationScore(item)}
-                        <span class="score">{item.score}</span>
-                    {/if}
+                    <span class="score">{item.score}</span>
                     <span class="row-main">
                         <strong>{item.beach.name}</strong>
                         <span

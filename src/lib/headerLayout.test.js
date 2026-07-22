@@ -330,8 +330,8 @@ test('recommendation panel labels watch-state recommendations as caution', () =>
 
 test('recommendation rows show a status heatbar instead of window summary text', () => {
     assert.match(recommendationPanel, /getRecommendationHeatbar\(item\)/);
-    assert.match(recommendationPanel, /shouldShowRecommendationScore\(item\)/);
-    assert.match(recommendationPanel, /\{#if shouldShowRecommendationScore\(item\)\}[\s\S]*class="score"/);
+    assert.match(recommendationPanel, /<span class="score">\{item\.score\}<\/span>/);
+    assert.doesNotMatch(recommendationPanel, /\{#if shouldShowRecommendationScore\(item\)\}[\s\S]*class="score"/);
     assert.match(recommendationPanel, /class="recommendation-heatbar"/);
     assert.match(recommendationPanel, /class="recommendation-heatbar-marker"/);
     assert.doesNotMatch(recommendationPanel, /<small>\{getRecommendationWindowSummary\(item\)\}<\/small>/);
