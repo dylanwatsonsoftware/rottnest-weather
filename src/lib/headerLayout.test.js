@@ -96,6 +96,7 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.match(css, /\.route-planner-actions button:focus-visible/s);
     assert.match(css, /\.route-planner-card button:not\(:disabled\):hover/s);
     assert.match(css, /\.route-planner-card a:hover/s);
+    assert.match(css, /\.route-name-field input[\s\S]*pointer-events:\s*auto/);
 });
 
 test('app buttons have subtle hover and focus feedback outside map planning controls', () => {

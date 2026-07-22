@@ -300,7 +300,9 @@ main {
 
 .route-planner-actions,
 .route-planner-card-actions button,
-.route-planner-card-actions a {
+.route-planner-card-actions a,
+.route-name-field,
+.route-name-field input {
     pointer-events: auto;
 }
 
