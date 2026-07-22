@@ -1741,6 +1741,12 @@ main {
     font-size: 1.12rem;
 }
 
+.dropped-pin-glyph {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 .beach-marker {
     --beach-marker-size: 34px;
     width: var(--beach-marker-size) !important;

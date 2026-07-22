@@ -250,6 +250,10 @@ test('app wires route planning and dropped pin sharing into the map', () => {
     assert.match(map, /L\.polyline/);
     assert.match(map, /route-waypoint-marker/);
     assert.match(map, /dropped-pin-marker/);
+    assert.match(map, /class="dropped-pin-glyph"/);
+    assert.match(map, /<circle cx="17" cy="17" r="7"/);
+    assert.match(map, /<line x1="17" y1="5" x2="17" y2="29"/);
+    assert.doesNotMatch(map, /html:\s*'<span>⌖<\/span>'/);
 });
 
 test('map receives all scored beaches so filtered states can shrink instead of disappear', () => {

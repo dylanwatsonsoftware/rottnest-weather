@@ -412,7 +412,13 @@
         if (Number.isFinite(droppedPin?.lat) && Number.isFinite(droppedPin?.lon)) {
             const pinIcon = L.divIcon({
                 className: 'dropped-pin-marker',
-                html: '<span>⌖</span>',
+                html: `
+                    <svg class="dropped-pin-glyph" viewBox="0 0 34 34" aria-hidden="true">
+                        <circle cx="17" cy="17" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <line x1="17" y1="5" x2="17" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="5" y1="17" x2="29" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                `,
                 iconSize: [34, 34],
                 iconAnchor: [17, 17]
             });
