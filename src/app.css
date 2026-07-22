@@ -307,7 +307,7 @@ main {
 }
 
 .route-planner-card {
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .route-planner-actions {
