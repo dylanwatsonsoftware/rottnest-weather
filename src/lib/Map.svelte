@@ -3,6 +3,7 @@
     import 'leaflet/dist/leaflet.css';
     import {
         getInitialFitSettings,
+        getInitialPlanningFocus,
         getLandmarkFitPoints,
         getMapNavigationTarget,
         getNavigationSettleDelay,
@@ -55,6 +56,7 @@
     let droppedPinMarker = null;
     let currentZoom = $state(12);
     let didFitInitialFocus = false;
+    let didFocusInitialPlanning = false;
     let lastNavigationRequestId = null;
     let isProgrammaticMapMove = false;
     let shouldRecenterSelectedNavigation = false;
@@ -445,8 +447,11 @@
     }
 
     function fitInitialFocus() {
+        if (!map || didFitInitialFocus) return;
+        if (focusInitialPlanning()) return;
+
         const fitPoints = getLandmarkFitPoints(landmarks);
-        if (!map || didFitInitialFocus || !fitPoints.length) return;
+        if (!fitPoints.length) return;
 
         didFitInitialFocus = true;
         const fitSettings = getInitialFitSettings();
@@ -457,6 +462,28 @@
         }
         currentZoom = map.getZoom();
         onZoomChange(currentZoom);
+    }
+
+    function focusInitialPlanning() {
+        if (!map || didFocusInitialPlanning) return false;
+
+        const focus = getInitialPlanningFocus({ routePoints, pin: droppedPin });
+        if (!focus) return false;
+
+        didFocusInitialPlanning = true;
+        didFitInitialFocus = true;
+        if (focus.type === 'route') {
+            const fitSettings = getInitialFitSettings();
+            map.fitBounds(L.latLngBounds(focus.points), {
+                ...fitSettings.fitBoundsOptions,
+                maxZoom: 15
+            });
+        } else {
+            map.setView(focus.point, focus.zoom, { animate: false });
+        }
+        currentZoom = map.getZoom();
+        onZoomChange(currentZoom);
+        return true;
     }
 
     function fitVisibleBeaches() {
@@ -722,6 +749,7 @@
         const currentDroppedPin = droppedPin;
         if (map) {
             updatePlanningLayers();
+            if (routeMode === 'off') focusInitialPlanning();
         }
     });
 

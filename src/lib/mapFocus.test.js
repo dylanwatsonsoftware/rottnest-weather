@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
     getInitialFitSettings,
+    getInitialPlanningFocus,
     getLandmarkFitPoints,
     getBeachSelectionMapTarget,
     getPanelModeSelectionMapTarget,
@@ -21,6 +22,35 @@ import {
     getVisibleBeachFitPoints,
     getVisibleBeachFitSettings
 } from './mapFocus.js';
+
+test('initial planning focus fits a shared route before considering a pin', () => {
+    assert.deepEqual(getInitialPlanningFocus({
+        routePoints: [
+            { lat: -32.006, lon: 115.51 },
+            { lat: -32.02, lon: 115.54 },
+            { lat: null, lon: 115.5 }
+        ],
+        pin: { lat: -32.01, lon: 115.52 }
+    }), {
+        type: 'route',
+        points: [
+            [-32.006, 115.51],
+            [-32.02, 115.54]
+        ]
+    });
+});
+
+test('initial planning focus zooms to a shared pin when no route is loaded', () => {
+    assert.deepEqual(getInitialPlanningFocus({
+        routePoints: [],
+        pin: { lat: -32.01, lon: 115.52 }
+    }), {
+        type: 'pin',
+        point: [-32.01, 115.52],
+        zoom: 16
+    });
+    assert.equal(getInitialPlanningFocus({ routePoints: [], pin: null }), null);
+});
 
 test('getLandmarkFitPoints uses every known landmark coordinate for initial load', () => {
     const points = getLandmarkFitPoints([

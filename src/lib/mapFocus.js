@@ -9,6 +9,18 @@ export function getInitialFitSettings() {
     };
 }
 
+export function getInitialPlanningFocus({ routePoints = [], pin = null } = {}) {
+    const points = routePoints
+        .filter((point) => Number.isFinite(point?.lat) && Number.isFinite(point?.lon))
+        .map((point) => [point.lat, point.lon]);
+
+    if (points.length) return { type: 'route', points };
+    if (Number.isFinite(pin?.lat) && Number.isFinite(pin?.lon)) {
+        return { type: 'pin', point: [pin.lat, pin.lon], zoom: 16 };
+    }
+    return null;
+}
+
 export function getLandmarkFitPoints(landmarks = []) {
     return landmarks
         .filter((landmark) => Number.isFinite(landmark.lat) && Number.isFinite(landmark.lon))
