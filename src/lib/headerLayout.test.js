@@ -115,6 +115,8 @@ test('route and pin controls are icon buttons below the map zoom controls', () =
     assert.equal((app.match(/class="route-planner-toggle"/g) || []).length, 1);
     assert.match(css, /\.route-planner-toggle\s*{[^}]*position:\s*absolute[^}]*top:\s*10px[^}]*right:\s*10px/s);
     assert.match(css, /\.route-planner-summary\s*{[^}]*width:\s*max-content[^}]*max-width:\s*min\(164px,[^}]*min-height:\s*48px/s);
+    assert.match(css, /\.route-planner-summary\s*{[^}]*padding:\s*9px 32px 9px 10px/s);
+    assert.match(css, /\.route-planner-summary-chevron\s*{[^}]*top:\s*16px[^}]*right:\s*10px[^}]*width:\s*16px[^}]*height:\s*16px[^}]*padding:\s*0[^}]*background:\s*transparent/s);
     assert.match(css, /\.route-planner-summary-name\s*{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis[^}]*white-space:\s*nowrap/s);
     assert.doesNotMatch(css, /\.route-planner-card button:not\(:disabled\):last-child/);
     assert.match(css, /\.route-share-action/);

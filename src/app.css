@@ -321,7 +321,7 @@ main {
     margin-left: auto;
     display: flex;
     align-items: center;
-    padding: 9px 46px 9px 10px;
+    padding: 9px 32px 9px 10px;
     border: 1px solid rgba(34, 60, 63, 0.14);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.96);
@@ -363,14 +363,14 @@ main {
 
 .route-planner-summary-chevron {
     position: absolute;
-    top: 10px;
+    top: 16px;
     right: 10px;
-    width: 28px;
-    height: 28px;
-    padding: 6px;
+    width: 16px;
+    height: 16px;
+    padding: 0;
     box-sizing: border-box;
-    border-radius: 8px;
-    background: #eef5f5;
+    border-radius: 0;
+    background: transparent;
 }
 
 .route-planner-chevron {
