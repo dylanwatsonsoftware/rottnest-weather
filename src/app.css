@@ -312,7 +312,7 @@ main {
     display: grid;
     justify-content: end;
     gap: 6px;
-    padding: 4px;
+    padding: 3px;
     width: max-content;
     margin-left: auto;
     border: 1px solid rgba(34, 60, 63, 0.14);
@@ -345,12 +345,12 @@ main {
 }
 
 .route-planner-actions button {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     display: grid;
     place-items: center;
-    font-size: 1.22rem;
+    font-size: 1.06rem;
     line-height: 1;
 }
 
@@ -360,8 +360,8 @@ main {
 }
 
 .route-planner-icon-route {
-    width: 24px;
-    height: 24px;
+    width: 21px;
+    height: 21px;
 }
 
 .route-planner-icon-route svg {
